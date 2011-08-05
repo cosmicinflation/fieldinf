@@ -17,7 +17,7 @@ me, in case of bugs!
 
 -Apply the patch in the cosmomc/ directory:
 
-patch -p1 < prog_purpose_DDMMYY.patch
+patch -p1 < purpose_DDMMYY.patch
 
 -See astro-ph/0509727, astro-ph/0605367, astro-ph/0703486, arXiv:1004.5525
 
@@ -84,6 +84,7 @@ by the boolean "useSplineDefault". The range and number of points are
 set in the routine "SetDefPowerParams".
 
 **********************************************************************
+
 All source files contain the switches "display" and "dump_files" which
 can be used for debugging. They output data at various stages of the
 computation. Mind that they slow down a lot the execution and you
