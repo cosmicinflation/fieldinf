@@ -1,6 +1,6 @@
 program infbackmain
   use infprec, only : kp
-  use infsrmodel
+  use infsric
   use infbgmodel
   use infbg
   use infinout

@@ -135,13 +135,7 @@ contains
 !to start on the attractor. This is epsilon2 = 0 for epsilon1<<1
 !initialy.
     use infbgmodel, only : infbgparam, metric_inverse
-    use infsrmodel, only : slowroll_initial_matter_lf
-    use infsrmodel, only : slowroll_initial_matter_sf
-    use infsrmodel, only : slowroll_initial_matter_hy
-    use infsrmodel, only : slowroll_initial_matter_rm
-    use infsrmodel, only : slowroll_initial_matter_kksf
-    use infsrmodel, only : slowroll_initial_matter_kklt
-    use infsrmodel, only : slowroll_initial_matter_mix
+    use infsric, only : slowroll_initial_matter
 
     implicit none
     type(infbgparam), intent(in) :: infParam
@@ -157,35 +151,13 @@ contains
 
 !if the matter fields are set to 0, use slow-roll guesses
     if (all(infParam%matters == 0._kp)) then
-
-       select case (infParam%name)
-
-       case ('largef')
-          infIni%field(1:matterNum) = slowroll_initial_matter_lf(infParam)
-
-       case ('smallf')
-          infIni%field(1:matterNum) = slowroll_initial_matter_sf(infParam)
-             
-       case ('hybrid')
-          infIni%field(1:matterNum) = slowroll_initial_matter_hy(infParam)
-
-       case ('runmas')
-          infIni%field(1:matterNum) = slowroll_initial_matter_rm(infParam)
-          
-       case ('kklmmt')
-          infIni%field(1:matterNum) = slowroll_initial_matter_kklt(infParam)
-
-       case ('mixinf')
-          infIni%field(1:matterNum) = slowroll_initial_matter_mix(infParam)
-          
-
-       end select
-
+       infIni%field(1:matterNum) = slowroll_initial_matter(infParam)
     endif
 
-
+!this is starting on slow-roll
     infIni%fieldDot &
          = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
+!overides for test
 !    infIni%fieldDot = 0._kp
 !    print *,'initial condition fieldDot=',infIni%fieldDot
 

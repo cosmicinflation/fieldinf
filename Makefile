@@ -20,8 +20,9 @@ FFLAGS= -O -fopenmp -D$(ext) -DPP12
 #FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 
 endif
 
-INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o hyper2F1.o specialinf.o infinout.o infbgmodel.o \
-	infsrmodel.o infbg.o infbgspline.o inftorad.o infpert.o infpowspline.o
+INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o hyper2F1.o specialinf.o \
+	 infinout.o infbgmodel.o infsric.o infbg.o infbgspline.o inftorad.o \
+	 infpert.o infpowspline.o infbounds.o
 
 
 infbackmain.$(ext): $(INFOBJ) infbackmain.o
