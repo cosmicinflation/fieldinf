@@ -19,7 +19,7 @@ module cosmopar
 !100MeV
 !!  real(kp), parameter :: lnRhoNuc = -178.55
 
-!only used for reheating using slow-roll prediction
+!only used for reheating using slow-roll (libslowroll)
 !COBE quadrupole moment
   real(kp), parameter :: QrmsOverT = 6e-6
 !Best scalar amp for slow-roll (update with new constraints)
