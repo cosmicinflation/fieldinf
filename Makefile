@@ -18,27 +18,31 @@ FC=gfortran
 FFLAGS= -O -fopenmp -D$(ext) -DPP12
 #bugbuster
 #FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 
+LDADD = -lsrmodels
 endif
 
-INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o hyper2F1.o specialinf.o \
-	 infinout.o infbgmodel.o infsric.o infbg.o infbgspline.o inftorad.o \
-	 infpert.o infpowspline.o infbounds.o
+INCLUDE = -I/usr/local/include/srmodels
 
+INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o hyper2F1.o specialinf.o \
+	 infinout.o infbgmodel.o infbounds.o infsric.o infbg.o infbgspline.o \
+	inftorad.o infpert.o infpowspline.o
+
+FFLAGS +=  $(INCLUDE)
 
 infbackmain.$(ext): $(INFOBJ) infbackmain.o
-	$(FC) $(FFLAGS) $(INFOBJ) infbackmain.o -o $@
+	$(FC) $(FFLAGS) $(INFOBJ) infbackmain.o -o $@ $(LDADD)
 
 infpertmain.$(ext): $(INFOBJ) infpertmain.o
-	$(FC) $(FFLAGS) $(INFOBJ) infpertmain.o -o $@
+	$(FC) $(FFLAGS) $(INFOBJ) infpertmain.o -o $@ $(LDADD)
 
 perttest.$(ext): $(INFOBJ) perttest.o
-	$(FC) $(FFLAGS) $(INFOBJ) perttest.o -o $@
+	$(FC) $(FFLAGS) $(INFOBJ) perttest.o -o $@ $(LDADD)
 
 %.o: %.f90
-	$(FC) $(FFLAGS) -c $*.f90
+	$(FC) $(FFLAGS) -c $*.f90 
 
 %.o: %.F90
-	$(FC) $(FFLAGS) -c $*.F90
+	$(FC) $(FFLAGS) -c $*.F90 
 
 clean:
 	rm *.$(ext) *.o *.mod

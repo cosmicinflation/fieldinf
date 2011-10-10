@@ -58,7 +58,7 @@ contains
        field_stopinf(2) = -1._kp
        print *, 'fieldStop = infParam(matterParamNum)'
 
-    case ('mixinf')
+    case ('mixlf')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
 

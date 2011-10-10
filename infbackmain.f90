@@ -27,7 +27,7 @@ program infbackmain
   integer :: ind
 
 !inflation model
-  infParam%name = 'mixinf'
+  infParam%name = 'mixlf'
 
 !parameters (see infbgmodel.f90)
   infParam%consts(1) = 1e-5

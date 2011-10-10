@@ -332,7 +332,7 @@ contains
             
 
 #ifndef PP5
-    case ('mixinf')
+    case ('mixlf')
 ! U = c1^4 [F^c2 + c6 F^c12]      
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &

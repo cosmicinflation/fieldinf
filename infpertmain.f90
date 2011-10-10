@@ -48,21 +48,22 @@ program infpertmain
 
   pi = acos(-1._kp)
 
+  infParam%consts = 0._kp
 
 !the model parameters
   infParam%name = 'largef'
   infParam%consts(1) = 1.
   infParam%consts(2) = 2.
 !  infParam%consts(3) = 4.623622988896771E-004
-    infParam%consts(3) = 1e-2 * sqrt(8._kp*pi)
-  infParam%consts(4) = 0.
-  infParam%consts(5) = -1.
-  infParam%consts(6)=0.
+!    infParam%consts(3) = 1e-2 * sqrt(8._kp*pi)
+!  infParam%consts(4) = 0.
+  infParam%consts(5) = 1._kp
+!  infParam%consts(6)=0.
 
-  infParam%consts(7) = 0.1_kp
-  infParam%consts(8) = 1000._kp
+!  infParam%consts(7) = 0.1_kp
+!  infParam%consts(8) = 1000._kp
 
-  infParam%consts(1) = infParam%consts(3) * sqrt(2._kp*pi)
+!  infParam%consts(1) = infParam%consts(3) * sqrt(2._kp*pi)
 
   infParam%conforms(1) = 1.
   
