@@ -12,6 +12,8 @@ module cosmopar
 
   real(kp), parameter :: lnMpcToKappa = 130.282_kp
 
+  real(kp), parameter :: lnMpinGeV=42.334_kp
+
 !1MeV
 !!  real(kp), parameter :: lnRhoNuc = -196.97
 !10MeV
