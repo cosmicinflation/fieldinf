@@ -46,14 +46,14 @@ contains
     case ('smallf')
        slowroll_initial_matter = sfi_initial_field(infParam,efold)
 
-    case ('kksf')
-       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
+!    case ('kksf')
+!       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
 
-    case ('kklt')
-       slowroll_initial_matter = bi_initial_field(infParam,efold)
+!    case ('kklt')
+!       slowroll_initial_matter = bi_initial_field(infParam,efold)
 
-    case ('mixlf')
-       slowroll_initial_matter = mlfi_initial_field(infParam,efold)
+!    case ('mixlf')
+!       slowroll_initial_matter = mlfi_initial_field(infParam,efold)
 
     case default
        stop 'slowroll_initial_matter: model not implemented!'
@@ -85,7 +85,7 @@ contains
     bfold = -efold
     p = infParam%consts(2)
 
-    xEnd = lf_x_endinf(p)
+    xEnd = lfi_x_endinf(p)
 
     if (display) write(*,*)'lf_initial_field: xend= ',xEnd
 
@@ -126,7 +126,7 @@ contains
   end function sfi_initial_field
 
 
-
+#ifdef NOYET
   function sfbi_initial_field(infParam,efold)
     use sfbisr, only : sfbi_x_endinf,sfbi_x_trajectory
     implicit none
@@ -232,7 +232,7 @@ contains
     mlfi_initial_field(:) = xIni
 
   end function mlfi_initial_field
-  
+#endif  
 
 
 end module infsric
