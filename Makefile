@@ -23,7 +23,7 @@ endif
 
 INCLUDE = -I/usr/local/include/srmodels
 
-INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o hyper2F1.o specialinf.o \
+INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o  \
 	 infinout.o infbgmodel.o infbounds.o infsric.o infbg.o infbgspline.o \
 	inftorad.o infpert.o infpowspline.o
 
