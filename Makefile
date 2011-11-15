@@ -23,9 +23,10 @@ endif
 
 INCLUDE = -I/usr/local/include/srmodels
 
-INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o  \
-	 infinout.o infbgmodel.o infbounds.o infsric.o infbg.o infbgspline.o \
-	inftorad.o infpert.o infpowspline.o
+INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o infinout.o \
+	 infmatter.o infdilaton.o infbgmodel.o infpotential.o infsigma.o \
+	 infbounds.o infsric.o infbgfunc.o infbg.o infbgspline.o \
+	 inftorad.o infpert.o infpowspline.o
 
 FFLAGS +=  $(INCLUDE)
 

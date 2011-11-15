@@ -43,8 +43,23 @@ contains
     case ('largef')
        slowroll_initial_matter = lfi_initial_field(infParam,efold)
 
-    case ('smallf')
-       slowroll_initial_matter = sfi_initial_field(infParam,efold)
+    case ('mixlf')
+       slowroll_initial_matter = mlfi_initial_field(infParam,efold)
+
+!    case ('rcm')
+!       slowroll_initial_matter = rcmi_initial_field(infParam,efold)
+
+!    case('rcq')
+!       slowroll_initial_matter = rcqi_initial_field(infParam,efold)
+
+!    case('pn')
+!       slowroll_initial_matter = pni_initial_field(infParam,efold)
+
+!    case('mn')
+!       slowroll_initial_matter = mni_initial_field(infParam,efold)
+
+!    case ('smallf')
+!       slowroll_initial_matter = sfi_initial_field(infParam,efold)
 
 !    case ('kksf')
 !       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
@@ -52,8 +67,7 @@ contains
 !    case ('kklt')
 !       slowroll_initial_matter = bi_initial_field(infParam,efold)
 
-!    case ('mixlf')
-!       slowroll_initial_matter = mlfi_initial_field(infParam,efold)
+
 
     case default
        stop 'slowroll_initial_matter: model not implemented!'
@@ -97,7 +111,38 @@ contains
 
 
 
+  function mlfi_initial_field(infParam,efold)
+    use mlfisr, only : mlfi_x_endinf,mlfi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: mlfi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
 
+    real(kp) :: p, q, alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+
+#ifndef PP5
+    p = infParam%consts(2)
+    q = infParam%consts(12)
+    alpha = infParam%consts(6)
+#else
+    stop 'mlfi_initial_field: -DPP12 not defined!'
+#endif
+    
+
+    xEnd = mlfi_x_endinf(p,q,alpha)
+
+    if (display) write(*,*)'mlfi_initial_field: xend= ',xEnd
+
+    xIni = mlfi_x_trajectory(bfold,xEnd,p,q,alpha)
+
+    mlfi_initial_field(:) = xIni
+
+  end function mlfi_initial_field
+
+
+#ifdef NOYET
   function sfi_initial_field(infParam,efold)
     use sfisr, only : sfi_x_endinf,sfi_x_trajectory
     implicit none
@@ -126,7 +171,7 @@ contains
   end function sfi_initial_field
 
 
-#ifdef NOYET
+
   function sfbi_initial_field(infParam,efold)
     use sfbisr, only : sfbi_x_endinf,sfbi_x_trajectory
     implicit none
@@ -201,37 +246,7 @@ contains
 
   end function bi_initial_field
 
-
-
-  function mlfi_initial_field(infParam,efold)
-    use mlfisr, only : mlfi_x_endinf,mlfi_x_trajectory
-    implicit none
-    real(kp), dimension(matterNum) :: mlfi_initial_field
-    type(infbgparam), intent(in) :: infParam
-    real(kp), intent(in) :: efold
-
-    real(kp) :: p, q, alpha, xEnd, xIni, bfold
-
-    bfold = -efold
-
-#ifndef PP5
-    p = infParam%consts(2)
-    q = infParam%consts(12)
-    alpha = infParam%consts(6)
-#else
-    stop 'mlfi_initial_field: -DPP12 not defined!'
-#endif
-    
-
-    xEnd = mlfi_x_endinf(p,q,alpha)
-
-    if (display) write(*,*)'mlfi_initial_field: xend= ',xEnd
-
-    xIni = mlfi_x_trajectory(bfold,xEnd,p,q,alpha)
-
-    mlfi_initial_field(:) = xIni
-
-  end function mlfi_initial_field
+  
 #endif  
 
 

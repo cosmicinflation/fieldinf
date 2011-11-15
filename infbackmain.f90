@@ -39,8 +39,9 @@ program infbackmain
   infParam%consts(7:11) = 0.
   infParam%consts(12) = 4
 
+
+  infParam%conforms = 1
 !initial field value.
-  infParam%conforms(1) = 1
   infParam%matters(1) = 0
 
 
@@ -86,7 +87,6 @@ program infbackmain
   call rescale_potential(2._kp,infParam,infIni,infEnd,infObs,ptrToBgdata)
 
   print *,'afterRescale'
-  print *,'mass=',matterParam(1)
   print *,'infParam',infParam
   print *,'infIni',infIni
   print *,'infEnd',infEnd
@@ -115,8 +115,8 @@ program infbackmain
         epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
         ricci = ricciOverH2*hubble*hubble
-        call livewrite('resfield.dat',efold,field(1),field(2)) !,field(3))
-        call livewrite('resfieldDot.dat',efold,fieldDot(1),fieldDot(2)) !,fieldDot(3))
+        call livewrite('resfield.dat',efold,field(1))
+        call livewrite('resfieldDot.dat',efold,fieldDot(1))
         call livewrite('reshubble.dat',efold,hubble)
         call livewrite('resepsilons.dat',efold,epsilon1,epsilon1JF)
         call livewrite('resricci.dat',efold,riccioverH2,ricci)
@@ -135,7 +135,6 @@ program infbackmain
  
   infIni = set_infbg_ini(infParam)
   print *,'After ini again'
-  print *,'mass=',matterParam(1)
   print *,'infPAram',infParam
   print *,'infIni',infIni
 

@@ -1,6 +1,10 @@
 module infbg
   use infprec, only : kp, tolkp
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
+  use infbgfunc, only : hubble_parameter_square, slowroll_first_parameter_JF
+  use infbgfunc, only : slowroll_first_parameter, slowroll_second_parameter
+  
+
 !background evolution in the Einstein FLRW Frame for multifields:
 !scalar gravity + matter fields.
 
@@ -48,16 +52,7 @@ module infbg
   public set_infbg_ini
   public rescale_potential
   public bg_field_evol, bg_field_dot_coupled
- 
-  public slowroll_first_parameter, slowroll_first_parameter_JF
-  public slowroll_second_parameter, hubble_parameter_square
-
-  public potential, deriv_potential, deriv_second_potential
-
-  public connection_affine, deriv_connection_affine
-  
-  public matter_energy_density, matter_energy_density_JF
-
+         
 
 contains
 
@@ -134,7 +129,9 @@ contains
   function set_infbg_ini(infParam)
 !to start on the attractor. This is epsilon2 = 0 for epsilon1<<1
 !initialy.
-    use infbgmodel, only : infbgparam, metric_inverse
+    use infbgmodel, only : infbgparam
+    use infsigma, only : metric_inverse
+    use infpotential, only : deriv_ln_potential
     use infsric, only : slowroll_initial_matter
 
     implicit none
@@ -195,8 +192,7 @@ contains
 
   subroutine rescale_potential(scale,infParam,infIni,infEnd,infObs,ptrBgdata)
 !update all relevant data such as Unew = scale*Uold
-    use infbgmodel, only : infbgparam, conformal_factor_square
-    use infbgmodel, only : set_infbg_param
+    use infbgmodel, only : infbgparam, set_infbg_param
     implicit none
     type(infbgparam), intent(inout) :: infParam
     type(infbgphys), intent(inout) :: infIni,infEnd,infObs
@@ -247,7 +243,8 @@ contains
 
     use infprec, only : transfert
     use inftools, only : easydverk, tunedverk, zbrent
-    use infbgmodel, only : conformal_factor_square
+    use infdilaton, only : conformal_factor_square
+    use infpotential, only : potential
     use infinout
     
     implicit none
@@ -653,9 +650,8 @@ contains
           
 !slow down a lot the computation: for test!
           if (dump_file) then
-             call livewrite('field.dat',efold,bgVar(1),bgVar(2),bgVar(3))
-             call livewrite('derivfield.dat',efold, ptrCurrent%bg%fieldDot(1) &
-                  ,ptrCurrent%bg%fieldDot(2))
+             call livewrite('field.dat',efold,bgVar(1),bgVar(2))
+             call livewrite('derivfield.dat',efold, ptrCurrent%bg%fieldDot(1))
              call livewrite('hubble.dat',efold,hubble)
              call livewrite('epsilon1.dat',efold,epsilon1,epsilon1JF)
              epsilon2 = slowroll_second_parameter(field,derivField,useVelocity)
@@ -905,7 +901,9 @@ contains
 !for the inflationary era.
 
     use infprec, only : transfert
-    use infbgmodel, only : metric, metric_inverse
+    use infsigma, only : metric, metric_inverse   
+    use infsigma, only : connection_affine
+    use infpotential, only : deriv_ln_potential
     implicit none
         
     integer :: neqs    
@@ -991,7 +989,8 @@ contains
 !at the end of inflation.
 
     use infprec, only : transfert
-    use infbgmodel, only : metric, metric_inverse
+    use infsigma, only : metric, metric_inverse, connection_affine
+    use infpotential, only : deriv_potential
     implicit none
         
     integer :: neqs    
@@ -1074,481 +1073,6 @@ contains
     bgVarDot(fieldNum+1:2*fieldNum) = velocityDot
             
   end subroutine bg_field_dot_coupled
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!geometrical functions
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-
-
-
-
-  function hubble_parameter_square(field,derivField,useVelocity)
-!in unit of kappa^2
-    use infbgmodel, only : metric
-    implicit none
-    real(kp) :: hubble_parameter_square
-    real(kp), dimension(fieldNum), intent(in) :: field, derivfield
-    logical, intent(in) :: useVelocity
-
-    real(kp) :: derivFieldSquare
-
-    derivFieldSquare = dot_product(derivField,matmul(metric(field),derivField))
-
-    if (useVelocity) then
-       hubble_parameter_square = (derivFieldSquare + 2._kp*potential(field))/6._kp
-    else
-       hubble_parameter_square = 2._kp*potential(field)/(6._kp - derivFieldSquare)       
-    endif
-   
-  end function hubble_parameter_square
-
-
-
-
-  function slowroll_first_parameter(field,derivField,useVelocity)
-!epsilon1 = epsilon
-    use infbgmodel, only : metric
-    implicit none
-    real(kp) :: slowroll_first_parameter
-    real(kp), dimension(fieldNum), intent(in) :: field, derivField
-    logical, intent(in) :: useVelocity
-    
-    real(kp) :: derivFieldSquare, hubbleSquare
-
-    derivFieldSquare = dot_product(derivField,matmul(metric(field),derivField))
-    
-    if (useVelocity) then       
-       hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
-       slowroll_first_parameter = derivFieldSquare/2d0/hubbleSquare
-    else
-       slowroll_first_parameter = derivFieldSquare/2d0
-    endif
-    
-
-  end function slowroll_first_parameter
-
-
-
-
-  function slowroll_second_parameter(field,derivField,useVelocity)
-!epsilon2 = 2(epsilon - delta)
-    implicit none
-    real(kp) :: slowroll_second_parameter
-    real(kp), dimension(fieldNum), intent(in) :: field, derivField
-    logical, intent(in) :: useVelocity
-
-    real(kp), dimension(fieldNum) :: fieldDot
-    real(kp) :: epsilon1
-    real(kp) :: hubbleSquare, derivPotFieldDot
-
-    hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
-    
-    if (useVelocity) then
-       fieldDot = derivField/sqrt(hubbleSquare)
-    else
-       fieldDot = derivField
-    endif
-
-    epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
-    
-    if (epsilon1.ne.0.) then
-       derivPotFieldDot = dot_product(deriv_potential(field),fieldDot)
-
-       slowroll_second_parameter = -6d0 + 2d0*epsilon1 &
-            - derivPotFieldDot/(epsilon1*hubbleSquare)
-    else
-       slowroll_second_parameter = 0.
-    endif
-
-  end function slowroll_second_parameter
-
-
-
-
-  function slowroll_first_parameter_JF(field,derivField,useVelocity)
-!this is epsilon1 EF, up to 2% when dilaton couplings = 1
-    use infbgmodel, only : conformal_first_gradient, conformal_second_gradient
-    use infbgmodel, only : metric_inverse
-    implicit none
-    real(kp) :: slowroll_first_parameter_JF
-    real(kp), dimension(fieldNum), intent(in) :: field, derivField
-    logical, intent(in) :: useVelocity
-
-    real(kp), dimension(fieldNum) :: christVec, fieldDot, potDerivVec
-    real(kp), dimension(dilatonNum) :: dilaton, dilatonDot,confFirstGrad    
-    real(kp), dimension(dilatonNum,dilatonNum) :: confSecondGrad
-    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel
-    real(kp) :: derivFieldSquare, hubbleSquare, epsilon1, epsilon1Xfactor, shift
-    real(kp) :: confFirstGradXdilDot
-
-    integer :: i
-    
-    hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
-
-    if (useVelocity) then
-       fieldDot = derivField/sqrt(hubbleSquare)
-    else
-       fieldDot = derivField
-    endif
-
-    dilaton = field(matterNum+1:fieldNum)
-    dilatonDot = fieldDot(matterNum+1:fieldNum)
-    confFirstGrad = conformal_first_gradient(dilaton)
-    confSecondGrad = conformal_second_gradient(dilaton)
-!    potDerivVec = deriv_potential_vec(field)
-    potDerivVec = matmul(metric_inverse(field),deriv_potential(field))
-    christoffel = connection_affine(field)
-
-    do i=1,fieldNum
-       christVec(i) = dot_product(fieldDot(:),matmul(christoffel(i,:,:),fieldDot(:)))
-    enddo
-   
-    confFirstGradXdilDot = dot_product(confFirstGrad,dilatonDot)
-
-    epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
-
-    
-    epsilon1Xfactor = (epsilon1 + confFirstGradXdilDot)/(1._kp + confFirstGradXdilDot)
-   
-
-    shift = ((3._kp - epsilon1)*confFirstGradXdilDot &
-         + dot_product(confFirstGrad,christVec(matterNum+1:fieldNum)) &
-         + dot_product(confFirstGrad,potDerivVec(matterNum+1:fieldNum)/hubbleSquare) &
-         - dot_product(dilatonDot, matmul(confSecondGrad,dilatonDot))) &
-         / (1._kp + confFirstGradXdilDot)**2
-         
-
-    slowroll_first_parameter_JF = epsilon1Xfactor + shift
-
-
-  end function slowroll_first_parameter_JF
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!gravity sector functions
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-  function connection_affine(field)
-!first index contravariant, 2 others covariant and symmetric
-    use infbgmodel, only : metric_inverse, conformal_first_gradient
-    use infbgmodel, only : conformal_factor_square
-    implicit none
-    real(kp), dimension(fieldNum) :: field    
-    real(kp), dimension(fieldNum,fieldNum) :: metricInv
-    real(kp), dimension(dilatonNum,dilatonNum) :: metricInvConf
-    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: connection_affine
-    real(kp) ::  confSquare
-    real(kp), dimension(dilatonNum) :: dilaton
-    real(kp), dimension(dilatonNum) :: confFirstGradVec, confFirstGrad
-   
-    integer :: i
-
-    connection_affine = 0._kp
-
-    metricInv = metric_inverse(field)
-    metricInvConf(1:dilatonNum,1:dilatonNum) &
-         = metricInv(matterNum+1:fieldNum,matterNum+1:fieldNum)
-
-    dilaton=field(matterNum+1:fieldNum)
-    confFirstGrad = conformal_first_gradient(dilaton)
-    confFirstGradVec = matmul(metricInvConf,confFirstGrad)
-    confSquare = conformal_factor_square(dilaton)
-    
-    do i=1,dilatonNum
-       connection_affine(1:matterNum,1:matterNum,matterNum+i) &
-            = confFirstGrad(i)
-       connection_affine(1:matterNum,matterNum+i,1:matterNum) &
-            = confFirstGrad(i)       
-    enddo
-
-    do i=1,matterNum
-       connection_affine(matterNum+1:fieldNum,i,i) &
-            = - confSquare * confFirstGradVec(1:dilatonNum)
-    enddo
-
-   
-  end function connection_affine
-
-
-
-
-  function deriv_connection_affine(field)
-!first partial derivative of the christoffel: first index contrariant,
-!3 others covariant
-    use infbgmodel, only : metric_inverse, conformal_first_gradient
-    use infbgmodel, only : conformal_second_gradient, conformal_factor_square
-    implicit none
-
-    real(kp), dimension(fieldNum) :: field
-    real(kp), dimension(fieldNum,fieldNum) :: metricInv
-    real (kp), dimension(fieldNum,fieldNum,fieldNum) :: metricDeriv
-    real(kp), dimension(fieldNum,fieldNum,fieldNum,fieldNum) :: deriv_connection_affine    
-
-    real(kp) :: confSquare
-    real(kp), dimension(dilatonNum) :: dilaton, confFirstGrad, confFirstGradVec
-    real(kp), dimension(dilatonNum,dilatonNum) :: metricInvConf
-    real(kp), dimension(dilatonNum,dilatonNum) :: confSecondGrad, confSecondGradVec
-    integer :: i,j,k
-
-    deriv_connection_affine = 0._kp
-
-    dilaton(1:dilatonNum) = field(matterNum+1:fieldNum)
-    confSquare = conformal_factor_square(dilaton)
-
-!    metricDeriv = deriv_metric(field)
-    metricInv = metric_inverse(field)
-    metricInvConf = metricInv(matterNum+1:fieldNum,matterNum+1:fieldNum)
-    
-    confFirstGrad = conformal_first_gradient(dilaton)
-    confFirstGradVec = matmul(metricInvConf,confFirstGrad)
-    confSecondGrad = conformal_second_gradient(dilaton)
-    confSecondGradVec = matmul(metricInvConf,confSecondGrad)
-    
-
-    do j=1,dilatonNum
-       do i=1,dilatonNum
-
-          deriv_connection_affine(1:matterNum,1:matterNum,matterNum+i,matterNum+j) &
-               = confSecondGrad(i,j)
-          deriv_connection_affine(1:matterNum,matterNum+i,1:matterNum,matterNum+j) & 
-               = confSecondGrad(i,j)
-
-          do k=1,matterNum
-             deriv_connection_affine(matterNum+i,k,k,matterNum+j) &
-                  = - confSquare * (confSecondGradVec(i,j) &
-                  + 2._kp * confFirstGradVec(i) * confFirstGrad(j)) 
-
-!zero when the the metric for the dilaton is constant and diagonal
-!                  + confSquare * dot_product(metricInvConf(i,:) &
-!                  ,matmul(metricDeriv(matterNum+1:fieldNum,matterNum+1:fieldNum,j) &
-!                  ,confFirstGradVec))
-          enddo
-
-       enddo
-    enddo
-
-
-  end function deriv_connection_affine
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!overall potential (matter + gravity)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-  function potential(field)
-!S=1/(2kappa^2) {{ int{sqrt(-g) d^4 x} [ R - metric Dfield Dfield - 2*potential(Field)] }}
-    use infbgmodel, only : matter_potential, conformal_factor_square
-    implicit none
-    real(kp), dimension(fieldNum), intent(in) :: field
-
-    real(kp), dimension(matterNum) :: matter
-    real(kp), dimension(dilatonNum) :: dilaton
-    real(kp) :: potential  
-
-    matter = field(1:matterNum)
-    dilaton = field(matterNum+1:fieldNum)
-
-    potential = matter_potential(matter)*(conformal_factor_square(dilaton))**2
-
-  end function potential
-
-
-
-
-  function deriv_potential(field)
-!with respect to the fields
-    use infbgmodel, only : deriv_matter_potential, conformal_first_gradient
-    use infbgmodel, only : conformal_factor_square
-    implicit none
-    real(kp), dimension(fieldNum) :: deriv_potential
-    real(kp), dimension(fieldNum), intent(in) :: field
-
-    real(kp), dimension(matterNum) :: matter, derivMatterPot
-    real(kp), dimension(dilatonNum) :: dilaton, confFirstGrad
-
-    real(kp) :: potentialVal
-    
-
-    matter = field(1:matterNum)
-    dilaton = field(matterNum+1:fieldNum)
-
-    potentialVal = potential(field)
-    derivMatterPot = deriv_matter_potential(matter)
-    confFirstGrad = conformal_first_gradient(dilaton)
-
-    deriv_potential(1:matterNum) &
-         =  derivMatterPot(1:matterNum)*(conformal_factor_square(dilaton))**2
-
-    deriv_potential(matterNum+1:fieldNum) &
-         = 4._kp*confFirstGrad(1:dilatonNum)*potentialVal    
-       
-  end function deriv_potential
-
-
-
-
-  function deriv_second_potential(field)
-    use infbgmodel, only : deriv_matter_potential, deriv_second_matter_potential
-    use infbgmodel, only : conformal_first_gradient, conformal_second_gradient
-    use infbgmodel, only : conformal_factor_square
-    implicit none
-    real(kp), dimension(fieldNum,fieldNum) :: deriv_second_potential
-    real(kp), dimension(fieldNum), intent(in) :: field
-
-    real(kp), dimension(fieldNum) :: derivPot
-    real(kp), dimension(matterNum) :: matter, derivMatterPot
-    real(kp), dimension(matterNum,matterNum) :: derivSecondMatterPot
-    real(kp), dimension(dilatonNum) :: dilaton, confFirstGrad
-    real(kp), dimension(dilatonNum,dilatonNum) :: confSecondGrad
-
-    real(kp) :: potentialVal
-    integer :: i,j
-
-    matter = field(1:matterNum)
-    dilaton = field(matterNum+1:fieldNum)
-
-    potentialVal = potential(field)
-
-    derivPot = deriv_potential(field)
-    derivMatterPot = deriv_matter_potential(matter)
-    derivSecondMatterPot = deriv_second_matter_potential(matter)
-
-    confFirstGrad = conformal_first_gradient(dilaton)
-    confSecondGrad = conformal_second_gradient(dilaton)
-
-    deriv_second_potential(1:matterNum,1:matterNum) &
-         = derivSecondMatterPot(1:matterNum,1:matterNum) &
-         *(conformal_factor_square(dilaton))**2
-
-    do i=1,matterNum
-       deriv_second_potential(i,matterNum+1:fieldNum) &
-            = derivPot(i) * 4._kp*confFirstGrad(1:dilatonNum)
-       deriv_second_potential(matterNum+1:fieldNum,i) &
-            = deriv_second_potential(i,matterNum+1:fieldNum)
-    enddo
-
-    do i=1,dilatonNum
-       do j=1,dilatonNum
-          deriv_second_potential(matterNum+i,matterNum+j) = potentialVal &
-               * (4._kp*confSecondGrad(i,j) + 4._kp*confFirstGrad(i) &
-               * 4._kp*confFirstGrad(j))
-       enddo
-    enddo
-
-  end function deriv_second_potential
-
-
-
-
-  function deriv_ln_potential(field)
-    use infbgmodel, only : conformal_first_gradient
-    implicit none
-    real(kp), dimension(fieldNum) :: deriv_ln_potential
-    real(kp), dimension(fieldNum), intent(in) :: field
-
-    real(kp), dimension(matterNum) :: matter,derivLnMatterPot
-    real(kp), dimension(dilatonNum) :: dilaton,confFirstGrad
-
-    matter = field(1:matterNum)
-    dilaton = field(matterNum+1:fieldNum)
-
-    derivLnMatterPot = deriv_ln_matter_potential(matter)
-    confFirstGrad = conformal_first_gradient(dilaton)
-
-    deriv_ln_potential(1:matterNum) =  derivLnMatterPot(1:matterNum)
-
-    deriv_ln_potential(matterNum+1:fieldNum) = 4._kp*confFirstGrad(1:dilatonNum)
-    
-  end function deriv_ln_potential
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!matter sector functions
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-  function deriv_ln_matter_potential(matter)
-    use infbgmodel, only : matter_potential, deriv_matter_potential
-    implicit none
-    real(kp), dimension(matterNum) :: deriv_ln_matter_potential
-    real(kp), dimension(matterNum) :: matter
-
-    real(kp) :: matterPotential
-
-    matterPotential = matter_potential(matter)
-
-    if (matterPotential.ne.0._kp) then
-       deriv_ln_matter_potential = deriv_matter_potential(matter)/matterPotential      
-    else
-       stop 'infbg:deriv_ln_matter_potential: matter_potential vanishes!'
-    endif
-
-!    deriv_ln_matter_potential(1) = 2._kp/chi
-
-  end function deriv_ln_matter_potential
-
-  
-
-
-  function matter_energy_density(field,velocity)
-!energy density of the matter fields in the Einstein Frame
-!A^2 (Dchi/Dtphys)^2 + A^4 U
-    use infbgmodel, only : matter_potential, conformal_factor_square
-    implicit none
-    real(kp) :: matter_energy_density
-    real(kp), dimension(fieldNum), intent(in) :: field,velocity
-
-    real(kp), dimension(matterNum) :: matter, matterVel
-    real(kp), dimension(dilatonNum) :: dilaton
-    real(kp) :: confSquare
-
-
-    matter = field(1:matterNum)
-    dilaton = field(matterNum+1:fieldNum)
-    matterVel = velocity(1:matterNum)
-    confSquare = conformal_factor_square(dilaton)
-
-    matter_energy_density &
-         = 0.5d0*confSquare * dot_product(matterVel,matterVel) &
-         + matter_potential(matter) * confSquare**2
-
-  end function matter_energy_density
-
-
-
-
-  function matter_energy_density_JF(field,velocity)
-!energy density of the matter fields in the Jordan Frame
-!EF/A^4
-    use infbgmodel, only : conformal_factor_square
-    implicit none
-    real(kp) :: matter_energy_density_JF
-    real(kp), dimension(fieldNum), intent(in) :: field,velocity
-    
-    real(kp), dimension(dilatonNum) :: dilaton
-    real(kp) :: confSquare
-    real(kp) :: matterEnergyDensEF
-
-    dilaton = field(matterNum+1:fieldNum)
-
-    confSquare = conformal_factor_square(dilaton)
-    matterEnergyDensEF = matter_energy_density(field,velocity)
-
-    matter_energy_density_JF = matterEnergyDensEF/confSquare**2
-
-  end function matter_energy_density_JF
-
 
 
 end module infbg

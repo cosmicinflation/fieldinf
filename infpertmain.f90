@@ -4,6 +4,8 @@
 program infpertmain
   use infprec, only : kp
   use infbgmodel
+  use infsigma
+  use infbgfunc
   use infbg
   use inftorad
   use infpert
@@ -52,7 +54,7 @@ program infpertmain
 
 !the model parameters
   infParam%name = 'largef'
-  infParam%consts(1) = 1.
+  infParam%consts(1) = 1e-2
   infParam%consts(2) = 2.
 !  infParam%consts(3) = 4.623622988896771E-004
 !    infParam%consts(3) = 1e-2 * sqrt(8._kp*pi)
@@ -65,7 +67,7 @@ program infpertmain
 
 !  infParam%consts(1) = infParam%consts(3) * sqrt(2._kp*pi)
 
-  infParam%conforms(1) = 1.
+  infParam%conforms = 1.
   
   infParam%matters(1) = 0.*infParam%consts(3)
 
@@ -144,7 +146,7 @@ program infpertmain
 
   kphysOverHubbleExit = 1d0
   lnKmpcMin = -18d0  
-  lnKmpcMax = 18d0
+  lnKmpcMax = 0d0
 
 !  lnKmpcMin=-30d0
 !  lnKmpcMax=-20d0
@@ -235,6 +237,9 @@ program infpertmain
      if (check_spline) then
         powerScalSpline = splineval_power_scal(kmpc)
         powerTensSpline = splineval_power_tens(kmpc)
+     else
+        powerScalSpline = 0._kp
+        powerTensSpline = 0._kp
      endif
 
 !(de)comment as required     

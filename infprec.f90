@@ -15,6 +15,9 @@ module infprec
 !default integration accuracy
   real(kp), parameter :: tolkp = 1.d-12
 
+!default length for short strings
+  integer, parameter :: lenshort = 6
+
 !workaround for passing argument to old f77 functions. Only pointer
 !can be deferred shape in derived data type.
 !Allows to stop integration from conditions coming from called
