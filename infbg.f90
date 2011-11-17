@@ -346,7 +346,7 @@ contains
        infObs = infIni
     endif
 
-    efoldExploreOsc = 5.
+    efoldExploreOsc = 0.
 
 !enabled by true
    
@@ -1026,6 +1026,7 @@ contains
     if (hubbleSquare.ge.0.) then
        hubble = sqrt(hubbleSquare)
     else
+       print *,'efold= ',efold
        print *,'field= ',field
        print *,'velocity= ',velocity 
        stop 'bg_field_dot_coupled: hubbleSquare < 0'
@@ -1039,7 +1040,6 @@ contains
           else
              epsilon1 = velocitySquare/2d0/hubbleSquare
           endif          
-                    
           if (stopData%yesno2) then
              if (stopData%yesno3) then
                 stopNow = (maxval(field(stopData%int1:stopData%int2)) &

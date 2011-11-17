@@ -140,7 +140,6 @@ contains
 !
 !
 !
-!Other notations: M=c1; mu=c3, p=c2; nu=c4
 
   
 
@@ -151,12 +150,10 @@ contains
 
 ! U = c1^4 F^c2       
 
-       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(3).ne.0._kp).or.(infParam%consts(5).ne.1._kp))
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
 
-       if (badParams) then          
-          write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:infParamNum)
+       if (badParams) then
+          write(*,*)'consts = ',infParam%consts(1:2)
           stop 'large field: improper params'
        endif
 
@@ -178,11 +175,11 @@ contains
 ! U = c1^4 [1 - (F/c3)^c2]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(3).le.0._kp).or.(infParam%consts(5).ne.1._kp))
+            .or.(infParam%consts(3).le.0._kp))
 
        if (badParams) then
           write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:infParamNum)
+          write(*,*)'consts = ',infParam%consts(1:3)
           stop 'small field: improper params'
        endif
 
@@ -214,8 +211,7 @@ contains
 ! U = c1^4 [1 + (F/c3)^c2]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(3).le.0._kp) &
-            .or.(infParam%consts(5).ne.1._kp))
+            .or.(infParam%consts(3).le.0._kp))            
 
        
 
@@ -245,13 +241,11 @@ contains
 
        badParams = ((infParam%consts(3).le.0._kp).or.(infParam%consts(3).gt.1._kp) &
             .or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(1).le.0._kp) &
-            .or.(infParam%consts(5).ne.1._kp))
-
-
+            .or.(infParam%consts(1).le.0._kp))
+       
        if  (badParams) then
           write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:infParamNum)
+          write(*,*)'consts = ',infParam%consts(1:4)
           stop 'running mass: improper params'
        endif
        
@@ -296,7 +290,7 @@ contains
 
        if (badParams) then
           write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:infParamNum)
+          write(*,*)'consts = ',infParam%consts(1:5)
           stop 'kklmmt: improper params'
        endif
 
@@ -315,20 +309,36 @@ contains
        matterParam(matterParamNum) = infParam%consts(matterParamNum)
             
 
-#ifndef PP5
-    case ('mixlf')
-! U = c1^4 [F^c2 + c6 F^c12]      
 
-       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(3).ne.0._kp).or.(infParam%consts(5).ne.1._kp) &
-            .or.(infParam%consts(6).le.0._kp).or.(infParam%consts(12).le.0._kp) &
-            .or.(infParam%consts(7).ne.0._kp).or.(infParam%consts(8).ne.0._kp) &
-            .or.(infParam%consts(9).ne.0._kp).or.(infParam%consts(10).ne.0._kp) &
-            .or.(infParam%consts(11).ne.0._kp))
+    case ('rcquad')
+! U = c1^4 F^4 [1 - c2 ln(F)]
+          
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
 
        if (badParams) then          
-          write(*,*)'model name: ',infParam%name
-          write(*,*)'infParamNum = ',infParamNum
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'radiative corrected quadratic field: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = 4._kp
+       matterParam(3) = 0._kp
+       matterParam(4) = -infParam%consts(1) &
+            *sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+       matterParam(5) = 1._kp
+
+
+#ifndef PP5
+
+    case ('mixlf')
+! U = c1^4 F^c2 [1 + c3 F^c4]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
+            .or.(infParam%consts(3).le.0._kp).or.(infParam%consts(4).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:infParamNum)
           stop 'mixed field: improper params'
        endif
@@ -340,9 +350,9 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = 1._kp
        matterParam(6) = infParam%consts(1) &
-            *sign(abs(infParam%consts(6))**0.25_kp,infParam%consts(6))
+            *sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
        matterParam(7:11) = 0._kp
-       matterParam(12) = infParam%consts(12)
+       matterParam(12) = infParam%consts(2) + infParam%consts(4)
 
 !fieldUv limit
        matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
@@ -350,8 +360,85 @@ contains
        matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
 
-#endif
 
+    case ('lfcorr')
+!U = c1^4 F^c2 [1 - c3 F^c4 ln(F)]       
+
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp).or. &
+            (infParam%consts(3).le.0._kp).or.(infParam%consts(4).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'radiative corrected large field: improper params'
+       endif
+
+       matterParam(1) = 0._kp
+       matterParam(2) = infParam%consts(2) + infParam%consts(4)
+       matterParam(3) = 0._kp
+       matterParam(4) = - infParam%consts(1) &
+            * sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
+       matterParam(5) = 1._kp
+       matterParam(6) = infParam%consts(1)
+       matterParam(7:11) = 0._kp
+       matterParam(12) = infParam%consts(2)
+
+
+    case ('rcmass')
+!U = c1^4 F^2 [1 - c2 F^2 ln F]
+
+!c2  is 2 x alpha
+
+       badParams = ((infParam%consts(1).le.0._kp).or.infParam%consts(2).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'radiative corrected massive: improper params'
+       endif
+
+       matterParam(1) = 0._kp
+       matterParam(2) = 4._kp
+       matterParam(3) = 0._kp
+       matterParam(4) = - infParam%consts(1) &
+            * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+       matterParam(5) = 1._kp
+       matterParam(6) = infParam%consts(1)
+       matterParam(7:11) = 0._kp
+       matterParam(12) = 2._kp
+
+
+    case ('natinf')
+!U = c1^4 [1 + c2 cos(F/c3)]
+
+!c2 is +-1 for plus sign natural inflation or -1 for minus signa
+!natural inflation
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp) &
+            .or.(abs(infParam%consts(2)).ne.1._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'natural with plus or minus: improper params'
+       endif
+       
+       matterParam(1:4) = 0._kp
+       matterParam(5) = 2._kp
+       matterParam(6) = infparam%consts(1)
+       matterParam(7) = 0._kp
+       matterParam(8) = 0._kp
+       matterParam(9) = infparam%consts(1) &
+            * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+       matterParam(10) = 1._kp/infParam%consts(3)
+       matterParam(11) = 0._kp
+       matterParam(12) = 0._kp
+       
+#ifndef PP12
+
+#endif
+#endif
 
 
     case default

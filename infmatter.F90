@@ -1,5 +1,14 @@
 module infmatter
   use infprec, only : kp, lenshort
+#if defined (PPNAME) && !defined (NOSRMODELS)
+  use lfisr, only : lfi_norm_potential, lfi_norm_deriv_potential, lfi_norm_deriv_second_potential
+  use mlfisr, only : mlfi_norm_potential, mlfi_norm_deriv_potential,  mlfi_norm_deriv_second_potential
+  use rcmisr, only : rcmi_norm_potential, rcmi_norm_deriv_potential, rcmi_norm_deriv_second_potential
+  use rcqisr, only : rcqi_norm_potential, rcqi_norm_deriv_potential, rcqi_norm_deriv_second_potential
+  use pnisr, only : pni_norm_potential, pni_norm_deriv_potential, pni_norm_deriv_second_potential
+  use mnisr, only : mni_norm_potential, mni_norm_deriv_potential, mni_norm_deriv_second_potential
+#endif
+
   implicit none
 
   private
@@ -24,7 +33,8 @@ module infmatter
 ! Defining PP5 truncates this expression to the first five, PP12 to
 ! the first 12.  Defining PPNAME requires to explicitly code the
 ! potential, its first and second derivative for each case models
-! triggered by potName.
+! triggered by potName. But wait, that's already done in libsrmodels,
+! so cool!
 !
 ! For matterParam vector as input the potential params are set to:
 !
@@ -58,6 +68,10 @@ module infmatter
   character(len=lenshort), save :: potName = 'x'
 !$omp threadprivate(potParam, potName)
  
+!some more easy to use alias for PPNAME
+  real(kp), save :: alpha, beta, p, q, mu, nu, M4
+!$omp threadprivate(alpha, beta, p, q, mu, nu, M4)
+
   public potParamNum, matterNum
 
   public set_potential_param, matter_potential, deriv_matter_potential
@@ -93,7 +107,46 @@ contains
 #endif
 
 #ifdef PPNAME
-    potName(1:lenshort) = cname(1:lenshort)
+
+    if (present(cname)) then
+       potName(1:lenshort) = cname(1:lenshort)
+    else
+       stop 'set_potential_param: PPNAME defined but not name as an input!'
+    endif
+    select case (cname)
+
+       case ('largef')
+          M4 = potParam(1)
+          p = potParam(2)
+
+       case ('mixlf')
+          M4 = potParam(1)
+          p = potParam(2)
+          q = potParam(12) - potParam(2)
+          alpha = potParam(6)/potParam(1)
+
+       case ('rcmass')
+          M4 = potParam(6)
+          alpha = -0.5_kp*potParam(4)/potParam(6)
+
+       case ('rcquad')
+          M4 = potParam(1)
+          alpha = -potParam(4)/potParam(1)
+
+       case ('natinf')
+          M4 = potParam(6)
+          alpha = potParam(9)/potParam(6)
+          mu = 1._kp/potParam(10)
+
+          if (alpha.eq.1._kp) potName = 'natpos'
+          if (alpha.eq.-1._kp) potName = 'natmin'
+
+       case default
+
+          stop 'set_potential_param: not such a model'
+
+       end select
+
 #endif
 
     if (display) write(*,*)'set_potential_param: potParam = ',potParam
@@ -126,7 +179,7 @@ contains
     matter_potential = (potParam(3) + &
          (potParam(1) + potParam(4)*lnchi)*chi**potParam(2) &
          )**potParam(5)
-
+    
 #ifndef PP5
 ! From p6 to p12
     matter_potential = matter_potential &
@@ -139,19 +192,38 @@ contains
 #endif
 #endif
 
-
-#else
+    
+#elif !defined(NOSRMODELS)
 
     select case (potName)
 
        case ('largef')
-          matter_potential = potParam(1) * chi**potParam(2)
+          matter_potential = lfi_norm_potential(chi,p)
           
+       case ('mixlf')
+          matter_potential = mlfi_norm_potential(chi,p,q,alpha)
+          
+       case ('rcmass')
+          matter_potential = rcmi_norm_potential(chi,alpha)
+
+       case ('rcquad')
+          matter_potential = rcqi_norm_potential(chi,alpha)
+
+       case ('natpos')
+          matter_potential = pni_norm_potential(chi,mu)
+          
+       case ('natmin')
+          matter_potential = mni_norm_potential(chi,mu)
+
        case default
           stop 'matter_potential: model not found!'
 
     end select
-
+!ensures normalistion x M^4
+    matter_potential = M4 * matter_potential
+    
+#else
+    stop 'matter_potential: FieldInf not built agains libsrmodels!'
 #endif
 
 
@@ -173,7 +245,7 @@ contains
     real(kp) :: chi, lnchi, expchi
 
     chi = matter(1)
-
+    expchi = exp(chi*potParam(8))
 #ifndef PPNAME
        
     if (chi.gt.0._kp) then
@@ -204,19 +276,37 @@ contains
 #endif
 
 
-#else
+#elif !defined(NOSRMODELS)
 
     select case (potName)
 
-    case ('largef')
-       deriv_matter_potential(1) = potParam(1)*potParam(2)*chi**(potParam(2)-1._kp)
+       case ('largef')
+          deriv_matter_potential(1) = lfi_norm_deriv_potential(chi,p)
+          
+       case ('mixlf')
+          deriv_matter_potential(1) = mlfi_norm_deriv_potential(chi,p,q,alpha)
+          
+       case ('rcmass')
+          deriv_matter_potential(1) = rcmi_norm_deriv_potential(chi,alpha)
 
-    case default
-       stop 'deriv_matter_potential: model not found!'
+       case ('rcquad')
+          deriv_matter_potential(1) = rcqi_norm_deriv_potential(chi,alpha)
+
+       case ('natpos')
+          deriv_matter_potential(1) = pni_norm_deriv_potential(chi,mu)
+          
+       case ('natmin')
+          deriv_matter_potential(1) = mni_norm_deriv_potential(chi,mu)
+
+       case default
+          stop 'matter_potential: model not found!'
 
     end select
 
-
+    deriv_matter_potential = M4 * deriv_matter_potential
+    
+#else
+    stop 'deriv_matter_potential: FieldInf not built agains libsrmodels!'
 #endif
 
   end function deriv_matter_potential
@@ -237,7 +327,7 @@ contains
     if (chi.gt.0._kp) then
        lnchi = log(chi)
     else
-       lnchi = -huge(1._kp)
+       lnchi = 0._kp
     endif
 
     deriv_second_matter_potential(1,1) = chi**(-2._kp + potParam(2)) * (potParam(3) &
@@ -270,21 +360,40 @@ contains
 #endif
 
 
-#else
+
+#elif !defined(NOSRMODELS)
 
     select case (potName)
 
-    case ('largef')
-       deriv_second_matter_potential(1,1) = potParam(1)*potParam(2)*(potParam(2)-1._kp) &
-            * chi**(potParam(2)-2._kp)
+       case ('largef')
+          deriv_second_matter_potential(1,1) = lfi_norm_deriv_second_potential(chi,p)
+          
+       case ('mixlf')
+          deriv_second_matter_potential(1,1) = mlfi_norm_deriv_second_potential(chi,p,q,alpha)
+          
+       case ('rcmass')
+          deriv_second_matter_potential(1,1) = rcmi_norm_deriv_second_potential(chi,alpha)
 
-    case default
-       stop 'deriv_second_matter_potential: model not found!'
+       case ('rcquad')
+          deriv_second_matter_potential(1,1) = rcqi_norm_deriv_second_potential(chi,alpha)
+
+       case ('natpos')
+          deriv_second_matter_potential(1,1) = pni_norm_deriv_second_potential(chi,mu)          
+
+       case ('natmin')
+          deriv_second_matter_potential(1,1) = mni_norm_deriv_second_potential(chi,mu)
+
+       case default
+          stop 'deriv_second_matter_potential: model not found!'
 
     end select
 
+    deriv_second_matter_potential = M4 * deriv_second_matter_potential   
+           
+#else
+    stop 'deriv_second_matter_potential: FieldInf not built agains libsrmodels!'
 #endif
-
+ 
 
   end function deriv_second_matter_potential
 

@@ -37,6 +37,10 @@ contains
     else
        efold = efoldDefault
     endif
+
+
+#ifndef NOSRMODELS
+   
     
     select case (infParam%name)
 
@@ -46,17 +50,21 @@ contains
     case ('mixlf')
        slowroll_initial_matter = mlfi_initial_field(infParam,efold)
 
-!    case ('rcm')
-!       slowroll_initial_matter = rcmi_initial_field(infParam,efold)
+    case ('rcmass')
+       slowroll_initial_matter = rcmi_initial_field(infParam,efold)
+       
+    case ('rcquad')
+       slowroll_initial_matter = rcqi_initial_field(infParam,efold)
 
-!    case('rcq')
-!       slowroll_initial_matter = rcqi_initial_field(infParam,efold)
+    case ('natinf')
+       if (infParam%consts(2).eq.1._kp) then
+          slowroll_initial_matter = pni_initial_field(infParam,efold)
+       elseif (infParam%consts(2).eq.-1._kp) then
+          slowroll_initial_matter = mni_initial_field(infParam,efold)
+       else
+          stop 'slowroll_initial_matter: natural inflation not found!'
+       endif
 
-!    case('pn')
-!       slowroll_initial_matter = pni_initial_field(infParam,efold)
-
-!    case('mn')
-!       slowroll_initial_matter = mni_initial_field(infParam,efold)
 
 !    case ('smallf')
 !       slowroll_initial_matter = sfi_initial_field(infParam,efold)
@@ -83,8 +91,17 @@ contains
        write(*,*)
     endif
 
+#else
+
+    write(*,*) 'slowroll_initial_matter: FieldInf not compiled against libsrmodels!'
+    stop 'You have to set non zero initial field values explicitly!'
+
+#endif
+
   end function slowroll_initial_matter
 
+
+#ifndef NOSRMODELS
 
 
   function lfi_initial_field(infParam,efold)
@@ -122,15 +139,11 @@ contains
 
     bfold = -efold
 
-#ifndef PP5
-    p = infParam%consts(2)
-    q = infParam%consts(12)
-    alpha = infParam%consts(6)
-#else
-    stop 'mlfi_initial_field: -DPP12 not defined!'
-#endif
-    
 
+    p = infParam%consts(2)
+    q = infParam%consts(4)
+    alpha = infParam%consts(3)
+    
     xEnd = mlfi_x_endinf(p,q,alpha)
 
     if (display) write(*,*)'mlfi_initial_field: xend= ',xEnd
@@ -140,6 +153,112 @@ contains
     mlfi_initial_field(:) = xIni
 
   end function mlfi_initial_field
+
+
+
+
+  function rcmi_initial_field(infParam,efold)
+    use rcmisr, only : rcmi_x_endinf,rcmi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: rcmi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = 0.5_kp * infParam%consts(2)
+    
+    xEnd = rcmi_x_endinf(alpha)
+
+    if (display) write(*,*)'rcmi_initial_field: xend= ',xEnd
+
+    xIni = rcmi_x_trajectory(bfold,xEnd,alpha)
+
+    rcmi_initial_field(:) = xIni
+
+  end function rcmi_initial_field
+
+
+
+
+  function rcqi_initial_field(infParam,efold)
+    use rcqisr, only : rcqi_x_endinf,rcqi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: rcqi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    
+    xEnd = rcqi_x_endinf(alpha)
+
+    if (display) write(*,*)'rcqi_initial_field: xend= ',xEnd
+
+    xIni = rcqi_x_trajectory(bfold,xEnd,alpha)
+
+    rcqi_initial_field(:) = xIni
+
+  end function rcqi_initial_field
+
+
+
+  
+  function pni_initial_field(infParam,efold)
+    use pnisr, only : pni_x_endinf,pni_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: pni_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    mu = infParam%consts(3)
+    
+    xEnd = pni_x_endinf(mu)
+
+    if (display) write(*,*)'pni_initial_field: xend= ',xEnd
+
+    xIni = pni_x_trajectory(bfold,xEnd,mu)
+
+    pni_initial_field(:) = xIni
+
+  end function pni_initial_field
+
+
+
+  
+  function mni_initial_field(infParam,efold)
+    use mnisr, only : mni_x_endinf,mni_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: mni_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    mu = infParam%consts(3)
+    
+    xEnd = mni_x_endinf(mu)
+
+    if (display) write(*,*)'mni_initial_field: xend= ',xEnd
+
+    xIni = mni_x_trajectory(bfold,xEnd,mu)
+
+    mni_initial_field(:) = xIni
+
+  end function mni_initial_field
+
+
 
 
 #ifdef NOYET
@@ -249,5 +368,7 @@ contains
   
 #endif  
 
+
+#endif
 
 end module infsric
