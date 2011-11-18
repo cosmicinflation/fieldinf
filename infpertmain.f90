@@ -3,6 +3,7 @@
 
 program infpertmain
   use infprec, only : kp
+  use infbounds
   use infbgmodel
   use infsigma
   use infbgfunc
@@ -39,6 +40,7 @@ program infpertmain
 
   real(kp) :: kstar,const,eps1star,eps2star,Hstar,bfoldStar
   real(kp) :: powerZetaSlowRoll, powerTensSlowRoll
+  real(kp), dimension(2) :: fieldstop
   real(kp), dimension(fieldNum) :: fieldStar
   real(kp), dimension(fieldNum) :: fieldDotStar
 
@@ -53,12 +55,16 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'natinf'
+  infParam%name = 'hfline'
 
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = -1.
-  infparam%consts(3) = 10.
-  infParam%consts(4) = 0.
+  infParam%consts(2) = -2.5
+  infparam%consts(3) = 1.
+  infParam%consts(4) = 1.
+  infParam%consts(5) = 1.
+
+!fieldstop
+  infParam%consts(matterParamNum) = 0.
 
   infParam%conforms = 1.
   
@@ -71,11 +77,18 @@ program infpertmain
   print *,'Setup done',setupDone
   bgIni = set_infbg_ini(infParam)
 
+!checkout fieldstop values
+  fieldstop = field_stopinf(infParam)
 
 !evolves the bg
   print *,'bgIni',bgIni
   print *
-  bgEnd = bg_field_evol(bgIni,1000,bgObs,ptrBgdata)
+
+  if (fieldstop(1).ne.0._kp) then
+     bgEnd = bg_field_evol(bgIni,1000,bgObs,ptrBgdata,fieldstop(1),(fieldstop(2)==1._kp))
+  else
+     bgEnd = bg_field_evol(bgIni,1000,bgObs,ptrBgdata)
+  endif
 
   print *,'bgEnd',bgEnd
   print *

@@ -65,6 +65,23 @@ contains
           stop 'slowroll_initial_matter: natural inflation not found!'
        endif
 
+    case ('exsusy')
+       slowroll_initial_matter = esi_initial_field(infParam,efold)
+
+    case ('powlaw')
+       slowroll_initial_matter = pli_initial_field(infParam,efold)
+
+    case ('kahmod')
+       if (infParam%consts(3).eq.1._kp) then
+          slowroll_initial_matter = kmii_initial_field(infParam,efold)
+       elseif (infParam%consts(3).eq.4._kp/3._kp) then
+          stop 'khamo2 soon!'
+       else
+          stop 'slowroll_initial_matter: khaler moduli not found!'
+       endif
+
+    case ('hfline')
+       slowroll_initial_matter = hf1i_initial_field(infParam,efold)
 
 !    case ('smallf')
 !       slowroll_initial_matter = sfi_initial_field(infParam,efold)
@@ -258,6 +275,110 @@ contains
 
   end function mni_initial_field
 
+
+  
+  function esi_initial_field(infParam,efold)
+    use esisr, only : esi_x_endinf,esi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: esi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: q, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    q = infParam%consts(2)
+    
+    xEnd = esi_x_endinf(q)
+
+    if (display) write(*,*)'esi_initial_field: xend= ',xEnd
+
+    xIni = esi_x_trajectory(bfold,xEnd,q)
+
+    esi_initial_field(:) = xIni
+
+  end function esi_initial_field
+
+
+
+  
+  function pli_initial_field(infParam,efold)
+    use plisr, only : pli_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: pli_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, XIni, xEnd, bfold
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+
+    fieldStop = field_stopinf(infParam)
+       
+    xEnd = fieldStop(1)
+
+    if (display) write(*,*)'pli_initial_field: xend= ',xEnd
+   
+    xIni = pli_x_trajectory(bfold,xEnd,alpha)
+
+    pli_initial_field(:) = xIni 
+
+  end function pli_initial_field
+
+
+  
+  function kmii_initial_field(infParam,efold)
+    use kmiisr, only : kmii_x_endinf,kmii_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: kmii_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    
+    xEnd = kmii_x_endinf(alpha)
+
+    if (display) write(*,*)'kmii_initial_field: xend= ',xEnd
+
+    xIni = kmii_x_trajectory(bfold,xEnd,alpha)
+
+    kmii_initial_field(:) = xIni
+
+  end function kmii_initial_field
+
+
+
+
+  function hf1i_initial_field(infParam,efold)
+    use hf1isr, only : hf1i_x_endinf,hf1i_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: hf1i_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    
+    xEnd = hf1i_x_endinf(alpha)
+
+    if (display) write(*,*)'hf1i_initial_field: xend= ',xEnd
+
+    xIni = hf1i_x_trajectory(bfold,xEnd,alpha)
+
+    hf1i_initial_field(:) = xIni
+
+  end function hf1i_initial_field
 
 
 

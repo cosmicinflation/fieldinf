@@ -107,7 +107,7 @@ contains
 !
 ! U = [(p1 + p4 ln F) F^p2 + p3]^p5
 !   + [p6 + p7 exp(p8 F) + p9 cos(p10 F + p11)] F^p12
-!   + p13 F^p14
+!   + p13 F^p14 + p15 F^p16 exp(p17 F^p18)
 !
 !where the p are the potential params. In terms of the  "matterParams", they read
 !
@@ -125,6 +125,10 @@ contains
 !p12 = m12
 !p13 = sign(m13) m13^4
 !p14 = m14
+!p15 = sign(m15) m15^4
+!p16 = m16
+!p17 = m17
+!p18 = m18
 !
 !The matterParams mi are set from the ci params according to the model
 !under scrutiny. Only the ci (infparam%consts) are public.
@@ -141,7 +145,13 @@ contains
 !
 !
 
-  
+
+!default initialization for
+!fieldUv limit
+    matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
+!fieldStop value
+    matterParam(matterParamNum) = infParam%consts(matterParamNum)
+
 
   select case (infParam%name)
 
@@ -164,10 +174,6 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = 1._kp
 
-!fieldUv limit
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
-!fieldStop value
-       matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
 
     case ('smallf')
@@ -189,11 +195,6 @@ contains
        matterParam(3) = infParam%consts(1)
        matterParam(4) = 0._kp
        matterParam(5) = 1._kp
-
-!fieldUv limit
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
-!fieldStop value
-       matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
             
        if (maxval(infParam%matters).gt.infParam%consts(3)) then
@@ -228,12 +229,7 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = 1._kp
 
-!fieldUv limit
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
-!fieldstop value
-       matterParam(matterParamNum) =infParam%consts(matterParamNum)
 
- 
 
     case ('runmas')
 
@@ -266,11 +262,8 @@ contains
 
        matterParam(5) = 1._kp
 
-!fieldUv limit
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
-!fieldstop value
-       matterParam(matterParamNum) = infParam%consts(matterParamNum)
-
+!fieldstop value required (checkout infbounds.f90)
+       
 
 
     case('kklmmt')
@@ -303,10 +296,10 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = infParam%consts(5)
 
+!those are necessary model parameters: checkout infbounds.f90
 !fieldUv: prevents brane out of the throat
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
 !flux number N
-       matterParam(matterParamNum) = infParam%consts(matterParamNum)
+       
             
 
 
@@ -329,6 +322,7 @@ contains
        matterParam(5) = 1._kp
 
 
+   
 #ifndef PP5
 
     case ('mixlf')
@@ -353,11 +347,6 @@ contains
             *sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
        matterParam(7:11) = 0._kp
        matterParam(12) = infParam%consts(2) + infParam%consts(4)
-
-!fieldUv limit
-       matterParam(matterParamNum-1) = infParam%consts(matterParamNum-1)
-!fieldStop value
-       matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
 
 
@@ -435,7 +424,103 @@ contains
        matterParam(11) = 0._kp
        matterParam(12) = 0._kp
        
+
+    case ('exsusy')
+!U = c1^4 [1 - exp(-c2 F)]
+
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'expoential susy: improper params'
+       endif
+
+       matterParam(1:4) = 0._kp
+       matterParam(5) = 2._kp
+       matterParam(6) = infParam%consts(1)
+       matterParam(7) = -infParam%consts(1)
+       matterParam(8) = -infParam%consts(2)
+       matterParam(9:12) = 0._kp
+
+
+    case ('powlaw')
+!U = c1^4 exp[-c2 F]
+       
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'power law: improper params'
+       endif
+
+       matterParam(1:4) = 0._kp
+       matterParam(5) = 2._kp
+       matterParam(6) = 0._kp
+       matterParam(7) = infParam%consts(1)
+       matterParam(8) = -infParam%consts(2)
+       matterParam(9:12) = 0._kp
+
+!fieldstop value required (checkout infbounds.f90)
+     
+
+
+    case ('hfline')
+!U = c1^4 [ (1 + c2 F)^2 - 2/3 c2^2 ]
+
+!c2 is A1
+       badParams = (infParam%consts(1).le.0._kp)
+
+      
+       matterParam(1) = sqrt(infParam%consts(1)) &
+            *  sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+       matterParam(2) = 1._kp
+       matterParam(3) = sqrt(infParam%consts(1))
+       matterParam(4) = 0._kp
+       matterParam(5) = 2._kp
+       matterParam(6) = - infParam%consts(1) &
+            * (2._kp/3._kp*infParam%consts(2)**2)**0.25_kp
+       matterParam(7:12) = 0._kp
+
+
+
+
 #ifndef PP12
+
+    case ('kahmod')
+!U = c1^4 [1 - c2 F^c3 exp(-c4 F^c5)]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).ne.infParam%consts(5)) )
+
+       badParams = ( badParams .or. &
+            .not. ((infParam%consts(3).eq.1._kp) &
+            .or. (infParam%consts(3).eq.4._kp/3._kp)) )
+            
+       badParams = ( badParams .or. &
+            ((infParam%consts(3).eq.1._kp).and.(infParam%consts(4).ne.1._kp)) )
+
+
+        if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:5)
+          stop 'kahler moduli: improper params'
+       endif
+
+       matterParam(1:4) = 0._kp      
+       matterParam(5) = 2._kp
+       matterParam(6:12) = 0._kp
+
+       matterParam(13) = infParam%consts(1)
+       matterParam(14) = 0._kp
+       matterParam(15) = -infParam%consts(1) &
+            * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+       matterParam(16) = infParam%consts(3)
+       matterParam(17) = -infParam%consts(4)
+       matterParam(18) = infParam%consts(5)
+
 
 #endif
 #endif

@@ -1,12 +1,7 @@
 module infmatter
   use infprec, only : kp, lenshort
 #if defined (PPNAME) && !defined (NOSRMODELS)
-  use lfisr, only : lfi_norm_potential, lfi_norm_deriv_potential, lfi_norm_deriv_second_potential
-  use mlfisr, only : mlfi_norm_potential, mlfi_norm_deriv_potential,  mlfi_norm_deriv_second_potential
-  use rcmisr, only : rcmi_norm_potential, rcmi_norm_deriv_potential, rcmi_norm_deriv_second_potential
-  use rcqisr, only : rcqi_norm_potential, rcqi_norm_deriv_potential, rcqi_norm_deriv_second_potential
-  use pnisr, only : pni_norm_potential, pni_norm_deriv_potential, pni_norm_deriv_second_potential
-  use mnisr, only : mni_norm_potential, mni_norm_deriv_potential, mni_norm_deriv_second_potential
+  include 'srlib.h'
 #endif
 
   implicit none
@@ -28,7 +23,7 @@ module infmatter
 !
 ! U = [(p1 + p4 ln F) F^p2 + p3]^p5
 !   + [p6 + p7 exp(p8 F) + p9 cos(p10 F + p11)] F^p12
-!   + p13 F^p14
+!   + p13 F^p14 + p15 F^p16 exp(p17 F^p18)
 !
 ! Defining PP5 truncates this expression to the first five, PP12 to
 ! the first 12.  Defining PPNAME requires to explicitly code the
@@ -52,7 +47,10 @@ module infmatter
 !p12 = m12
 !p13 = sign(m13) m13^4
 !p14 = m14
-
+!p15 = sign(m15) m15^4
+!p16 = m16
+!p17 = m17
+!p18 = m18
 
 
 #ifdef PP5
@@ -60,7 +58,7 @@ module infmatter
 #elif defined(PP12)
   integer, parameter :: potParamNum = 12
 #else
-  integer, parameter :: potParamNum = 14
+  integer, parameter :: potParamNum = 18
 #endif
   
 
@@ -103,6 +101,10 @@ contains
 #ifndef PP12
     potParam(13) = sign(matterParam(13)**4,matterParam(13))
     potParam(14) = matterParam(14)
+    potParam(15) = sign(matterParam(15)**4,matterParam(15))
+    potParam(16) = matterParam(16)
+    potParam(17) = matterParam(17)
+    potParam(18) = matterParam(18)
 #endif
 #endif
 
@@ -113,12 +115,20 @@ contains
     else
        stop 'set_potential_param: PPNAME defined but not name as an input!'
     endif
+
     select case (cname)
 
        case ('largef')
           M4 = potParam(1)
           p = potParam(2)
 
+       case ('rcquad')
+          M4 = potParam(1)
+          alpha = -potParam(4)/potParam(1)
+
+      
+
+#ifndef PP5
        case ('mixlf')
           M4 = potParam(1)
           p = potParam(2)
@@ -128,11 +138,7 @@ contains
        case ('rcmass')
           M4 = potParam(6)
           alpha = -0.5_kp*potParam(4)/potParam(6)
-
-       case ('rcquad')
-          M4 = potParam(1)
-          alpha = -potParam(4)/potParam(1)
-
+       
        case ('natinf')
           M4 = potParam(6)
           alpha = potParam(9)/potParam(6)
@@ -141,11 +147,42 @@ contains
           if (alpha.eq.1._kp) potName = 'natpos'
           if (alpha.eq.-1._kp) potName = 'natmin'
 
+       case ('exsusy')
+          M4 = potParam(6)
+          q = -potParam(8)
+
+       case ('powlaw')
+          M4 = potParam(7)
+          alpha = -potParam(8)
+
+       case ('hfline')
+          M4 = potParam(3)**2
+          alpha = potParam(1)/potParam(3)
+
+
+#ifndef PP12
+       case ('kahmod')
+          M4 = potParam(13)
+          alpha = -potParam(15)/potParam(13)
+          beta = -potParam(17)
+          p = potParam(16)
+          q = potParam(18)
+
+          if (p.eq.1._kp) potName = 'khamo1'
+          if (p.eq.4._kp/3._kp) potName = 'khamo2'
+         
+#endif
+#endif     
+
        case default
 
           stop 'set_potential_param: not such a model'
 
        end select
+
+
+
+
 
 #endif
 
@@ -188,7 +225,8 @@ contains
 
 ! From p13 to p14
 #ifndef PP12
-    matter_potential = matter_potential + potParam(13)*chi**potParam(14)
+    matter_potential = matter_potential + potParam(13)*chi**potParam(14) &
+         + potParam(15)*chi**potParam(16)*exp(potParam(17)*chi**potParam(18))
 #endif
 #endif
 
@@ -215,13 +253,26 @@ contains
        case ('natmin')
           matter_potential = mni_norm_potential(chi,mu)
 
+       case ('exsusy')
+          matter_potential = esi_norm_potential(chi,q)
+
+       case ('powlaw')
+          matter_potential = pli_norm_potential(chi,alpha)
+
+       case ('khamo1')
+          matter_potential = kmii_norm_potential(chi,alpha)
+
+       case ('hfline')
+          matter_potential = hf1i_norm_potential(chi,alpha)
+
        case default
+          write(*,*)'name is ',potName
           stop 'matter_potential: model not found!'
 
     end select
 !ensures normalistion x M^4
     matter_potential = M4 * matter_potential
-    
+
 #else
     stop 'matter_potential: FieldInf not built agains libsrmodels!'
 #endif
@@ -242,10 +293,10 @@ contains
     real(kp), dimension(matterNum) :: deriv_matter_potential
     real(kp), dimension(matterNum) :: matter
 
-    real(kp) :: chi, lnchi, expchi
+    real(kp) :: chi, lnchi, expchi, expchi2
 
     chi = matter(1)
-    expchi = exp(chi*potParam(8))
+
 #ifndef PPNAME
        
     if (chi.gt.0._kp) then
@@ -270,8 +321,15 @@ contains
          - potParam(9)*potParam(10)*Sin(chi*potParam(10)+potParam(11)))
 
 #ifndef PP12
+
+    expchi2 = exp(chi**potParam(18)*potParam(17))
+
     deriv_matter_potential(1) = deriv_matter_potential(1) &
-         + potParam(13)*potParam(14)*chi**(potParam(14)-1._kp)
+         + potParam(13)*potParam(14)*chi**(potParam(14)-1._kp) &
+         + chi**(-1._kp+potParam(16))*expchi2*potParam(15)*potParam(16)&
+         + chi**(-1 + potParam(16) + potParam(18))*expchi2*potParam(15) &
+         *potParam(17)*potParam(18)
+
 #endif
 #endif
 
@@ -298,8 +356,22 @@ contains
        case ('natmin')
           deriv_matter_potential(1) = mni_norm_deriv_potential(chi,mu)
 
+       case ('exsusy')
+          deriv_matter_potential(1) = esi_norm_deriv_potential(chi,q)
+
+       case ('powlaw')
+          deriv_matter_potential(1) = pli_norm_deriv_potential(chi,alpha)
+
+       case ('khamo1')
+          deriv_matter_potential(1) = kmii_norm_deriv_potential(chi,alpha)
+
+       case ('hfline')
+          deriv_matter_potential(1) = hf1i_norm_deriv_potential(chi,alpha)
+
+
        case default
-          stop 'matter_potential: model not found!'
+          write(*,*)'name is ',potName
+          stop 'deriv_matter_potential: model not found!'
 
     end select
 
@@ -318,7 +390,7 @@ contains
     real(kp), dimension(matterNum,matterNum) :: deriv_second_matter_potential
     real(kp), dimension(matterNum) :: matter
 
-    real(kp) :: chi, lnchi, expchi, coschi
+    real(kp) :: chi, lnchi, expchi, expchi2, coschi
 
     chi = matter(1)
    
@@ -354,8 +426,18 @@ contains
          *Sin(chi*potParam(10)+potParam(11)))
 
 #ifndef PP12
+
+    expchi2 = exp(chi**potParam(18)*potParam(17))
+
     deriv_second_matter_potential(1,1) = deriv_second_matter_potential(1,1) &
-         + potParam(13)*potParam(14)*(potParam(14)-1._kp)*chi**(potParam(14)-2._kp)
+         + potParam(13)*potParam(14)*(potParam(14)-1._kp)*chi**(potParam(14)-2._kp) &
+         + chi**(-2._kp+potParam(16))*expchi2*potParam(15)*(-1._kp+potParam(16)) &
+         * potParam(16)+2._kp*chi**(-2._kp+potParam(16)+potParam(18))*expchi2 &
+         * potParam(15)*potParam(16)*potParam(17)*potParam(18) &
+         +chi**potParam(16)*potParam(15)*(chi**(-2._kp+potParam(18))*expchi2 &
+         *potParam(17)*(-1._kp+potParam(18))*potParam(18) &
+         +chi**(-2._kp+2._kp*potParam(18))*expchi2*potParam(17)**2*potParam(18)**2)
+
 #endif
 #endif
 
@@ -383,7 +465,20 @@ contains
        case ('natmin')
           deriv_second_matter_potential(1,1) = mni_norm_deriv_second_potential(chi,mu)
 
+       case ('exsusy')
+          deriv_second_matter_potential(1,1) = esi_norm_deriv_second_potential(chi,q)
+
+       case ('powlaw')
+          deriv_second_matter_potential(1,1) = pli_norm_deriv_second_potential(chi,alpha)
+
+       case ('khamo1')
+          deriv_second_matter_potential(1,1) = kmii_norm_deriv_second_potential(chi,alpha)
+
+       case ('hfline')
+          deriv_second_matter_potential(1,1) = hf1i_norm_deriv_second_potential(chi,alpha)
+
        case default
+          write(*,*)'name is ',potName
           stop 'deriv_second_matter_potential: model not found!'
 
     end select
