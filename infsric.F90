@@ -109,13 +109,43 @@ contains
     endif
 
 #else
+    write(*,*)
+    write(*,*)'slowroll_initial_matter: FieldInf not compiled against libsrmodels!'
+    write(*,*)'minimal functions provided for test with largef models only'
+    if (infParam%name.ne.'largef') then
+       stop 'You have to set non zero initial field values explicitly!'
+    endif
 
-    write(*,*) 'slowroll_initial_matter: FieldInf not compiled against libsrmodels!'
-    stop 'You have to set non zero initial field values explicitly!'
-
+    slowroll_initial_matter = largef_initial_field(infParam,efold)
+    
 #endif
 
   end function slowroll_initial_matter
+
+
+
+  function largef_initial_field(infParam,efold)   
+    use infbgmodel, only : infbgparam
+    implicit none
+    real(kp), dimension(matterNum) :: largef_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), optional, intent(in) :: efold
+    
+        
+    real(kp) :: xEnd, xIni
+    real(kp) :: p,bfold
+
+    bfold = -efold
+    p = infParam%consts(2)
+   
+    xEnd = p/sqrt(2._kp)
+    xIni = sqrt(p**2/2._kp + 2._kp*p*efold)
+
+    if (display) write(*,*)'largef_initial_field: xend= ',XEnd
+
+    largef_initial_field(:) = xIni
+  end function largef_initial_field
+
 
 
 #ifndef NOSRMODELS
