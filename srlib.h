@@ -4,7 +4,7 @@
   use lfisr, only : lfi_norm_potential, lfi_norm_deriv_potential
   use lfisr, only : lfi_norm_deriv_second_potential
 
-!mixer large field
+!mixed large field
   use mlfisr, only : mlfi_norm_potential, mlfi_norm_deriv_potential
   use mlfisr, only : mlfi_norm_deriv_second_potential
 
@@ -39,3 +39,15 @@
 !horizon flow linear
   use hf1isr, only : hf1i_norm_potential, hf1i_norm_deriv_potential
   use hf1isr, only : hf1i_norm_deriv_second_potential
+
+!small field
+  use sfisr, only : sfi_norm_potential, sfi_norm_deriv_potential
+  use sfisr, only : sfi_norm_deriv_second_potential
+
+!global susy with loop inflation
+  use lisr, only : li_norm_potential, li_norm_deriv_potential
+  use lisr, only : li_norm_deriv_second_potential
+
+!intermediate inflation
+  use iisr, only : ii_norm_potential, ii_norm_deriv_potential
+  use iisr, only : ii_norm_deriv_second_potential

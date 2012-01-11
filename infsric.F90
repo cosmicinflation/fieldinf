@@ -45,7 +45,7 @@ contains
     select case (infParam%name)
 
     case ('largef')
-       slowroll_initial_matter = lfi_initial_field(infParam,efold)
+       slowroll_initial_matter = lfi_initial_field(infParam,efold)    
 
     case ('mixlf')
        slowroll_initial_matter = mlfi_initial_field(infParam,efold)
@@ -83,8 +83,14 @@ contains
     case ('hfline')
        slowroll_initial_matter = hf1i_initial_field(infParam,efold)
 
-!    case ('smallf')
-!       slowroll_initial_matter = sfi_initial_field(infParam,efold)
+    case ('smallf')
+       slowroll_initial_matter = sfi_initial_field(infParam,efold)
+
+    case ('gswli')
+       slowroll_initial_matter = li_initial_field(infParam,efold)
+
+    case ('interm')
+       slowroll_initial_matter = ii_initial_field(infParam,efold)
 
 !    case ('kksf')
 !       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
@@ -412,7 +418,6 @@ contains
 
 
 
-#ifdef NOYET
   function sfi_initial_field(infParam,efold)
     use sfisr, only : sfi_x_endinf,sfi_x_trajectory
     implicit none
@@ -442,6 +447,68 @@ contains
 
 
 
+  function li_initial_field(infParam,efold)
+    use lisr, only : li_x_endinf,li_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: li_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    
+    xEnd = li_x_endinf(alpha)
+
+    if (display) write(*,*)'li_initial_field: xend= ',xEnd
+
+    xIni = li_x_trajectory(bfold,xEnd,alpha)
+
+    li_initial_field(:) = xIni
+
+  end function li_initial_field
+
+
+
+  function ii_initial_field(infParam,efold)
+    use iisr, only : ii_x_trajectory, ii_prior_xendmin
+    implicit none
+    real(kp), dimension(matterNum) :: ii_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: beta, XIni, xEnd, xEndMin, bfold
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+
+    beta = infParam%consts(2)
+
+    fieldStop = field_stopinf(infParam)
+       
+    xEnd = fieldStop(1)
+
+    if (display) write(*,*)'ii_initial_field: xend= ',xEnd
+
+    xEndMin = ii_prior_xendmin(beta,bfold)
+
+    if (xEnd.lt.xEndMin) then
+       write(*,*)'xEndMin= bfold= ',xEndMin,bfold
+       stop 'ii_initial_field: fieldStop too small!'
+    endif
+
+    xIni = ii_x_trajectory(bfold,xEnd,beta)
+
+    ii_initial_field(:) = xIni 
+
+  end function ii_initial_field
+
+
+
+#ifdef NOYET
+  
   function sfbi_initial_field(infParam,efold)
     use sfbisr, only : sfbi_x_endinf,sfbi_x_trajectory
     implicit none

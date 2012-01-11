@@ -126,7 +126,15 @@ contains
           M4 = potParam(1)
           alpha = -potParam(4)/potParam(1)
 
-      
+       case ('smallf')
+          M4 = potParam(3)
+          p = potParam(2)
+          mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
+
+       case ('gswli')
+          M4 = potParam(3)
+          alpha = potParam(4)/potParam(3)
+
 
 #ifndef PP5
        case ('mixlf')
@@ -158,6 +166,10 @@ contains
        case ('hfline')
           M4 = potParam(3)**2
           alpha = potParam(1)/potParam(3)
+
+       case ('interm')
+          M4 = potParam(1)
+          beta = - potParam(2)
 
 
 #ifndef PP12
@@ -265,6 +277,15 @@ contains
        case ('hfline')
           matter_potential = hf1i_norm_potential(chi,alpha)
 
+       case ('smallf')
+          matter_potential = sfi_norm_potential(chi/mu,p)
+
+       case ('gswli')
+          matter_potential = li_norm_potential(chi,alpha)
+
+       case ('interm')
+          matter_potential = ii_norm_potential(chi,beta)
+
        case default
           write(*,*)'name is ',potName
           stop 'matter_potential: model not found!'
@@ -368,6 +389,14 @@ contains
        case ('hfline')
           deriv_matter_potential(1) = hf1i_norm_deriv_potential(chi,alpha)
 
+       case ('smallf')
+          deriv_matter_potential(1) = sfi_norm_deriv_potential(chi/mu,p)/mu
+
+       case ('gswli')
+          deriv_matter_potential(1) = li_norm_deriv_potential(chi,alpha)
+
+       case ('interm')
+          deriv_matter_potential(1) = ii_norm_deriv_potential(chi,beta)
 
        case default
           write(*,*)'name is ',potName
@@ -476,6 +505,15 @@ contains
 
        case ('hfline')
           deriv_second_matter_potential(1,1) = hf1i_norm_deriv_second_potential(chi,alpha)
+
+       case ('smallf')
+          deriv_second_matter_potential(1,1) = sfi_norm_deriv_second_potential(chi/mu,p)/mu/mu
+
+       case ('gswli')
+          deriv_second_matter_potential(1,1) = li_norm_deriv_second_potential(chi,alpha)
+
+       case ('interm')
+          deriv_second_matter_potential(1,1) = ii_norm_deriv_second_potential(chi,beta)
 
        case default
           write(*,*)'name is ',potName

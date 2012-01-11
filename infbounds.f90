@@ -67,6 +67,11 @@ contains
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = 1._kp
 
+
+    case ('interm')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = 1._kp
+
     end select
 
     
