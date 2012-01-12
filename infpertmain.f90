@@ -55,13 +55,13 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'interm'
+  infParam%name = 'kahmod'
 
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = 2.5
-  infparam%consts(3) = 0.
-  infParam%consts(4) = 0.
-  infParam%consts(5) = 0.
+  infParam%consts(2) = 2.4
+  infparam%consts(3) = 4._kp/3._kp
+  infParam%consts(4) = 1.
+  infParam%consts(5) = 4._kp/3._kp
 
 !fieldstop
   infParam%consts(matterParamNum) = 24.

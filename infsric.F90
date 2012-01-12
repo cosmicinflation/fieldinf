@@ -74,8 +74,9 @@ contains
     case ('kahmod')
        if (infParam%consts(3).eq.1._kp) then
           slowroll_initial_matter = kmii_initial_field(infParam,efold)
-       elseif (infParam%consts(3).eq.4._kp/3._kp) then
-          stop 'khamo2 soon!'
+       elseif ((infParam%consts(3).eq.4._kp/3._kp) &
+            .and.(infParam%consts(5).eq.4._kp/3._kp)) then
+          slowroll_initial_matter = kmiii_initial_field(infParam,efold)
        else
           stop 'slowroll_initial_matter: khaler moduli not found!'
        endif
@@ -91,6 +92,9 @@ contains
 
     case ('interm')
        slowroll_initial_matter = ii_initial_field(infParam,efold)
+
+    case ('colwei')
+       slowroll_initial_matter = cwi_initial_field(infParam,efold)
 
 !    case ('kksf')
 !       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
@@ -504,6 +508,79 @@ contains
     ii_initial_field(:) = xIni 
 
   end function ii_initial_field
+
+
+
+  function kmiii_initial_field(infParam,efold)
+    use kmiiisr, only : kmiii_x_endinf,kmiii_x_trajectory,kmiii_alphamin
+    implicit none
+    real(kp), dimension(matterNum) :: kmiii_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alphaMin
+    real(kp) :: alpha, beta, xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    beta = infParam%consts(4)
+
+!model valid for alpha < beta e    
+
+    if (alpha.ge.beta*exp(1._kp)) stop 'kmiii_initial_field: alpha > beta e!'
+
+    alphaMin = kmiii_alphamin(beta)
+
+    if (alpha.lt.alphaMin) then
+       write(*,*)'beta= ',beta
+       write(*,*)'alpha= alphamin= ',alpha,alphamin
+       stop 'kmiii_initial_field: inflation never stops'
+    endif
+
+    xEnd = kmiii_x_endinf(alpha,beta)
+
+    if (display) write(*,*)'kmiii_initial_field: xend= ',xEnd
+
+    xIni = kmiii_x_trajectory(bfold,xEnd,alpha,beta)
+
+    kmiii_initial_field(:) = xIni
+
+  end function kmiii_initial_field
+
+
+
+
+  function cwi_initial_field(infParam,efold)
+    use cwisr, only : cwi_x_endinf,cwi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: cwi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, mu, xEnd, xIni, bfold
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    if (mu.ne.(4._kp*exp(1._kp)/infParam%consts(2))**0.25_kp) then
+       stop 'cwi_initial_field: improper Q value!'
+    endif
+
+    xEnd = cwi_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'cwi_initial_field: xend= ',xEnd
+
+    xIni = cwi_x_trajectory(bfold,xEnd,alpha,mu)
+
+    cwi_initial_field(:) = xIni
+
+  end function cwi_initial_field
+  
+  
+
 
 
 

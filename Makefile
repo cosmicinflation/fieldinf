@@ -15,7 +15,7 @@ endif
 
 ifeq ($(ext),Lin)
 FC=gfortran
-FFLAGS= -O -fopenmp -D$(ext) -DPP12
+FFLAGS= -O -fopenmp -D$(ext) -DPP12 -DPPNAME
 #-DPPNAME
 #bugbuster -DPPNAME
 #FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 

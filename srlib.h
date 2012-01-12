@@ -51,3 +51,11 @@
 !intermediate inflation
   use iisr, only : ii_norm_potential, ii_norm_deriv_potential
   use iisr, only : ii_norm_deriv_second_potential
+
+!khaler moduli second type
+  use kmiiisr, only : kmiii_norm_potential, kmiii_norm_deriv_potential
+  use kmiiisr, only : kmiii_norm_deriv_second_potential
+
+!coleman-weinberg inflation
+  use cwisr, only : cwi_norm_potential, cwi_norm_deriv_potential
+  use cwisr, only : cwi_norm_deriv_second_potential

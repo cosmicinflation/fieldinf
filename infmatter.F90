@@ -135,6 +135,11 @@ contains
           M4 = potParam(3)
           alpha = potParam(4)/potParam(3)
 
+       case ('colwei')
+          M4 = potParam(3)
+          alpha = potParam(4)/potParam(3)
+          mu = exp(-potParam(1)/potParam(4))
+
 
 #ifndef PP5
        case ('mixlf')
@@ -286,6 +291,12 @@ contains
        case ('interm')
           matter_potential = ii_norm_potential(chi,beta)
 
+       case ('khamo2')
+          matter_potential = kmiii_norm_potential(chi,alpha,beta)
+
+       case ('colwei')
+          matter_potential = cwi_norm_potential(chi,alpha,mu)
+
        case default
           write(*,*)'name is ',potName
           stop 'matter_potential: model not found!'
@@ -397,6 +408,12 @@ contains
 
        case ('interm')
           deriv_matter_potential(1) = ii_norm_deriv_potential(chi,beta)
+
+       case ('khamo2')
+          deriv_matter_potential(1) = kmiii_norm_deriv_potential(chi,alpha,beta)
+
+       case ('colwei')
+          deriv_matter_potential(1) = cwi_norm_deriv_potential(chi,alpha,mu)
 
        case default
           write(*,*)'name is ',potName
@@ -514,6 +531,12 @@ contains
 
        case ('interm')
           deriv_second_matter_potential(1,1) = ii_norm_deriv_second_potential(chi,beta)
+
+       case ('khamo2')
+          deriv_second_matter_potential(1,1) = kmiii_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('colwei')
+          deriv_second_matter_potential(1,1) = cwi_norm_deriv_second_potential(chi,alpha,mu)
 
        case default
           write(*,*)'name is ',potName
