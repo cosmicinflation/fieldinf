@@ -405,7 +405,7 @@ contains
 
     use inftools, only : easydverk
     use infprec, only : transfert
-    use infdilaton, only : conformal_factor_square, conformal_first_gradient
+!    use infdilaton, only : conformal_factor_square, conformal_first_gradient
     use infsigma, only : metric, deriv_metric    
     use infpotential, only : potential, deriv_potential
     use infbg, only : operator(/=)
