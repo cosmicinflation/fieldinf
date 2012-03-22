@@ -1,4 +1,4 @@
-!import required potential and derivated from libsrmodels
+!import required potential and derivatives from libsrmodels
 
 !large field  
   use lfisr, only : lfi_norm_potential, lfi_norm_deriv_potential
@@ -59,3 +59,19 @@
 !coleman-weinberg inflation
   use cwisr, only : cwi_norm_potential, cwi_norm_deriv_potential
   use cwisr, only : cwi_norm_deriv_second_potential
+
+!higgs inflation
+  use hisr, only : hi_norm_potential, hi_norm_deriv_potential
+  use hisr, only : hi_norm_deriv_second_potential
+
+!twisted inflation
+  use twisr, only : twi_norm_potential, twi_norm_deriv_potential
+  use twisr, only : twi_norm_deriv_second_potential
+  
+!topological double well inflation
+  use dwisr, only : dwi_norm_potential, dwi_norm_deriv_potential
+  use dwisr, only : dwi_norm_deriv_second_potential
+
+!mutated hilltop inflation
+  use mhisr, only : mhi_norm_potential, mhi_norm_deriv_potential
+  use mhisr, only : mhi_norm_deriv_second_potential

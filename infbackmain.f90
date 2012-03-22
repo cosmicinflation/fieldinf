@@ -4,6 +4,8 @@ program infbackmain
   use infbgmodel
   use infbg
   use infinout
+  use infbounds
+  use twisr
 
   implicit none
 
@@ -17,32 +19,30 @@ program infbackmain
  
   integer :: inum = 0
 
-  real(kp) :: matter,efold,efoldGo,efoldFin,hubble,epsilon1,epsilon1JF
+  real(kp) :: matter,efold,efoldGo,efoldFin,hubble,epsilon1,epsilon1JF, epsilon1SR
   real(kp) :: ricci, ricciOverH2
   real(kp), dimension(dilatonNum) :: dilaton
   real(kp), dimension(fieldNum,fieldNum) :: metricVal,metricInv  
   real(kp), dimension(2*fieldNum) :: bgVar
+  real(kp), dimension(2) :: fieldstop
   real(kp) :: tol
   logical :: paramCheck = .false.
   integer :: ind
 
 !inflation model
-  infParam%name = 'mixlf'
+  infParam%name = 'twisti'
 
 !parameters (see infbgmodel.f90)
-  infParam%consts(1) = 1e-5
-  infParam%consts(2) = 2
-  infParam%consts(3) = 0.
-  infParam%consts(4) = 0.
-  infParam%consts(5) = 1.
-  infParam%consts(6) = 0.5
-  infParam%consts(7:11) = 0.
-  infParam%consts(12) = 4
+  infParam%consts(1) = 1e-4
+  infParam%consts(2) = 0.33183220
+  infParam%consts(3) = 0.1
 
+!fieldstop
+  infParam%consts(matterParamNum) = 0.
 
   infParam%conforms = 1
 !initial field value.
-  infParam%matters(1) = 0
+  infParam%matters(1) = 0.3
 
 
 
@@ -54,11 +54,18 @@ program infbackmain
 !set initial condition  
   infIni = set_infbg_ini(infParam)
   print *,'infIni',infIni
+
+!checkout fieldstop values
+  fieldstop = field_stopinf(infParam)
  
 !evolves the background till the end of inflation and store the
 !results with 5000 points
-  infEnd = bg_field_evol(infIni,50000,infObs,ptrToBgdata)
-  
+  if (fieldstop(1).ne.0._kp) then
+     infEnd = bg_field_evol(infIni,10000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
+  else
+     infEnd = bg_field_evol(infIni,10000,infObs,ptrToBgdata)
+  endif
+     
 
 !physical quantities at the end of inflation
   print *,'infEnd', infEnd, (infEnd==infIni)
@@ -112,13 +119,14 @@ program infbackmain
         fieldDot = ptrRun%bg%fieldDot
         hubble = ptrRun%bg%hubble
         epsilon1 = ptrRun%bg%epsilon1
-        epsilon1JF =  ptrRun%bg%epsilon1JF
+        epsilon1SR = twi_epsilon_one(field(1),infparam%consts(3))
+!        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
         ricci = ricciOverH2*hubble*hubble
         call livewrite('resfield.dat',efold,field(1))
         call livewrite('resfieldDot.dat',efold,fieldDot(1))
         call livewrite('reshubble.dat',efold,hubble)
-        call livewrite('resepsilons.dat',efold,epsilon1,epsilon1JF)
+        call livewrite('resepsilons.dat',efold,epsilon1,epsilon1SR)
         call livewrite('resricci.dat',efold,riccioverH2,ricci)
         inum = inum + 1
         ptrRun => ptrRun%ptr             
@@ -131,21 +139,7 @@ program infbackmain
   if (associated(ptrToBgdata)) then
      call free_infbg_data(ptrToBgdata)
   endif
-
  
-  infIni = set_infbg_ini(infParam)
-  print *,'After ini again'
-  print *,'infPAram',infParam
-  print *,'infIni',infIni
-
-!evolves the background
-  infEnd = bg_field_evol(infIni,100,infObs,ptrToBgdata)
-  
-
-!print the physical quantities at the end of inflation
-  print *,'infEnd', infEnd, (infEnd==infIni)
-  print *,'infObs',infObs
-  print *
  
 
 end program infbackmain

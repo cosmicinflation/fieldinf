@@ -96,6 +96,18 @@ contains
     case ('colwei')
        slowroll_initial_matter = cwi_initial_field(infParam,efold)
 
+    case ('higgsi')
+       slowroll_initial_matter = hi_initial_field(infParam,efold)
+
+    case ('twisti')
+       slowroll_initial_matter = twi_initial_field(infParam,efold)
+
+    case ('tdwell')
+       slowroll_initial_matter = dwi_initial_field(infParam,efold)
+
+    case ('mhitop')
+       slowroll_initial_matter = mhi_initial_field(infParam,efold)
+
 !    case ('kksf')
 !       slowroll_initial_matter = sfbi_initial_field(infParam,efold)
 
@@ -580,6 +592,110 @@ contains
   end function cwi_initial_field
   
   
+
+  function hi_initial_field(infParam,efold)
+    use hisr, only : hi_x_endinf,hi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: hi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+   
+    xEnd = hi_x_endinf()
+
+    if (display) write(*,*)'hi_initial_field: xend= ',xEnd
+
+    xIni = hi_x_trajectory(bfold,xEnd)
+
+    hi_initial_field(:) = xIni
+    
+  end function hi_initial_field
+
+
+
+  function twi_initial_field(infParam,efold)
+    use twisr, only : twi_x_endinf,twi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: twi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), dimension(2) :: fieldStop
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, xEnd, xIni, xEps, bfold
+
+    bfold = -efold
+   
+    mu = infParam%consts(3)
+    
+    fieldStop = field_stopinf(infParam)
+
+    xEnd = fieldStop(1)
+    xEps = twi_x_endinf(mu)   
+
+    if (xEnd.lt.xEps) then
+       write(*,*) 'twi_initial_field: xEnd is in slow-roll violation region'
+    endif
+
+    if (display) write(*,*)'twi_initial_field: xend= ',xEnd,xEps
+
+    xIni = twi_x_trajectory(bfold,xEnd,mu)
+
+    twi_initial_field(:) = xIni                   
+
+  end function twi_initial_field
+
+
+
+ function dwi_initial_field(infParam,efold)
+    use dwisr, only : dwi_x_endinf,dwi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: dwi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, xEnd, xIni, bfold
+
+    bfold = -efold
+   
+    mu = infParam%consts(2)
+    
+    xEnd = dwi_x_endinf(mu)   
+  
+    if (display) write(*,*)'twi_initial_field: xend= ',xEnd
+
+    xIni = dwi_x_trajectory(bfold,xEnd,mu)
+
+    dwi_initial_field(:) = xIni*mu          
+
+  end function dwi_initial_field
+
+
+
+  function mhi_initial_field(infParam,efold)
+    use mhisr, only : mhi_x_endinf,mhi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: mhi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, xEnd, xIni, bfold
+
+    bfold = -efold
+   
+    mu = infParam%consts(2)
+    
+    xEnd = mhi_x_endinf(mu)   
+  
+    if (display) write(*,*)'mhi_initial_field: xend= ',xEnd
+
+    xIni = mhi_x_trajectory(bfold,xEnd,mu)
+
+    mhi_initial_field(:) = xIni*mu          
+
+  end function mhi_initial_field
 
 
 

@@ -107,13 +107,13 @@ contains
 !
 ! U = [(p1 + p4 ln F) F^p2 + p3]^p5
 !   + [p6 + p7 exp(p8 F) + p9 cos(p10 F + p11)] F^p12
-!   + p13 F^p14 + p15 F^p16 exp(p17 F^p18)
+!   + p13 F^p14 + p15 F^p16 exp(p17 F^p18) 
 !
 !where the p are the potential params. In terms of the  "matterParams", they read
 !
 ! p1 = sign(m1) m1^4 
 ! p2 = m2
-! p3 = m3^4
+! p3 = sign(m3) m3^4
 ! p4 = sign(m4) m4^4
 ! p5 = m5
 ! p6 = sign(m6) m6^4 
@@ -129,15 +129,16 @@ contains
 !p16 = m16
 !p17 = m17
 !p18 = m18
-!
+
+
 !The matterParams mi are set from the ci params according to the model
 !under scrutiny. Only the ci (infparam%consts) are public.
 !
-! m15=c15
+! m19=c19
 !
 ! is a field value that bounds the initial field values (ex, the throat size for kklt)
 !
-! m16=c16
+! m20=c20
 !
 !is a field value that stops inflation (ex, hybrid, kklt) instead of
 ! the condition epsilon1 = 1
@@ -362,6 +363,23 @@ contains
        matterParam(4) = infParam%consts(1) * infParam%consts(2)**0.25_kp
        matterParam(5) = 1._kp
 
+    case ('tdwell')
+! U = c1^4 [(F/c2)^2 - 1]^2
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).lt.sqrt(8._kp)))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'topological double well: improper params'
+       endif
+
+       matterParam(1) = sqrt(infParam%consts(1)/infParam%consts(2))
+       matterParam(2) = 2._kp
+       matterParam(3) = -sqrt(infParam%consts(1))
+       matterParam(4) = 0._kp
+       matterParam(5) = 2._kp
+
 #ifndef PP5
 
     case ('mixlf')
@@ -473,7 +491,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
-          stop 'expoential susy: improper params'
+          stop 'exponential susy: improper params'
        endif
 
        matterParam(1:4) = 0._kp
@@ -504,7 +522,6 @@ contains
 
 !fieldstop value required (checkout infbounds.f90)
      
-
 
     case ('hfline')
 !U = c1^4 [ (1 + c2 F)^2 - 2/3 c2^2 ]
@@ -546,6 +563,30 @@ contains
        matterParam(12) = -infParam%consts(2) - 2._kp
 
 
+ case ('twisti')
+!U = c1^4 [1 - c2 (F/c3)^2 exp(-F/c3)]
+
+!c2 = 32/[92 ζ(5)]~0.33183220
+!fieldstop value required (checkout infbounds.f90)
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp)
+       badParams = badParams.or.(infParam%consts(3).gt.0.04228)
+       badParams = badParams.or.(abs(infParam%consts(2)-0.33183220).gt.epsilon(1.))       
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'twisted inflation: improper params'
+       endif
+
+       matterParam(1:12) = 0._kp
+       matterParam(3) = infParam%consts(1)
+       matterParam(5) = 1._kp
+       matterParam(7) = - infParam%consts(1) * infParam%consts(2)**0.25_kp &
+            /sqrt(infParam%consts(3))
+       matterParam(8) = -1._kp/infParam%consts(3)
+       matterParam(12) = 2._kp
+
 #ifndef PP12
 
     case ('kahmod')
@@ -581,9 +622,45 @@ contains
        matterParam(18) = infParam%consts(5)
 
 
+    case ('higgsi')
+!U = c1^4 [1 - exp(-c2 F)]^2 with c2 = -sqrt(2/3)
+
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).ne.sqrt(2._kp/3._kp)))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'Higgs inflation: improper params'
+       endif
+
+       matterParam(3) = infParam%consts(1)
+       matterParam(5) = 1._kp
+       matterParam(7) = - 2**0.25_kp * infParam%consts(1)
+       matterParam(8) = - infParam%consts(2)
+       matterParam(15) = infParam%consts(1)
+       matterParam(17) = -2._kp*infParam%consts(2)
+       matterParam(18) = 1._kp
+
 #endif
 #endif
 
+#ifdef PPNAME
+    case ('mhitop')
+!U = c1^4 [1 - 1/cosh(F/c2)]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
+
+        if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'mutated hilltop: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+#endif
 
     case default
        stop 'set_infbg_param: no such a model'

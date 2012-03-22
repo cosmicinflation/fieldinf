@@ -35,7 +35,7 @@ module infmatter
 !
 ! p1 = sign(m1) m1^4 
 ! p2 = m2
-! p3 = m3^4
+! p3 = sign(m3) m3^4
 ! p4 = sign(m4) m4^4
 ! p5 = m5
 ! p6 = sign(m6) m6^4 
@@ -85,7 +85,7 @@ contains
 
     potParam(1) = sign(matterParam(1)**4,matterParam(1)) !/matterParam(3)**4
     potParam(2) = matterParam(2)
-    potParam(3) = matterParam(3)**4
+    potParam(3) = sign(matterParam(3)**4,matterParam(3))
     potParam(4) = sign(matterParam(4)**4,matterParam(4)) !/matterParam(3)**4
     potParam(5) = matterParam(5)
 
@@ -140,6 +140,13 @@ contains
           alpha = potParam(4)/potParam(3)
           mu = exp(-potParam(1)/potParam(4))
 
+       case ('tdwell')
+          M4 = potParam(3)**2
+          mu = sqrt(-potParam(3)/potParam(1))
+
+       case ('mhitop')
+          M4 = potParam(1)
+          mu = potParam(2)
 
 #ifndef PP5
        case ('mixlf')
@@ -176,6 +183,9 @@ contains
           M4 = potParam(1)
           beta = - potParam(2)
 
+       case ('twisti')
+          M4 = potParam(3)
+          mu = -1._kp/potParam(8)
 
 #ifndef PP12
        case ('kahmod')
@@ -187,7 +197,10 @@ contains
 
           if (p.eq.1._kp) potName = 'khamo1'
           if (p.eq.4._kp/3._kp) potName = 'khamo2'
-         
+
+       case ('higgsi')
+          M4 = potParam(3)
+
 #endif
 #endif     
 
@@ -296,6 +309,18 @@ contains
 
        case ('colwei')
           matter_potential = cwi_norm_potential(chi,alpha,mu)
+
+       case ('higgsi')
+          matter_potential = hi_norm_potential(chi)
+
+       case ('twisti')
+          matter_potential = twi_norm_potential(chi,mu)
+
+       case ('tdwell')
+          matter_potential = dwi_norm_potential(chi/mu)
+
+       case ('mhitop')
+          matter_potential = mhi_norm_potential(chi/mu)
 
        case default
           write(*,*)'name is ',potName
@@ -414,6 +439,18 @@ contains
 
        case ('colwei')
           deriv_matter_potential(1) = cwi_norm_deriv_potential(chi,alpha,mu)
+
+       case ('higgsi')
+          deriv_matter_potential(1) = hi_norm_deriv_potential(chi)
+
+       case ('twisti')
+          deriv_matter_potential(1) = twi_norm_deriv_potential(chi,mu)
+
+       case ('tdwell')
+          deriv_matter_potential(1) = dwi_norm_deriv_potential(chi/mu)/mu
+
+       case ('mhitop')
+          deriv_matter_potential(1) = mhi_norm_deriv_potential(chi/mu)/mu
 
        case default
           write(*,*)'name is ',potName
@@ -537,6 +574,18 @@ contains
 
        case ('colwei')
           deriv_second_matter_potential(1,1) = cwi_norm_deriv_second_potential(chi,alpha,mu)
+
+       case ('higgsi')
+          deriv_second_matter_potential(1,1) = hi_norm_deriv_second_potential(chi)
+
+       case ('twisti')
+          deriv_second_matter_potential(1,1) = twi_norm_deriv_second_potential(chi,mu)
+
+       case ('tdwell')
+          deriv_second_matter_potential(1,1) = dwi_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('mhitop')
+          deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu)/mu/mu
 
        case default
           write(*,*)'name is ',potName
