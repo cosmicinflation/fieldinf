@@ -55,10 +55,11 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'mhitop'
+  infParam%name = 'twisti'
 
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = 0.5
+  infParam%consts(2) = 0.33183220
+  infParam%consts(3) = 0.02
 
 !  infParam%consts(4) = 1.
 !  infParam%consts(5) = 4._kp/3._kp

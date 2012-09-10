@@ -1,4 +1,4 @@
-!import required potential and derivatives from libsrmodels
+!import required potential and derivatives from libaspic
 
 !large field  
   use lfisr, only : lfi_norm_potential, lfi_norm_deriv_potential

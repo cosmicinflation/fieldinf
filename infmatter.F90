@@ -1,7 +1,7 @@
 module infmatter
   use infprec, only : kp, lenshort
 #if defined (PPNAME) && !defined (NOSRMODELS)
-  include 'srlib.h'
+  include 'libaspic.h'
 #endif
 
   implicit none
@@ -28,7 +28,7 @@ module infmatter
 ! Defining PP5 truncates this expression to the first five, PP12 to
 ! the first 12.  Defining PPNAME requires to explicitly code the
 ! potential, its first and second derivative for each case models
-! triggered by potName. But wait, that's already done in libsrmodels,
+! triggered by potName. But wait, that's already done in libaspic,
 ! so cool!
 !
 ! For matterParam vector as input the potential params are set to:

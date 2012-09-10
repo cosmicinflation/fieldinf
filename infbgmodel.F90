@@ -570,7 +570,7 @@ contains
 !fieldstop value required (checkout infbounds.f90)
 
        badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp)
-       badParams = badParams.or.(infParam%consts(3).gt.0.04228)
+!       badParams = badParams.or.(infParam%consts(3).gt.0.04228)
        badParams = badParams.or.(abs(infParam%consts(2)-0.33183220).gt.epsilon(1.))       
 
        if (badParams) then          

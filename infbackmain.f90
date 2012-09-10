@@ -19,7 +19,10 @@ program infbackmain
  
   integer :: inum = 0
 
-  real(kp) :: matter,efold,efoldGo,efoldFin,hubble,epsilon1,epsilon1JF, epsilon1SR
+  real(kp) :: matter,efold,efoldGo,efoldFin,hubble
+  real(kp) :: epsilon1,epsilon1JF, epsilon1SR
+  real(kp) :: epsmax
+
   real(kp) :: ricci, ricciOverH2
   real(kp), dimension(dilatonNum) :: dilaton
   real(kp), dimension(fieldNum,fieldNum) :: metricVal,metricInv  
@@ -35,14 +38,14 @@ program infbackmain
 !parameters (see infbgmodel.f90)
   infParam%consts(1) = 1e-4
   infParam%consts(2) = 0.33183220
-  infParam%consts(3) = 0.02
+  infParam%consts(3) = 0.0005
 
 !fieldstop
   infParam%consts(matterParamNum) = 0.
 
   infParam%conforms = 1
 !initial field value.
-  infParam%matters(1) = 0.33
+  infParam%matters(1) = 0.01
 
 
 
@@ -61,9 +64,9 @@ program infbackmain
 !evolves the background till the end of inflation and store the
 !results with 5000 points
   if (fieldstop(1).ne.0._kp) then
-     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
+     infEnd = bg_field_evol(infIni,5000000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
   else
-     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata)
+     infEnd = bg_field_evol(infIni,5000000,infObs,ptrToBgdata)
   endif
      
 
@@ -71,7 +74,7 @@ program infbackmain
   print *,'infEnd', infEnd, (infEnd==infIni)
   print *,'infObs',infObs
   print *
-  read(*,*)
+
 
 !test the chain list
   inum =0
@@ -91,18 +94,18 @@ program infbackmain
 !  stop
 
 !test rescaling
-  call rescale_potential(2._kp,infParam,infIni,infEnd,infObs,ptrToBgdata)
-
-  print *,'afterRescale'
-  print *,'infParam',infParam
-  print *,'infIni',infIni
-  print *,'infEnd',infEnd
-  print *,'infObs',infObs
-  print *
-  read(*,*)
-  inum=0
+!  call rescale_potential(2._kp,infParam,infIni,infEnd,infObs,ptrToBgdata)
+!  print *,'afterRescale'
+!  print *,'infParam',infParam
+!  print *,'infIni',infIni
+!  print *,'infEnd',infEnd
+!  print *,'infObs',infObs
+!  print *
+!  read(*,*)
+!  inum=0
    
-  
+  epsmax = 0._kp
+
   if (associated(ptrToBgdata)) then
      ptrRun => ptrToBgdata
 
@@ -119,6 +122,9 @@ program infbackmain
         fieldDot = ptrRun%bg%fieldDot
         hubble = ptrRun%bg%hubble
         epsilon1 = ptrRun%bg%epsilon1
+
+        epsmax = max(epsilon1,epsmax)
+
         epsilon1SR = twi_epsilon_one(field(1),infparam%consts(3))
 !        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
@@ -134,6 +140,7 @@ program infbackmain
      ptrRun => null()
      print *,'inum',inum
      print *,'count',count_infbg_data(ptrToBgdata)
+     print *,'espmax ',epsmax
   endif
 
   if (associated(ptrToBgdata)) then
