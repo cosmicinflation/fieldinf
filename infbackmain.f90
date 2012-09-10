@@ -64,9 +64,9 @@ program infbackmain
 !evolves the background till the end of inflation and store the
 !results with 5000 points
   if (fieldstop(1).ne.0._kp) then
-     infEnd = bg_field_evol(infIni,5000000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
+     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
   else
-     infEnd = bg_field_evol(infIni,5000000,infObs,ptrToBgdata)
+     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata)
   endif
      
 

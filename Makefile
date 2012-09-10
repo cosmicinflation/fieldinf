@@ -19,10 +19,10 @@ FFLAGS= -O -fopenmp -D$(ext) -DPPNAME
 #-DPPNAME
 #bugbuster -DPPNAME
 #FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 
-LDADD = -lsrmodels
+LDADD = -laspic
 endif
 
-INCLUDE = -I/usr/local/include/srmodels
+INCLUDE = -I/usr/local/include/aspic
 
 INFOBJ = infprec.o cosmopar.o binfspline.o inftools.o infinout.o \
 	 infmatter.o infdilaton.o infbgmodel.o infpotential.o infsigma.o \
