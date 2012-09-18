@@ -5,7 +5,7 @@ program infbackmain
   use infbg
   use infinout
   use infbounds
-  use twisr
+  use lmi2sr
 
   implicit none
 
@@ -20,10 +20,10 @@ program infbackmain
   integer :: inum = 0
 
   real(kp) :: matter,efold,efoldGo,efoldFin,hubble
-  real(kp) :: epsilon1,epsilon1JF, epsilon1SR
-  real(kp) :: epsmax
+  real(kp) :: epsilon1,epsilon1JF, epsilon1SR, epsilon2SR
+  real(kp) :: epsmax, alpha, beta, gamma
 
-  real(kp) :: ricci, ricciOverH2
+  real(kp) :: ricci, ricciOverH2, x, xend, xini
   real(kp), dimension(dilatonNum) :: dilaton
   real(kp), dimension(fieldNum,fieldNum) :: metricVal,metricInv  
   real(kp), dimension(2*fieldNum) :: bgVar
@@ -33,21 +33,31 @@ program infbackmain
   integer :: ind
 
 !inflation model
-  infParam%name = 'twisti'
+  infParam%name = 'logmd2'
 
 !parameters (see infbgmodel.f90)
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = 0.33183220
-  infParam%consts(3) = 0.0005
+
+  beta = 1.5
+  gamma = 0.4
+
+  infParam%consts(3) = beta
+  infParam%consts(4) = gamma
+  infParam%consts(2) = 4.*(1-infParam%consts(4))
 
 !fieldstop
-  infParam%consts(matterParamNum) = 0.
+  infParam%consts(matterParamNum) = 5
 
   infParam%conforms = 1
 !initial field value.
-  infParam%matters(1) = 0.01
+  infParam%matters(1) = 0
 
+  print *,'xvmax=', lmi2_x_max_potential(gamma,beta)
 
+  xini=lmi2_x_trajectory(-110._kp,5._kp,gamma,beta)
+  print *,'test',xini
+
+  read(*,*)
 
 !set the parameters
   paramCheck =  set_infbg_param(infParam)
@@ -60,13 +70,14 @@ program infbackmain
 
 !checkout fieldstop values
   fieldstop = field_stopinf(infParam)
- 
+  print *,'fieldstop',fieldstop
+
 !evolves the background till the end of inflation and store the
 !results with 5000 points
   if (fieldstop(1).ne.0._kp) then
-     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
+     infEnd = bg_field_evol(infIni,10000,infObs,ptrToBgdata,fieldstop(1),(fieldstop(2)==1._kp))
   else
-     infEnd = bg_field_evol(infIni,100000,infObs,ptrToBgdata)
+     infEnd = bg_field_evol(infIni,10000,infObs,ptrToBgdata)
   endif
      
 
@@ -115,6 +126,11 @@ program infbackmain
      call delete_file('resepsilons.dat')
      call delete_file('resricci.dat')
 
+!     xend = lmi1_x_endinf(gamma,beta)
+
+     xend = infEnd%field(1)
+     xini = infIni%field(1)
+
      do while (associated(ptrRun))
 !        print *,'efold hubble =',ptrRun%bg%efold, ptrRun%bg%hubble
         efold = ptrRun%bg%efold
@@ -123,16 +139,19 @@ program infbackmain
         hubble = ptrRun%bg%hubble
         epsilon1 = ptrRun%bg%epsilon1
 
-        epsmax = max(epsilon1,epsmax)
+!        epsmax = max(epsilon1,epsmax)
+        x = lmi2_x_trajectory(efold-infEnd%efold,xend,gamma,beta) 
 
-        epsilon1SR = twi_epsilon_one(field(1),infparam%consts(3))
+        epsilon1SR = lmi2_epsilon_one(field(1),gamma,beta)
+        epsilon2SR = lmi2_epsilon_two(field(1),gamma,beta)
 !        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
         ricci = ricciOverH2*hubble*hubble
         call livewrite('resfield.dat',efold,field(1))
+        call livewrite('resslowroll.dat',efold,epsilon1SR, epsilon2SR)
         call livewrite('resfieldDot.dat',efold,fieldDot(1))
         call livewrite('reshubble.dat',efold,hubble)
-        call livewrite('resepsilons.dat',efold,epsilon1,epsilon1SR)
+        call livewrite('resepsilons.dat',efold,epsilon1)
         call livewrite('resricci.dat',efold,riccioverH2,ricci)
         inum = inum + 1
         ptrRun => ptrRun%ptr             
@@ -140,7 +159,7 @@ program infbackmain
      ptrRun => null()
      print *,'inum',inum
      print *,'count',count_infbg_data(ptrToBgdata)
-     print *,'espmax ',epsmax
+!     print *,'espmax ',epsmax
   endif
 
   if (associated(ptrToBgdata)) then

@@ -563,7 +563,7 @@ contains
        matterParam(12) = -infParam%consts(2) - 2._kp
 
 
- case ('twisti')
+    case ('twisti')
 !U = c1^4 [1 - c2 (F/c3)^2 exp(-F/c3)]
 
 !c2 = 32/[92 ζ(5)]~0.33183220
@@ -642,6 +642,31 @@ contains
        matterParam(15) = infParam%consts(1)
        matterParam(17) = -2._kp*infParam%consts(2)
        matterParam(18) = 1._kp
+
+    case ('logmd1','logmd2')
+!U = c1^4 F^c2 exp(-c3 F^c4) with c2 = 4*(1-c4)
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp) &
+            .or. (infParam%consts(4).lt.0._kp) .or. (infParam%consts(4).gt.1._kp ))
+
+       badParams = ( badParams .or. &
+            .not. ( (infParam%consts(2).eq.4._kp*(1._kp-infParam%consts(4)) ) ) )                  
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'Logamediate: improper params'
+       endif
+
+       matterParam(1:4) = 0._kp      
+       matterParam(5) = 2._kp
+       matterParam(6:14) = 0._kp
+      
+       matterParam(15) = infParam%consts(1)
+       matterParam(16) = infParam%consts(2)
+       matterParam(17) = -infParam%consts(3)
+       matterParam(18) = infParam%consts(4)
+
 
 #endif
 #endif

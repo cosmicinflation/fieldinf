@@ -1,6 +1,6 @@
 module infmatter
   use infprec, only : kp, lenshort
-#if defined (PPNAME) && !defined (NOSRMODELS)
+#if defined (PPNAME) && !defined (NOASPIC)
   include 'libaspic.h'
 #endif
 
@@ -67,8 +67,8 @@ module infmatter
 !$omp threadprivate(potParam, potName)
  
 !some more easy to use alias for PPNAME
-  real(kp), save :: alpha, beta, p, q, mu, nu, M4
-!$omp threadprivate(alpha, beta, p, q, mu, nu, M4)
+  real(kp), save :: alpha, beta, gamma, p, q, mu, nu, M4
+!$omp threadprivate(alpha, beta, gamma, p, q, mu, nu, M4)
 
   public potParamNum, matterNum
 
@@ -201,6 +201,13 @@ contains
        case ('higgsi')
           M4 = potParam(3)
 
+       case ('logmd1','logmd2')
+          M4 = potParam(15)
+          alpha = potParam(16)
+          beta = -potParam(17)
+          gamma = potParam(18)
+
+          print *,'M4',M4,alpha,beta,gamma
 #endif
 #endif     
 
@@ -261,7 +268,7 @@ contains
 #endif
 
     
-#elif !defined(NOSRMODELS)
+#elif !defined(NOASPIC)
 
     select case (potName)
 
@@ -321,6 +328,12 @@ contains
 
        case ('mhitop')
           matter_potential = mhi_norm_potential(chi/mu)
+
+       case ('logmd1')
+          matter_potential = lmi1_norm_potential(chi,gamma,beta)
+
+       case ('logmd2')
+          matter_potential = lmi2_norm_potential(chi,gamma,beta)
 
        case default
           write(*,*)'name is ',potName
@@ -391,7 +404,7 @@ contains
 #endif
 
 
-#elif !defined(NOSRMODELS)
+#elif !defined(NOASPIC)
 
     select case (potName)
 
@@ -451,6 +464,13 @@ contains
 
        case ('mhitop')
           deriv_matter_potential(1) = mhi_norm_deriv_potential(chi/mu)/mu
+
+       case ('logmd1')
+          deriv_matter_potential(1) = lmi1_norm_deriv_potential(chi,gamma,beta)
+
+       case ('logmd2')
+          deriv_matter_potential(1) = lmi2_norm_deriv_potential(chi,gamma,beta)
+          
 
        case default
           write(*,*)'name is ',potName
@@ -519,14 +539,13 @@ contains
          * potParam(15)*potParam(16)*potParam(17)*potParam(18) &
          +chi**potParam(16)*potParam(15)*(chi**(-2._kp+potParam(18))*expchi2 &
          *potParam(17)*(-1._kp+potParam(18))*potParam(18) &
-         +chi**(-2._kp+2._kp*potParam(18))*expchi2*potParam(17)**2*potParam(18)**2)
-
+         +chi**(-2._kp+2._kp*potParam(18))*expchi2*potParam(17)**2*potParam(18)**2)    
 #endif
 #endif
 
+    
 
-
-#elif !defined(NOSRMODELS)
+#elif !defined(NOASPIC)
 
     select case (potName)
 
@@ -586,6 +605,12 @@ contains
 
        case ('mhitop')
           deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('logmd1')
+          deriv_second_matter_potential(1,1) = lmi1_norm_deriv_second_potential(chi,gamma,beta)
+
+       case ('logmd2')
+          deriv_second_matter_potential(1,1) = lmi2_norm_deriv_second_potential(chi,gamma,beta)
 
        case default
           write(*,*)'name is ',potName

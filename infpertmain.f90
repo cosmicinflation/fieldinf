@@ -46,6 +46,8 @@ program infpertmain
 
   real(kp) :: lnReheatCorr = 0._kp
 
+  real(kp) :: alpha, beta, gamma
+
   logical :: setupDone = .false.
   logical :: check_spline = .false.
   logical :: slowroll = .false.
@@ -55,17 +57,22 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'twisti'
+  infParam%name = 'logmd2'
 
+  beta = 1.5
+  gamma = 0.4
+  
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = 0.33183220
-  infParam%consts(3) = 0.02
+  infParam%consts(3) = beta
+  infParam%consts(4) = gamma
+  infParam%consts(2) = 4.*(1-infParam%consts(4))
+
 
 !  infParam%consts(4) = 1.
 !  infParam%consts(5) = 4._kp/3._kp
 
 !fieldstop
-  infParam%consts(matterParamNum) = 0
+  infParam%consts(matterParamNum) = 35
 
   infParam%conforms = 1.
   

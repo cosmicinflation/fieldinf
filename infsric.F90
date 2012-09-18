@@ -39,7 +39,7 @@ contains
     endif
 
 
-#ifndef NOSRMODELS
+#ifndef NOASPIC
    
     
     select case (infParam%name)
@@ -115,6 +115,11 @@ contains
 !       slowroll_initial_matter = bi_initial_field(infParam,efold)
 
 
+    case ('logmd1')
+       slowroll_initial_matter = lmi1_initial_field(infParam,efold)
+
+    case ('logmd2')
+       slowroll_initial_matter = lmi2_initial_field(infParam,efold)
 
     case default
        stop 'slowroll_initial_matter: model not implemented!'
@@ -170,7 +175,7 @@ contains
 
 
 
-#ifndef NOSRMODELS
+#ifndef NOASPIC
 
 
   function lfi_initial_field(infParam,efold)
@@ -617,7 +622,7 @@ contains
 
 
   function twi_initial_field(infParam,efold)
-    use twisr, only : twi_x_endinf,twi_x_trajectory
+    use twisr, only : twi_x_trajectory, twi_x_endsr
     implicit none
     real(kp), dimension(matterNum) :: twi_initial_field
     type(infbgparam), intent(in) :: infParam
@@ -633,7 +638,7 @@ contains
     fieldStop = field_stopinf(infParam)
 
     xEnd = fieldStop(1)
-    xEps = twi_x_endinf(mu)   
+    xEps = twi_x_endsr(mu)
 
     if (xEnd.lt.xEps) then
        write(*,*) 'twi_initial_field: xEnd is in slow-roll violation region'
@@ -699,6 +704,72 @@ contains
 
 
 
+  function lmi1_initial_field(infParam,efold)
+    use lmi1sr, only : lmi1_x_endinf,lmi1_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: lmi1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, beta, gamma
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    gamma = infParam%consts(4)
+
+!model valid for alpha = 4(1-gamma)
+    if (alpha.ne.4._kp*(1._kp - gamma)) stop 'lmi1_initial_field: alpha >< 4(1-gamma)'
+   
+    xEnd = lmi1_x_endinf(gamma,beta)
+
+    if (display) write(*,*)'lmi1_initial_field: xend= ',xEnd
+
+    xIni = lmi1_x_trajectory(bfold,xEnd,gamma,beta)
+
+    lmi1_initial_field(:) = xIni
+
+  end function lmi1_initial_field
+
+
+
+  function lmi2_initial_field(infParam,efold)
+    use lmicommon, only: lmi_x_potmax
+    use lmi2sr, only : lmi2_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: lmi2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+    real(kp), dimension(2) :: fieldStop
+
+    real(kp) :: alpha, beta, gamma
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    gamma = infParam%consts(4)
+
+    fieldStop = field_stopinf(infParam)
+
+    xEnd = fieldStop(1)
+   
+!model valid for alpha=4(1-gamma)
+    if (alpha.ne.4._kp*(1._kp - gamma)) stop 'lmi2_initial_field: alpha >< 4(1-gamma)'
+       
+    if (display) write(*,*)'lmi2_initial_field: xend= ',xEnd
+
+    xIni = lmi2_x_trajectory(bfold,xEnd,gamma,beta)
+
+    lmi2_initial_field(:) = xIni
+
+  end function lmi2_initial_field
+
+
+   
 
 #ifdef NOYET
   

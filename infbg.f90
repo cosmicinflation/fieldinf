@@ -151,11 +151,12 @@ contains
        infIni%field(1:matterNum) = slowroll_initial_matter(infParam)
     endif
 
-!this is starting on slow-roll
     infIni%fieldDot &
          = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
-!overides for test
+
 !    infIni%fieldDot = 0._kp
+    
+!overides for test
 !    print *,'initial condition fieldDot=',infIni%fieldDot
 
 !    infIni%fieldDot(1)=1.
@@ -265,7 +266,7 @@ contains
     real(kp) :: epsilon2
 
 !if ptrBgdata input without data number, this is the default storage step
-    real(kp), parameter :: efoldStepDefault = 1._kp
+    real(kp), parameter :: efoldStepDefault = 1_kp
 
 !we cannot discover inflation longer on this computer
     real(kp) :: efoldHuge
@@ -452,7 +453,7 @@ contains
     efoldAfterEndInf = efold
     efoldBeforeEndInf = efoldAfterEndInf - efoldStepDefault
   
-
+    
     if (efoldBeforeEndInf.le.infIni%efold) then
        if (display) write(*,*)'bg_field_evol: inflation too short'
        bg_field_evol = infIni       

@@ -75,3 +75,10 @@
 !mutated hilltop inflation
   use mhisr, only : mhi_norm_potential, mhi_norm_deriv_potential
   use mhisr, only : mhi_norm_deriv_second_potential
+
+!logamediate inflation
+  use lmi1sr, only : lmi1_norm_potential, lmi1_norm_deriv_potential
+  use lmi1sr, only : lmi1_norm_deriv_second_potential
+
+  use lmi2sr, only : lmi2_norm_potential, lmi2_norm_deriv_potential
+  use lmi2sr, only : lmi2_norm_deriv_second_potential
