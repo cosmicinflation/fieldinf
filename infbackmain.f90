@@ -5,7 +5,8 @@ program infbackmain
   use infbg
   use infinout
   use infbounds
-  use lmi2sr
+ 
+!  use rgisr
 
   implicit none
 
@@ -21,7 +22,7 @@ program infbackmain
 
   real(kp) :: matter,efold,efoldGo,efoldFin,hubble
   real(kp) :: epsilon1,epsilon1JF, epsilon1SR, epsilon2SR
-  real(kp) :: epsmax, alpha, beta, gamma
+  real(kp) :: epsmax, alpha, beta, gamma, p, lambda
 
   real(kp) :: ricci, ricciOverH2, x, xend, xini
   real(kp), dimension(dilatonNum) :: dilaton
@@ -33,31 +34,26 @@ program infbackmain
   integer :: ind
 
 !inflation model
-  infParam%name = 'logmd2'
+  infParam%name = 'radiag'
 
 !parameters (see infbgmodel.f90)
   infParam%consts(1) = 1e-4
 
-  beta = 1.5
-  gamma = 0.4
-
-  infParam%consts(3) = beta
-  infParam%consts(4) = gamma
-  infParam%consts(2) = 4.*(1-infParam%consts(4))
+  alpha = 2.
+  
+  infParam%consts(2) = alpha
 
 !fieldstop
-  infParam%consts(matterParamNum) = 5
+  infParam%consts(matterParamNum) = 0
 
   infParam%conforms = 1
 !initial field value.
   infParam%matters(1) = 0
 
-  print *,'xvmax=', lmi2_x_max_potential(gamma,beta)
+!  print *,'xvmax=', lmi2_x_max_potential(gamma,beta)
 
-  xini=lmi2_x_trajectory(-110._kp,5._kp,gamma,beta)
-  print *,'test',xini
+!  print *,'xini'
 
-  read(*,*)
 
 !set the parameters
   paramCheck =  set_infbg_param(infParam)
@@ -129,7 +125,7 @@ program infbackmain
 !     xend = lmi1_x_endinf(gamma,beta)
 
      xend = infEnd%field(1)
-     xini = infIni%field(1)
+
 
      do while (associated(ptrRun))
 !        print *,'efold hubble =',ptrRun%bg%efold, ptrRun%bg%hubble
@@ -140,14 +136,14 @@ program infbackmain
         epsilon1 = ptrRun%bg%epsilon1
 
 !        epsmax = max(epsilon1,epsmax)
-        x = lmi2_x_trajectory(efold-infEnd%efold,xend,gamma,beta) 
+!        x = rgi_x_trajectory(efold-infEnd%efold,xend,alpha)
+!        epsilon1SR = rgi_epsilon_one(field(1),alpha)
+!        epsilon2SR = rgi_epsilon_two(field(1),alpha)
 
-        epsilon1SR = lmi2_epsilon_one(field(1),gamma,beta)
-        epsilon2SR = lmi2_epsilon_two(field(1),gamma,beta)
 !        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
         ricci = ricciOverH2*hubble*hubble
-        call livewrite('resfield.dat',efold,field(1))
+        call livewrite('resfield.dat',efold,field(1),x)
         call livewrite('resslowroll.dat',efold,epsilon1SR, epsilon2SR)
         call livewrite('resfieldDot.dat',efold,fieldDot(1))
         call livewrite('reshubble.dat',efold,hubble)

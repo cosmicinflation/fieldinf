@@ -14,6 +14,8 @@ program infpertmain
   use infpowspline
   use infinout
 
+  use rpicommon
+
   implicit none
   
   integer :: inum,i
@@ -46,7 +48,7 @@ program infpertmain
 
   real(kp) :: lnReheatCorr = 0._kp
 
-  real(kp) :: alpha, beta, gamma
+  real(kp) :: alpha, beta,lambda
 
   logical :: setupDone = .false.
   logical :: check_spline = .false.
@@ -57,26 +59,22 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'logmd2'
+  infParam%name = 'radiag'
 
-  beta = 1.5
-  gamma = 0.4
-  
+  alpha = 2.
+
   infParam%consts(1) = 1e-4
-  infParam%consts(3) = beta
-  infParam%consts(4) = gamma
-  infParam%consts(2) = 4.*(1-infParam%consts(4))
-
+   infParam%consts(2) = alpha
 
 !  infParam%consts(4) = 1.
 !  infParam%consts(5) = 4._kp/3._kp
 
 !fieldstop
-  infParam%consts(matterParamNum) = 35
+  infParam%consts(matterParamNum) = 0
 
   infParam%conforms = 1.
   
-  infParam%matters = 0.
+  infParam%matters = 0
 
 
 

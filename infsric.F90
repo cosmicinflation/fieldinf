@@ -121,6 +121,18 @@ contains
     case ('logmd2')
        slowroll_initial_matter = lmi2_initial_field(infParam,efold)
 
+    case ('ricci1')
+       slowroll_initial_matter = rpi1_initial_field(infParam,efold)
+
+    case ('ricci2')
+       slowroll_initial_matter = rpi2_initial_field(infParam,efold)
+
+    case ('betexp')
+       slowroll_initial_matter = bei_initial_field(infParam,efold)
+
+    case ('radiag')
+       slowroll_initial_matter = rgi_initial_field(infParam,efold)
+
     case default
        stop 'slowroll_initial_matter: model not implemented!'
 
@@ -736,7 +748,6 @@ contains
 
 
   function lmi2_initial_field(infParam,efold)
-    use lmicommon, only: lmi_x_potmax
     use lmi2sr, only : lmi2_x_trajectory
     implicit none
     real(kp), dimension(matterNum) :: lmi2_initial_field
@@ -769,7 +780,116 @@ contains
   end function lmi2_initial_field
 
 
+  function rpi1_initial_field(infParam,efold)
+    use rpi1sr, only : rpi1_x_endinf,rpi1_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: rpi1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: p
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    p = infParam%consts(2)
+    
+    if (p.lt.1._kp) stop 'rpi1_initial_field: p<1!'
    
+    xEnd = rpi1_x_endinf(p)
+
+    if (display) write(*,*)'rpi1_initial_field: xend= ',xEnd
+
+    xIni = rpi1_x_trajectory(bfold,xEnd,p)
+
+    rpi1_initial_field(:) = xIni * sqrt(3._kp/2._kp)
+
+  end function rpi1_initial_field
+
+
+
+  function rpi2_initial_field(infParam,efold)
+    use rpi2sr, only : rpi2_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: rpi2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: p
+    real(kp) :: xEnd, xIni, bfold
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+    
+    p = infParam%consts(2)
+
+    fieldStop = field_stopinf(infParam)
+    xEnd = fieldStop(1)*sqrt(2._kp/3._kp)
+
+    if (p.lt.1._kp) stop 'rpi2_initial_field: p<1!'
+       
+    if (display) write(*,*)'rpi2_initial_field: xend= ',xEnd
+
+    xIni = rpi2_x_trajectory(bfold,xEnd,p)
+
+    rpi2_initial_field(:) = xIni * sqrt(3._kp/2._kp)
+
+  end function rpi2_initial_field
+
+   
+
+  function bei_initial_field(infParam, efold)
+    use beisr, only : bei_x_trajectory, bei_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: bei_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: beta, lambda
+
+    bfold = -efold
+    beta = 1._kp/infParam%consts(3)
+    lambda = infParam%consts(2)*infParam%consts(3)
+
+    xEnd = bei_x_endinf(lambda,beta)
+
+    if (display) write(*,*)'bei_initial_field: xend= ',xEnd
+
+    xIni = bei_x_trajectory(bfold,xEnd,lambda,beta)
+
+    bei_initial_field(:) = xIni
+
+  end function bei_initial_field
+
+
+
+  function rgi_initial_field(infParam, efold)
+    use rgisr, only : rgi_x_trajectory, rgi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: rgi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+   
+
+    xEnd = rgi_x_endinf(alpha)
+
+    if (display) write(*,*)'rgi_initial_field: xend= ',xEnd
+
+    xIni = rgi_x_trajectory(bfold,xEnd,alpha)
+
+    rgi_initial_field(:) = xIni
+
+  end function rgi_initial_field
+
 
 #ifdef NOYET
   

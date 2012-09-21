@@ -380,6 +380,45 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = 2._kp
 
+
+    case ('betexp')
+! U =c1^4 (1 - c2 F)^c3
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
+       badParams = badParams.or.(infParam%consts(3).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'beta-exponential: improper params'
+       endif
+
+
+       matterParam(5) = infParam%consts(3)
+       matterParam(4) = 0._kp
+       matterParam(3) = infParam%consts(1)**(1._kp/infParam%consts(3))
+       matterParam(2) = 1._kp
+       matterParam(1) = - infParam%consts(2)**0.25_kp * matterParam(3)
+
+
+    case ('radiag')
+!U = c1^4 / [1 + c2 F^-2]
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'radion assisted gauge: improper params'
+       endif
+
+       matterParam(5) = -1._kp
+       matterParam(4) = 0._kp
+       matterParam(3) = 1._kp/infParam%consts(1)
+       matterParam(2) = -2._kp
+       matterParam(1) = infParam%consts(2)**0.25_kp * matterParam(3)
+
+
 #ifndef PP5
 
     case ('mixlf')
@@ -671,6 +710,7 @@ contains
 #endif
 #endif
 
+!potentials not encompassed in the generic formulae
 #ifdef PPNAME
     case ('mhitop')
 !U = c1^4 [1 - 1/cosh(F/c2)]
@@ -685,6 +725,23 @@ contains
 
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)
+
+
+    case ('ricci1', 'ricci2')
+!U = c1^4 e^(-2 F) [e^F - 1]^[c2/(c2-1/2)]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).lt.1._kp))
+       
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'R + R^p: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+       
+
 #endif
 
     case default

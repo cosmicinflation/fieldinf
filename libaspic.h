@@ -82,3 +82,18 @@
 
   use lmi2sr, only : lmi2_norm_potential, lmi2_norm_deriv_potential
   use lmi2sr, only : lmi2_norm_deriv_second_potential
+
+!R + R^p inflation
+  use rpi1sr, only : rpi1_norm_potential, rpi1_norm_deriv_potential
+  use rpi1sr, only : rpi1_norm_deriv_second_potential
+
+  use rpi2sr, only : rpi2_norm_potential, rpi2_norm_deriv_potential
+  use rpi2sr, only : rpi2_norm_deriv_second_potential
+
+!beta exponential inflation
+  use beisr, only : bei_norm_potential, bei_norm_deriv_potential
+  use beisr, only : bei_norm_deriv_second_potential
+
+!radion assisted gauge inflation
+  use rgisr, only : rgi_norm_potential, rgi_norm_deriv_potential
+  use rgisr, only : rgi_norm_deriv_second_potential

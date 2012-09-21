@@ -67,8 +67,8 @@ module infmatter
 !$omp threadprivate(potParam, potName)
  
 !some more easy to use alias for PPNAME
-  real(kp), save :: alpha, beta, gamma, p, q, mu, nu, M4
-!$omp threadprivate(alpha, beta, gamma, p, q, mu, nu, M4)
+  real(kp), save :: alpha, beta, gam, lambda ,p, q, mu, nu, M4
+!$omp threadprivate(alpha, beta, gam, lambda, p, q, mu, nu, M4)
 
   public potParamNum, matterNum
 
@@ -144,9 +144,15 @@ contains
           M4 = potParam(3)**2
           mu = sqrt(-potParam(3)/potParam(1))
 
-       case ('mhitop')
-          M4 = potParam(1)
-          mu = potParam(2)
+       case ('betexp')
+          M4 = potParam(3)**potParam(5)
+          beta = 1._kp/potParam(5)
+          lambda = -potParam(1)*potParam(5)/potParam(3)
+
+       case ('radiag')
+          M4 = 1._kp/potParam(3)
+          alpha = potParam(1)/potParam(3)
+          
 
 #ifndef PP5
        case ('mixlf')
@@ -205,11 +211,21 @@ contains
           M4 = potParam(15)
           alpha = potParam(16)
           beta = -potParam(17)
-          gamma = potParam(18)
+          gam = potParam(18)
 
-          print *,'M4',M4,alpha,beta,gamma
+
 #endif
 #endif     
+
+       case ('mhitop')
+          M4 = potParam(1)
+          mu = potParam(2)
+
+       case ('ricci1','ricci2')
+          M4 = potParam(1)
+          p = potParam(2)
+          q = sqrt(3._kp/2._kp)
+
 
        case default
 
@@ -330,10 +346,22 @@ contains
           matter_potential = mhi_norm_potential(chi/mu)
 
        case ('logmd1')
-          matter_potential = lmi1_norm_potential(chi,gamma,beta)
+          matter_potential = lmi1_norm_potential(chi,gam,beta)
 
        case ('logmd2')
-          matter_potential = lmi2_norm_potential(chi,gamma,beta)
+          matter_potential = lmi2_norm_potential(chi,gam,beta)
+
+       case ('ricci1')
+          matter_potential = rpi1_norm_potential(chi/q,p)
+
+       case ('ricci2')
+          matter_potential = rpi2_norm_potential(chi/q,p)
+
+       case ('betexp')
+          matter_potential = bei_norm_potential(chi,lambda,beta)
+
+       case ('radiag')
+          matter_potential = rgi_norm_potential(chi,alpha)
 
        case default
           write(*,*)'name is ',potName
@@ -466,11 +494,22 @@ contains
           deriv_matter_potential(1) = mhi_norm_deriv_potential(chi/mu)/mu
 
        case ('logmd1')
-          deriv_matter_potential(1) = lmi1_norm_deriv_potential(chi,gamma,beta)
+          deriv_matter_potential(1) = lmi1_norm_deriv_potential(chi,gam,beta)
 
        case ('logmd2')
-          deriv_matter_potential(1) = lmi2_norm_deriv_potential(chi,gamma,beta)
-          
+          deriv_matter_potential(1) = lmi2_norm_deriv_potential(chi,gam,beta)
+
+       case ('ricci1')
+          deriv_matter_potential(1) = rpi1_norm_deriv_potential(chi/q,p)/q
+
+       case ('ricci2')
+          deriv_matter_potential(1) = rpi2_norm_deriv_potential(chi/q,p)/q
+
+       case ('betexp')
+          deriv_matter_potential(1) = bei_norm_deriv_potential(chi,lambda,beta)
+
+       case ('radiag')
+          deriv_matter_potential(1) = rgi_norm_deriv_potential(chi,alpha)
 
        case default
           write(*,*)'name is ',potName
@@ -607,10 +646,22 @@ contains
           deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu)/mu/mu
 
        case ('logmd1')
-          deriv_second_matter_potential(1,1) = lmi1_norm_deriv_second_potential(chi,gamma,beta)
+          deriv_second_matter_potential(1,1) = lmi1_norm_deriv_second_potential(chi,gam,beta)
 
        case ('logmd2')
-          deriv_second_matter_potential(1,1) = lmi2_norm_deriv_second_potential(chi,gamma,beta)
+          deriv_second_matter_potential(1,1) = lmi2_norm_deriv_second_potential(chi,gam,beta)
+
+       case ('ricci1')
+          deriv_second_matter_potential(1,1) = rpi1_norm_deriv_second_potential(chi/q,p)/q/q
+
+       case ('ricci2')
+          deriv_second_matter_potential(1,1) = rpi2_norm_deriv_second_potential(chi/q,p)/q/q
+
+       case ('betexp')
+          deriv_second_matter_potential(1,1) = bei_norm_deriv_second_potential(chi,lambda,beta)
+
+       case ('radiag')
+          deriv_second_matter_potential(1,1) = rgi_norm_deriv_second_potential(chi,alpha)
 
        case default
           write(*,*)'name is ',potName

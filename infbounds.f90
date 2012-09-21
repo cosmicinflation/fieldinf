@@ -31,7 +31,7 @@ contains
    
     case ('smallf')
        field_stopinf(1) = infParam%consts(matterParamNum)*infParam%consts(3)
-       field_stopinf(2) = 1._kp
+       field_stopinf(2) = +1._kp
 
     case ('hybrid')
        stop 'bug here'
@@ -65,12 +65,12 @@ contains
 
     case ('powlaw')
        field_stopinf(1) = infParam%consts(matterParamNum)
-       field_stopinf(2) = 1._kp
+       field_stopinf(2) = +1._kp
 
 
     case ('interm')
        field_stopinf(1) = infParam%consts(matterParamNum)
-       field_stopinf(2) = 1._kp
+       field_stopinf(2) = +1._kp
 
 
     case ('twisti')
@@ -78,14 +78,14 @@ contains
        field_stopinf(2) = -1._kp
     
 
-!    case ('logmd1')
-!       field_stopinf(1) = infParam%consts(matterParamNum)
-!       field_stopinf(2) = -1._kp
-
     case ('logmd2')
        field_stopinf(1) = infParam%consts(matterParamNum)
-       field_stopinf(2) = 1._kp
+       field_stopinf(2) = +1._kp
 
+
+    case ('ricci2')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
 
     end select
 
