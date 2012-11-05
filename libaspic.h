@@ -5,8 +5,8 @@
   use lfisr, only : lfi_norm_deriv_second_potential
 
 !mixed large field
-  use mlfisr, only : mlfi_norm_potential, mlfi_norm_deriv_potential
-  use mlfisr, only : mlfi_norm_deriv_second_potential
+  use gmlfisr, only : gmlfi_norm_potential, gmlfi_norm_deriv_potential
+  use gmlfisr, only : gmlfi_norm_deriv_second_potential
 
 !radiative corrected massive
   use rcmisr, only : rcmi_norm_potential, rcmi_norm_deriv_potential
@@ -97,3 +97,35 @@
 !radion assisted gauge inflation
   use rgisr, only : rgi_norm_potential, rgi_norm_deriv_potential
   use rgisr, only : rgi_norm_deriv_second_potential
+
+!mssm inflation
+  use mssmisr, only : mssmi_norm_potential, mssmi_norm_deriv_potential
+  use mssmisr, only : mssmi_norm_deriv_second_potential
+  
+!generalized mssm inflation
+  use gmssmisr, only : gmssmi_norm_potential, gmssmi_norm_deriv_potential
+  use gmssmisr, only : gmssmi_norm_deriv_second_potential
+
+!brane susy breaking inflatoin
+  use bsusybisr, only : bsusybi_norm_potential, bsusybi_norm_deriv_potential
+  use bsusybisr, only : bsusybi_norm_deriv_second_potential
+
+!tip inflation
+  use tisr, only : ti_norm_potential, ti_norm_deriv_potential
+  use tisr, only : ti_norm_deriv_second_potential
+
+!pseudo natural inflation
+  use psnisr, only : psni_norm_potential, psni_norm_deriv_potential
+  use psnisr, only : psni_norm_deriv_second_potential
+
+!non-canonical Kahler inflation
+  use nckisr, only : ncki_norm_potential, ncki_norm_deriv_potential
+  use nckisr, only : ncki_norm_deriv_second_potential
+
+!valley hybrid inflation
+  use vhisr, only : vhi_norm_potential, vhi_norm_deriv_potential
+  use vhisr, only : vhi_norm_deriv_second_potential
+
+!dynamical susy inflation
+  use dsisr, only : dsi_norm_potential, dsi_norm_deriv_potential
+  use dsisr, only : dsi_norm_deriv_second_potential

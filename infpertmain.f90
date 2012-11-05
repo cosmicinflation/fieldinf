@@ -14,7 +14,6 @@ program infpertmain
   use infpowspline
   use infinout
 
-  use rpicommon
 
   implicit none
   
@@ -59,18 +58,16 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'radiag'
-
-  alpha = 2.
+  infParam%name = 'gmixlf'
 
   infParam%consts(1) = 1e-4
-   infParam%consts(2) = alpha
-
-!  infParam%consts(4) = 1.
-!  infParam%consts(5) = 4._kp/3._kp
-
+  infParam%consts(2) = 2.3
+  infParam%consts(3) = 3.3
+  infParam%consts(4) = 0.1
+ 
 !fieldstop
-  infParam%consts(matterParamNum) = 0
+  infParam%consts(matterParamNum) = 0._kp
+
 
   infParam%conforms = 1.
   

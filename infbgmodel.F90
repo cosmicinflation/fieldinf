@@ -209,8 +209,9 @@ contains
        
 
     case ('hybrid')
-
 ! U = c1^4 [1 + (F/c3)^c2]
+
+!fieldstop value required (checkout infbounds.f90)
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp))            
@@ -220,7 +221,7 @@ contains
         if  (badParams) then
           write(*,*)'model name: ',infParam%name
           write(*,*)'consts = ',infParam%consts(1:infParamNum)
-          stop 'hybrid models: improper params'
+          stop 'valley hybrid inflation: improper params'
        endif
           
        matterParam(1) = infParam%consts(1) &
@@ -231,10 +232,35 @@ contains
        matterParam(5) = 1._kp
 
 
+    case ('dysusy')
+! U = c1^4 [1 + (F/c3)^(-c2)]
+
+!fieldstop value required (checkout infbounds.f90)
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
+            .or.(infParam%consts(3).le.0._kp))            
+
+       
+
+        if  (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:infParamNum)
+          stop 'dynamical susy inflation: improper params'
+       endif
+          
+       matterParam(1) = infParam%consts(1) &
+               /(infParam%consts(3)**(-infParam%consts(2)/4._kp))
+       matterParam(2) = -infParam%consts(2)
+       matterParam(3) = infParam%consts(1)
+       matterParam(4) = 0._kp
+       matterParam(5) = 1._kp
+
 
     case ('runmas')
 
 ! U = c1^4 { 1 + c4[1/c2 - ln(F/c3)] F^c2 }
+
+!fieldstop value required (checkout infbounds.f90)
 
        badParams = ((infParam%consts(3).le.0._kp).or.(infParam%consts(3).gt.1._kp) &
             .or.(infParam%consts(2).le.0._kp) &
@@ -263,7 +289,7 @@ contains
 
        matterParam(5) = 1._kp
 
-!fieldstop value required (checkout infbounds.f90)
+
        
 
 
@@ -421,7 +447,7 @@ contains
 
 #ifndef PP5
 
-    case ('mixlf')
+    case ('gmixlf')
 ! U = c1^4 F^c2 [1 + c3 F^c4]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
@@ -543,6 +569,8 @@ contains
 
     case ('powlaw')
 !U = c1^4 exp[-c2 F]
+
+!fieldstop value required (checkout infbounds.f90)
        
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
 
@@ -559,7 +587,7 @@ contains
        matterParam(8) = -infParam%consts(2)
        matterParam(9:12) = 0._kp
 
-!fieldstop value required (checkout infbounds.f90)
+
      
 
     case ('hfline')
@@ -625,6 +653,29 @@ contains
             /sqrt(infParam%consts(3))
        matterParam(8) = -1._kp/infParam%consts(3)
        matterParam(12) = 2._kp
+
+
+       case ('nckahi')
+!U = c1^4 [ 1 + c2 ln F + c3 F^2 ]
+
+          badParams = ((infParam%consts(1).le.0._kp) &
+               .or.(infParam%consts(2).le.0._kp))
+
+        if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'non-canonical Kahler inflation: improper params'
+       endif
+          
+       matterParam(1:2) = 0._kp
+       matterParam(3) = infParam%consts(1)
+       matterParam(4) = infParam%consts(1)*infParam%consts(2)**0.25_kp
+       matterParam(5) = 1._kp
+
+       matterParam(6) = infParam%consts(1)*sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
+       matterParam(7:11) = 0._kp
+       matterParam(12) = 2._kp
+
 
 #ifndef PP12
 
@@ -707,10 +758,86 @@ contains
        matterParam(18) = infParam%consts(4)
 
 
+    case ('nmssmi','gmssmi','rinfpt')
+!U = c1^4 [ F^2 -  c3 F^c2 + c4 F^c5] 
+
+       badParams =  ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(3).lt.0._kp) &
+            .or.(infParam%consts(4).lt.0._kp))
+
+       if (infParam%name.eq.'nmssmi') then
+!c2=6; c5=10 and c4=9/20 c3^2
+          badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
+               .or.(infParam%consts(5).ne.10._kp) &
+               .or.(9._kp/20._kp*infParam%consts(3)**2.ne.infParam%consts(4))
+       elseif (infParam%name.eq.'rinfpt') then
+!c2=3; c5=4 and c4=9/32 c3^2
+          badParams = badParams.or.(infParam%consts(2).ne.3._kp) &
+               .or.(infParam%consts(5).ne.4._kp) &
+               .or.(9._kp/32._kp*infParam%consts(3)**2.ne.infParam%consts(4))
+       elseif (infParam%name.eq.'gmssmi') then
+!c5=2(c2-1)
+          badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
+               .or.(infParam%consts(5).ne.10._kp)
+       endif
+       
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:5)
+          stop 'MSSM inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = 2._kp
+       matterParam(3:4) = 0._kp
+       matterParam(5) = 1._kp
+
+       matterParam(6) = -infParam%consts(1)*infparam%consts(3)**0.25_kp
+       matterParam(7:11) = 0._kp
+       matterParam(12) = infparam%consts(2)
+
+       matterParam(13) = infparam%consts(1)*infparam%consts(4)**0.25_kp
+       matterParam(14) = infParam%consts(5)
+       matterParam(15:18) = 0._kp
+
+
+    case ('bsusyb')
+!U = c1^4 [ exp(c2 F) + c3 exp(c4 F) ]
+
+!fieldstop value required (checkout infbounds.f90)
+
+       badParams = (infParam%consts(1).lt.0._kp &
+            .or.(infParam%consts(2).ne.sqrt(6._kp)) &
+            .or.(infParam%consts(3).ne.1._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'Brane SUSY breaking inflation: improper params'
+       endif
+       
+       matterParam(1:4) = 0._kp
+       matterParam(2) = 2._kp
+       matterParam(5) = 2._kp
+       
+       matterParam(6) = 0._kp
+       matterParam(7) = infParam%consts(1)
+       matterParam(8) = infParam%consts(2)
+       matterParam(9:11) = 0._kp
+       matterParam(12) = 0._kp
+
+       matterParam(13:14) = 0._kp
+       matterParam(15) = infParam%consts(1)*infParam%consts(3)**0.25_kp
+       matterParam(16) = 0._kp
+       matterParam(17) = infParam%consts(4)
+       matterParam(18) = 1._kp
+       
+
 #endif
 #endif
 
-!potentials not encompassed in the generic formulae
+!potentials not encompassed in the generic formula
 #ifdef PPNAME
     case ('mhitop')
 !U = c1^4 [1 - 1/cosh(F/c2)]
@@ -730,7 +857,8 @@ contains
     case ('ricci1', 'ricci2')
 !U = c1^4 e^(-2 F) [e^F - 1]^[c2/(c2-1/2)]
 
-       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).lt.1._kp))
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).lt.1._kp))
        
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
@@ -740,8 +868,41 @@ contains
 
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)
-       
 
+    case ('tipinf')
+!U = c1^4 [ 1 + cos(F/c3) + c2 sin^2(F/c3) ]
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'Tip inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+       matterParam(3) = infParam%consts(3)
+
+    case ('psenat')
+!U = c1^4 { 1 + c2 ln[cos(F/c3)] }
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'Pseudo natural inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+       matterParam(3) = infParam%consts(3)
+       
 #endif
 
     case default

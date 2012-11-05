@@ -28,15 +28,10 @@ contains
     case ('largef')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
-   
-    case ('smallf')
-       field_stopinf(1) = infParam%consts(matterParamNum)*infParam%consts(3)
-       field_stopinf(2) = +1._kp
-
+      
     case ('hybrid')
-       stop 'bug here'
-!       field_stopinf(1) = infParam%consts(matterParamNum) &
-!            * slowroll_stopmax_matter_hy(infParam)
+
+       field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
        
     case ('runmas')
@@ -84,6 +79,16 @@ contains
 
 
     case ('ricci2')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
+
+
+    case ('bsusyb')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = -1._kp
+
+    case ('dysusy')
+
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
 

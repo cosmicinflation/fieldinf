@@ -47,8 +47,8 @@ contains
     case ('largef')
        slowroll_initial_matter = lfi_initial_field(infParam,efold)    
 
-    case ('mixlf')
-       slowroll_initial_matter = mlfi_initial_field(infParam,efold)
+    case ('gmixlf')
+       slowroll_initial_matter = gmlfi_initial_field(infParam,efold)
 
     case ('rcmass')
        slowroll_initial_matter = rcmi_initial_field(infParam,efold)
@@ -78,7 +78,7 @@ contains
             .and.(infParam%consts(5).eq.4._kp/3._kp)) then
           slowroll_initial_matter = kmiii_initial_field(infParam,efold)
        else
-          stop 'slowroll_initial_matter: khaler moduli not found!'
+          stop 'slowroll_initial_matter: kahler moduli not found!'
        endif
 
     case ('hfline')
@@ -133,6 +133,30 @@ contains
     case ('radiag')
        slowroll_initial_matter = rgi_initial_field(infParam,efold)
 
+    case ('nmssmi')
+       slowroll_initial_matter = mssmi_initial_field(infParam,efold)
+
+    case ('gmssmi')
+       slowroll_initial_matter = gmssmi_initial_field(infParam,efold)
+
+    case ('bsusyb')
+       slowroll_initial_matter = bsusybi_initial_field(infParam,efold)
+
+    case ('tipinf')
+       slowroll_initial_matter = ti_initial_field(infParam,efold)
+
+    case ('psenat')
+       slowroll_initial_matter = psni_initial_field(infParam,efold)
+
+    case ('nckahi')
+       slowroll_initial_matter = ncki_initial_field(infParam,efold)
+
+    case ('hybrid')
+       slowroll_initial_matter = vhi_initial_field(infParam,efold)
+
+    case ('dysusy')
+       slowroll_initial_matter = dsi_initial_field(infParam,efold)
+
     case default
        stop 'slowroll_initial_matter: model not implemented!'
 
@@ -149,8 +173,9 @@ contains
 
 #else
     write(*,*)
-    write(*,*)'slowroll_initial_matter: FieldInf not compiled against libsrmodels!'
-    write(*,*)'minimal functions provided for test with largef models only'
+    write(*,*)'slowroll_initial_matter: '
+    write(*,*)'FieldInf has not been compiled with libaspic!'
+    write(*,*)'initial conditions functions are provided for the largef models only'
     if (infParam%name.ne.'largef') then
        stop 'You have to set non zero initial field values explicitly!'
     endif
@@ -214,10 +239,10 @@ contains
 
 
 
-  function mlfi_initial_field(infParam,efold)
-    use mlfisr, only : mlfi_x_endinf,mlfi_x_trajectory
+  function gmlfi_initial_field(infParam,efold)
+    use gmlfisr, only : gmlfi_x_endinf,gmlfi_x_trajectory
     implicit none
-    real(kp), dimension(matterNum) :: mlfi_initial_field
+    real(kp), dimension(matterNum) :: gmlfi_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -230,15 +255,15 @@ contains
     q = infParam%consts(4)
     alpha = infParam%consts(3)
     
-    xEnd = mlfi_x_endinf(p,q,alpha)
+    xEnd = gmlfi_x_endinf(p,q,alpha)
 
-    if (display) write(*,*)'mlfi_initial_field: xend= ',xEnd
+    if (display) write(*,*)'gmlfi_initial_field: xend= ',xEnd
 
-    xIni = mlfi_x_trajectory(bfold,xEnd,p,q,alpha)
+    xIni = gmlfi_x_trajectory(bfold,xEnd,p,q,alpha)
 
-    mlfi_initial_field(:) = xIni
+    gmlfi_initial_field(:) = xIni
 
-  end function mlfi_initial_field
+  end function gmlfi_initial_field
 
 
 
@@ -634,7 +659,7 @@ contains
 
 
   function twi_initial_field(infParam,efold)
-    use twisr, only : twi_x_trajectory, twi_x_endsr
+    use twisr, only : twi_x_trajectory, twi_x_endsr,phi0eps1
     implicit none
     real(kp), dimension(matterNum) :: twi_initial_field
     type(infbgparam), intent(in) :: infParam
@@ -650,10 +675,11 @@ contains
     fieldStop = field_stopinf(infParam)
 
     xEnd = fieldStop(1)
-    xEps = twi_x_endsr(mu)
-
-    if (xEnd.lt.xEps) then
-       write(*,*) 'twi_initial_field: xEnd is in slow-roll violation region'
+    if (mu.lt.phi0eps1) then
+       xEps = twi_x_endsr(mu)
+       if (xEnd.lt.xEps) then
+          write(*,*) 'twi_initial_field: xEnd is in slow-roll violation region'
+       endif
     endif
 
     if (display) write(*,*)'twi_initial_field: xend= ',xEnd,xEps
@@ -889,6 +915,263 @@ contains
     rgi_initial_field(:) = xIni
 
   end function rgi_initial_field
+
+
+  function mssmi_initial_field(infParam, efold)
+    use mssmisr, only : mssmi_x_trajectory, mssmi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: mssmi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha
+
+    bfold = -efold
+    alpha = infParam%consts(3)
+   
+
+    xEnd = mssmi_x_endinf(alpha)
+
+    if (display) write(*,*)'mssmi_initial_field: xend= ',xEnd
+
+    xIni = mssmi_x_trajectory(bfold,xEnd,alpha)
+
+    mssmi_initial_field(:) = xIni
+
+  end function mssmi_initial_field
+  
+
+  function gmssmi_initial_field(infParam, efold)
+    use gmssmisr, only : gmssmi_x_trajectory, gmssmi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: gmssmi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha, beta
+
+    bfold = -efold
+    alpha = infParam%consts(3)
+    beta = infParam%consts(5)
+
+    xEnd = gmssmi_x_endinf(alpha,beta)
+
+    if (display) write(*,*)'gmssmi_initial_field: xend= ',xEnd
+
+    xIni = gmssmi_x_trajectory(bfold,xEnd,alpha,beta)
+
+    gmssmi_initial_field(:) = xIni
+
+  end function gmssmi_initial_field
+
+
+
+  function bsusybi_initial_field(infParam, efold)
+    use bsusybisr, only : bsusybi_x_trajectory, bsusybi_xendmax
+    implicit none
+    real(kp), dimension(matterNum) :: bsusybi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xEndMax
+    real(kp) :: gam
+    real(kp), dimension(2) :: fieldStop
+
+
+    bfold = -efold
+    fieldStop = field_stopinf(infParam)
+       
+    gam = infParam%consts(4)/sqrt(6._kp)
+
+    xEnd = fieldStop(1)
+    xEndMax = bsusybi_xendmax(gam,bfold)
+
+    if (xEnd.gt.xEndMax) then
+       write(*,*)'xEnd= xEndMax= ',xEnd,xEndMax
+       stop 'bsusybi_initial_field: XEnd too large'
+    endif
+
+    if (display) write(*,*)'bsusybi_initial_field: xend= ',xEnd
+
+    xIni = bsusybi_x_trajectory(bfold,xEnd,gam)
+
+    bsusybi_initial_field(:) = xIni
+
+  end function bsusybi_initial_field
+
+
+
+  function ti_initial_field(infParam, efold)
+    use tisr, only : ti_x_trajectory, ti_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: ti_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha, mu
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = ti_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'ti_initial_field: xend= ',xEnd
+
+    xIni = ti_x_trajectory(bfold,xEnd,alpha,mu)
+
+    ti_initial_field(:) = xIni*mu
+
+  end function ti_initial_field
+
+
+
+  function psni_initial_field(infParam, efold)
+    use psnisr, only : psni_x_trajectory, psni_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: psni_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha, mu
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = psni_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'psni_initial_field: xend= ',xEnd
+
+    xIni = psni_x_trajectory(bfold,xEnd,alpha,mu)
+
+    psni_initial_field(:) = xIni*mu
+
+  end function psni_initial_field
+
+
+
+  function ncki_initial_field(infParam, efold)
+    use nckisr, only : ncki_x_trajectory, ncki_x_endinf
+    use nckisr, only : ncki_x_potmax
+    implicit none
+    real(kp), dimension(matterNum) :: ncki_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xPotMax
+    real(kp) :: alpha, beta
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+
+    if (beta.le.0._kp) then
+       xpotMax = ncki_x_potmax(alpha,beta)
+       write(*,*)
+       write(*,*)'ncki_initial_field: '
+       write(*,*)'slow-roll violated, initial condition innaccurate!'
+       write(*,*)'inflation occurs at the top: xpotMax= ',xpotMax
+       write(*,*)
+    endif
+
+    xEnd = ncki_x_endinf(alpha,beta)
+
+    if (display) write(*,*)'ncki_initial_field: xend= ',xEnd
+
+    xIni = ncki_x_trajectory(bfold,xEnd,alpha,beta)
+
+    ncki_initial_field(:) = xIni
+
+  end function ncki_initial_field
+  
+
+
+  function vhi_initial_field(infParam, efold)
+    use vhisr, only : vhi_x_trajectory, vhi_xendmax, vhi_xendmin
+    implicit none
+    real(kp), dimension(matterNum) :: vhi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xEndMax, xEndMin
+    real(kp) :: p,mu
+    real(kp), dimension(2) :: fieldStop
+
+
+    bfold = -efold
+    fieldStop = field_stopinf(infParam)
+       
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = fieldStop(1)/mu
+    xEndMax = vhi_xendmax(efold,p,mu)
+    xEndMin = vhi_xendmin(p,mu)
+
+    if ((xEnd.gt.xEndMax).or.(xEnd.lt.xEndmin)) then
+       write(*,*)'xEnd= xEndMin= xEndMax ',xEnd,xEndMin,xEndMax
+       stop 'vhi_initial_field: XEnd out of bounds'
+    endif
+
+    if (display) write(*,*)'vhi_initial_field: xend= ',xEnd
+
+    xIni = vhi_x_trajectory(bfold,xEnd,p,mu)
+
+    vhi_initial_field(:) = xIni*mu
+
+  end function vhi_initial_field
+
+  
+
+  function dsi_initial_field(infParam, efold)
+    use dsisr, only : dsi_x_trajectory, dsi_xendmin
+    implicit none
+    real(kp), dimension(matterNum) :: dsi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xEndMin
+    real(kp) :: p,mu
+    real(kp), dimension(2) :: fieldStop
+
+
+    bfold = -efold
+    fieldStop = field_stopinf(infParam)
+       
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = fieldStop(1)/mu   
+    xEndMin = dsi_xendmin(efold,p,mu)
+
+    if ((xEnd.lt.xEndmin)) then
+       write(*,*)'xEnd= xEndMin=  ',xEnd,xEndMin
+       stop 'dsi_initial_field: xEnd out of bounds'
+    endif
+
+    if (display) write(*,*)'dsi_initial_field: xend= ',xEnd
+
+    xIni = dsi_x_trajectory(bfold,xEnd,p,mu)
+
+    dsi_initial_field(:) = xIni*mu
+
+  end function dsi_initial_field
+
+
+  
 
 
 #ifdef NOYET

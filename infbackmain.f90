@@ -5,8 +5,8 @@ program infbackmain
   use infbg
   use infinout
   use infbounds
- 
-!  use rgisr
+
+  use vhisr
 
   implicit none
 
@@ -22,9 +22,9 @@ program infbackmain
 
   real(kp) :: matter,efold,efoldGo,efoldFin,hubble
   real(kp) :: epsilon1,epsilon1JF, epsilon1SR, epsilon2SR
-  real(kp) :: epsmax, alpha, beta, gamma, p, lambda
+  real(kp) :: epsmax, alpha, beta, gamma, p, lambda, ricciOverH2,ricci
 
-  real(kp) :: ricci, ricciOverH2, x, xend, xini
+  real(kp) :: x, xend, xini
   real(kp), dimension(dilatonNum) :: dilaton
   real(kp), dimension(fieldNum,fieldNum) :: metricVal,metricInv  
   real(kp), dimension(2*fieldNum) :: bgVar
@@ -33,27 +33,29 @@ program infbackmain
   logical :: paramCheck = .false.
   integer :: ind
 
+  infParam%consts(:) = 0._kp
+
 !inflation model
-  infParam%name = 'radiag'
+ infParam%name = 'hybrid'
 
-!parameters (see infbgmodel.f90)
-  infParam%consts(1) = 1e-4
-
-  alpha = 2.
-  
-  infParam%consts(2) = alpha
+ infParam%consts(1) = 1e-4
+ infParam%consts(2) = 10
+ infParam%consts(3) = 0.2
+ 
+ print *,'test',vhi_xinimax(infParam%consts(2),infParam%consts(3))
+ ricci= vhi_xendmax(110._kp,infParam%consts(2),infParam%consts(3))
+ print *,'test',ricci
+ read(*,*)
 
 !fieldstop
-  infParam%consts(matterParamNum) = 0
+  infParam%consts(matterParamNum) = 0.2*infParam%consts(3)
+ 
 
   infParam%conforms = 1
 !initial field value.
-  infParam%matters(1) = 0
+  infParam%matters(1) = 0.
 
-!  print *,'xvmax=', lmi2_x_max_potential(gamma,beta)
-
-!  print *,'xini'
-
+  
 
 !set the parameters
   paramCheck =  set_infbg_param(infParam)
@@ -137,8 +139,8 @@ program infbackmain
 
 !        epsmax = max(epsilon1,epsmax)
 !        x = rgi_x_trajectory(efold-infEnd%efold,xend,alpha)
-!        epsilon1SR = rgi_epsilon_one(field(1),alpha)
-!        epsilon2SR = rgi_epsilon_two(field(1),alpha)
+!        epsilon1SR = ncki_epsilon_one(field(1),infParam%consts(2), infParam%consts(3))
+!        epsilon2SR = ncki_epsilon_two(field(1),infParam%consts(2), infParam%consts(3))
 
 !        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)

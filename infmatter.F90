@@ -153,9 +153,18 @@ contains
           M4 = 1._kp/potParam(3)
           alpha = potParam(1)/potParam(3)
           
+       case ('hybrid')
+          M4 = potParam(3)
+          p = potParam(2)
+          mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
+
+       case ('dysusy')
+          M4 = potParam(3)
+          p = -potParam(2)
+          mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
 
 #ifndef PP5
-       case ('mixlf')
+       case ('gmixlf')
           M4 = potParam(1)
           p = potParam(2)
           q = potParam(12) - potParam(2)
@@ -193,6 +202,12 @@ contains
           M4 = potParam(3)
           mu = -1._kp/potParam(8)
 
+       case ('nckahi')
+          M4= potParam(3)
+          alpha = potParam(4)/potParam(3)
+          beta = potParam(6)/potParam(3)
+
+
 #ifndef PP12
        case ('kahmod')
           M4 = potParam(13)
@@ -201,8 +216,8 @@ contains
           p = potParam(16)
           q = potParam(18)
 
-          if (p.eq.1._kp) potName = 'khamo1'
-          if (p.eq.4._kp/3._kp) potName = 'khamo2'
+          if (p.eq.1._kp) potName = 'kahmo1'
+          if (p.eq.4._kp/3._kp) potName = 'kahmo2'
 
        case ('higgsi')
           M4 = potParam(3)
@@ -213,6 +228,16 @@ contains
           beta = -potParam(17)
           gam = potParam(18)
 
+       case ('nmssmi','gmssmi','rinfpt')
+          M4 = potParam(1)
+          p = potParam(12)
+          q = potParam(14)
+          alpha = - potParam(6)/potParam(1)
+          beta = potParam(13)/potParam(1)
+
+       case ('bsusyb')
+          M4 = potParam(7)
+          gam = potParam(17)/sqrt(6._kp)
 
 #endif
 #endif     
@@ -225,6 +250,16 @@ contains
           M4 = potParam(1)
           p = potParam(2)
           q = sqrt(3._kp/2._kp)
+
+       case ('tipinf')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          mu = potParam(3)**0.25_kp
+
+       case ('psenat')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          mu = potParam(3)**0.25_kp
 
 
        case default
@@ -291,8 +326,8 @@ contains
        case ('largef')
           matter_potential = lfi_norm_potential(chi,p)
           
-       case ('mixlf')
-          matter_potential = mlfi_norm_potential(chi,p,q,alpha)
+       case ('gmixlf')
+          matter_potential = gmlfi_norm_potential(chi,p,q,alpha)
           
        case ('rcmass')
           matter_potential = rcmi_norm_potential(chi,alpha)
@@ -312,7 +347,7 @@ contains
        case ('powlaw')
           matter_potential = pli_norm_potential(chi,alpha)
 
-       case ('khamo1')
+       case ('kahmo1')
           matter_potential = kmii_norm_potential(chi,alpha)
 
        case ('hfline')
@@ -327,7 +362,7 @@ contains
        case ('interm')
           matter_potential = ii_norm_potential(chi,beta)
 
-       case ('khamo2')
+       case ('kahmo2')
           matter_potential = kmiii_norm_potential(chi,alpha,beta)
 
        case ('colwei')
@@ -362,6 +397,30 @@ contains
 
        case ('radiag')
           matter_potential = rgi_norm_potential(chi,alpha)
+
+       case ('nmssmi')
+          matter_potential = mssmi_norm_potential(chi,alpha)
+
+       case ('gmssmi')
+          matter_potential = gmssmi_norm_potential(chi,alpha,beta)
+
+       case ('bsusyb')
+          matter_potential = bsusybi_norm_potential(chi,gam)
+
+       case ('tipinf')
+          matter_potential = ti_norm_potential(chi/mu,alpha)
+
+       case ('psenat')
+          matter_potential = psni_norm_potential(chi/mu,alpha)
+
+       case ('nckahi')
+          matter_potential = ncki_norm_potential(chi,alpha,beta)
+
+       case ('hybrid')
+          matter_potential = vhi_norm_potential(chi/mu,p)
+
+       case ('dysusy')
+          matter_potential = dsi_norm_potential(chi/mu,p)
 
        case default
           write(*,*)'name is ',potName
@@ -427,7 +486,6 @@ contains
          + chi**(-1._kp+potParam(16))*expchi2*potParam(15)*potParam(16)&
          + chi**(-1 + potParam(16) + potParam(18))*expchi2*potParam(15) &
          *potParam(17)*potParam(18)
-
 #endif
 #endif
 
@@ -439,8 +497,8 @@ contains
        case ('largef')
           deriv_matter_potential(1) = lfi_norm_deriv_potential(chi,p)
           
-       case ('mixlf')
-          deriv_matter_potential(1) = mlfi_norm_deriv_potential(chi,p,q,alpha)
+       case ('gmixlf')
+          deriv_matter_potential(1) = gmlfi_norm_deriv_potential(chi,p,q,alpha)
           
        case ('rcmass')
           deriv_matter_potential(1) = rcmi_norm_deriv_potential(chi,alpha)
@@ -460,7 +518,7 @@ contains
        case ('powlaw')
           deriv_matter_potential(1) = pli_norm_deriv_potential(chi,alpha)
 
-       case ('khamo1')
+       case ('kahmo1')
           deriv_matter_potential(1) = kmii_norm_deriv_potential(chi,alpha)
 
        case ('hfline')
@@ -475,7 +533,7 @@ contains
        case ('interm')
           deriv_matter_potential(1) = ii_norm_deriv_potential(chi,beta)
 
-       case ('khamo2')
+       case ('kahmo2')
           deriv_matter_potential(1) = kmiii_norm_deriv_potential(chi,alpha,beta)
 
        case ('colwei')
@@ -510,6 +568,30 @@ contains
 
        case ('radiag')
           deriv_matter_potential(1) = rgi_norm_deriv_potential(chi,alpha)
+
+       case ('nmssmi')
+          deriv_matter_potential(1) = mssmi_norm_deriv_potential(chi,alpha)
+
+       case ('gmssmi')
+          deriv_matter_potential(1) = gmssmi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('bsusyb')
+          deriv_matter_potential(1) = bsusybi_norm_deriv_potential(chi,gam)
+
+       case ('tipinf')
+          deriv_matter_potential(1) = ti_norm_deriv_potential(chi/mu,alpha)/mu
+
+       case ('psenat')
+          deriv_matter_potential(1) = psni_norm_deriv_potential(chi/mu,alpha)/mu
+
+       case ('nckahi')
+          deriv_matter_potential(1) = ncki_norm_deriv_potential(chi,alpha,beta)
+
+       case ('hybrid')
+          deriv_matter_potential(1) = vhi_norm_deriv_potential(chi/mu,p)/mu
+
+       case ('dysusy')
+          deriv_matter_potential(1) = dsi_norm_deriv_potential(chi/mu,p)/mu
 
        case default
           write(*,*)'name is ',potName
@@ -567,6 +649,8 @@ contains
          *potParam(7)*potParam(8) - potParam(9)*potParam(10) &
          *Sin(chi*potParam(10)+potParam(11)))
 
+    
+
 #ifndef PP12
 
     expchi2 = exp(chi**potParam(18)*potParam(17))
@@ -591,8 +675,8 @@ contains
        case ('largef')
           deriv_second_matter_potential(1,1) = lfi_norm_deriv_second_potential(chi,p)
           
-       case ('mixlf')
-          deriv_second_matter_potential(1,1) = mlfi_norm_deriv_second_potential(chi,p,q,alpha)
+       case ('gmixlf')
+          deriv_second_matter_potential(1,1) = gmlfi_norm_deriv_second_potential(chi,p,q,alpha)
           
        case ('rcmass')
           deriv_second_matter_potential(1,1) = rcmi_norm_deriv_second_potential(chi,alpha)
@@ -612,7 +696,7 @@ contains
        case ('powlaw')
           deriv_second_matter_potential(1,1) = pli_norm_deriv_second_potential(chi,alpha)
 
-       case ('khamo1')
+       case ('kahmo1')
           deriv_second_matter_potential(1,1) = kmii_norm_deriv_second_potential(chi,alpha)
 
        case ('hfline')
@@ -627,7 +711,7 @@ contains
        case ('interm')
           deriv_second_matter_potential(1,1) = ii_norm_deriv_second_potential(chi,beta)
 
-       case ('khamo2')
+       case ('kahmo2')
           deriv_second_matter_potential(1,1) = kmiii_norm_deriv_second_potential(chi,alpha,beta)
 
        case ('colwei')
@@ -662,6 +746,30 @@ contains
 
        case ('radiag')
           deriv_second_matter_potential(1,1) = rgi_norm_deriv_second_potential(chi,alpha)
+
+       case ('nmssmi')
+          deriv_second_matter_potential(1,1) = mssmi_norm_deriv_second_potential(chi,alpha)
+
+       case ('gmssmi')
+          deriv_second_matter_potential(1,1) = gmssmi_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('bsusyb')
+          deriv_second_matter_potential(1,1) = bsusybi_norm_deriv_second_potential(chi,gam)
+
+       case ('tipinf')
+          deriv_second_matter_potential(1,1) = ti_norm_deriv_second_potential(chi/mu,alpha)/mu/mu
+
+       case ('psenat')
+          deriv_second_matter_potential(1,1) = psni_norm_deriv_second_potential(chi/mu,alpha)/mu/mu
+
+       case ('nckahi')
+          deriv_second_matter_potential(1,1) = ncki_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('hybrid')
+          deriv_second_matter_potential(1,1) = vhi_norm_deriv_second_potential(chi/mu,p)/mu/mu
+
+       case ('dysusy')
+          deriv_second_matter_potential(1,1) = dsi_norm_deriv_second_potential(chi/mu,p)/mu/mu
 
        case default
           write(*,*)'name is ',potName
