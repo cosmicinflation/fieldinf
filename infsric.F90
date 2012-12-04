@@ -136,6 +136,9 @@ contains
     case ('nmssmi')
        slowroll_initial_matter = mssmi_initial_field(infParam,efold)
 
+    case ('rinfpt')
+       slowroll_initial_matter = ripi_initial_field(infParam,efold)
+
     case ('gmssmi')
        slowroll_initial_matter = gmssmi_initial_field(infParam,efold)
 
@@ -157,6 +160,15 @@ contains
     case ('dysusy')
        slowroll_initial_matter = dsi_initial_field(infParam,efold)
 
+    case ('arctan')
+       slowroll_initial_matter = ai_initial_field(infParam,efold)
+
+    case ('fixnsa')
+       slowroll_initial_matter = cnai_initial_field(infParam,efold)
+
+    case ('fixnsb')
+       slowroll_initial_matter = cnbi_initial_field(infParam,efold)
+
     case default
        stop 'slowroll_initial_matter: model not implemented!'
 
@@ -174,7 +186,7 @@ contains
 #else
     write(*,*)
     write(*,*)'slowroll_initial_matter: '
-    write(*,*)'FieldInf has not been compiled with libaspic!'
+    write(*,*)'FieldInf not built with libaspic support!'
     write(*,*)'initial conditions functions are provided for the largef models only'
     if (infParam%name.ne.'largef') then
        stop 'You have to set non zero initial field values explicitly!'
@@ -943,6 +955,33 @@ contains
   end function mssmi_initial_field
   
 
+
+  function ripi_initial_field(infParam, efold)
+    use ripisr, only : ripi_x_trajectory, ripi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: ripi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha
+
+    bfold = -efold
+    alpha = infParam%consts(3)
+   
+    xEnd = ripi_x_endinf(alpha)
+
+    if (display) write(*,*)'ripi_initial_field: xend= ',xEnd
+
+    xIni = ripi_x_trajectory(bfold,xEnd,alpha)
+
+    ripi_initial_field(:) = xIni
+
+  end function ripi_initial_field
+
+
+
   function gmssmi_initial_field(infParam, efold)
     use gmssmisr, only : gmssmi_x_trajectory, gmssmi_x_endinf
     implicit none
@@ -1171,7 +1210,84 @@ contains
   end function dsi_initial_field
 
 
-  
+  function ai_initial_field(infParam, efold)
+    use aisr, only : ai_x_trajectory, ai_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: ai_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: mu
+
+    bfold = -efold
+    mu = infParam%consts(2)
+   
+    xEnd = ai_x_endinf(mu)
+
+    if (display) write(*,*)'ai_initial_field: xend= ',xEnd
+
+    xIni = ai_x_trajectory(bfold,xEnd,mu)
+
+    ai_initial_field(:) = xIni*mu
+
+  end function ai_initial_field
+
+
+
+  function cnai_initial_field(infParam, efold)
+    use cnaisr, only : cnai_x_trajectory, cnai_x_endinf
+    use cnaisr, only : cnai_x_potzero
+    implicit none
+    real(kp), dimension(matterNum) :: cnai_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xMax
+    real(kp) :: alpha
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+   
+    xMax = cnai_x_potzero(alpha)
+
+    xEnd = cnai_x_endinf(alpha)
+
+    if (display) write(*,*)'cnai_initial_field: xend= xmax=',xEnd,xMax
+
+    xIni = cnai_x_trajectory(bfold,xEnd,alpha)
+
+    cnai_initial_field(:) = xIni
+
+  end function cnai_initial_field
+
+
+
+  function cnbi_initial_field(infParam, efold)
+    use cnbisr, only : cnbi_x_trajectory, cnbi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: cnbi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha
+
+    bfold = -efold
+    alpha = infParam%consts(2)
+   
+    xEnd = cnbi_x_endinf(alpha)
+
+    if (display) write(*,*)'cnbi_initial_field: xend= ',xEnd
+
+    xIni = cnbi_x_trajectory(bfold,xEnd,alpha)
+
+    cnbi_initial_field(:) = xIni
+
+  end function cnbi_initial_field
 
 
 #ifdef NOYET

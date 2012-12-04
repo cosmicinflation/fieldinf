@@ -58,12 +58,11 @@ program infpertmain
   infParam%consts = 0._kp
 
 !the model parameters
-  infParam%name = 'gmixlf'
+  infParam%name = 'fixnsb'
 
   infParam%consts(1) = 1e-4
-  infParam%consts(2) = 2.3
-  infParam%consts(3) = 3.3
-  infParam%consts(4) = 0.1
+  infParam%consts(2) = 0.03
+ 
  
 !fieldstop
   infParam%consts(matterParamNum) = 0._kp

@@ -6,7 +6,7 @@ program infbackmain
   use infinout
   use infbounds
 
-  use vhisr
+!  use vhisr
 
   implicit none
 
@@ -39,21 +39,21 @@ program infbackmain
  infParam%name = 'hybrid'
 
  infParam%consts(1) = 1e-4
- infParam%consts(2) = 10
- infParam%consts(3) = 0.2
+ infParam%consts(2) = 4
+ infParam%consts(3) = 0.5
  
- print *,'test',vhi_xinimax(infParam%consts(2),infParam%consts(3))
- ricci= vhi_xendmax(110._kp,infParam%consts(2),infParam%consts(3))
- print *,'test',ricci
- read(*,*)
+! print *,'test',vhi_xinimax(infParam%consts(2),infParam%consts(3))
+! ricci= vhi_xendmax(110._kp,infParam%consts(2),infParam%consts(3))
+! print *,'test',ricci
+! read(*,*)
 
 !fieldstop
-  infParam%consts(matterParamNum) = 0.2*infParam%consts(3)
+  infParam%consts(matterParamNum) = 0.001*infParam%consts(3)
  
 
   infParam%conforms = 1
 !initial field value.
-  infParam%matters(1) = 0.
+  infParam%matters(1) = 0.1
 
   
 
@@ -122,6 +122,7 @@ program infbackmain
      call delete_file('resfielDotd.dat')
      call delete_file('reshubble.dat')
      call delete_file('resepsilons.dat')
+     call delete_file('resslowroll.dat')
      call delete_file('resricci.dat')
 
 !     xend = lmi1_x_endinf(gamma,beta)
@@ -138,18 +139,18 @@ program infbackmain
         epsilon1 = ptrRun%bg%epsilon1
 
 !        epsmax = max(epsilon1,epsmax)
-!        x = rgi_x_trajectory(efold-infEnd%efold,xend,alpha)
-!        epsilon1SR = ncki_epsilon_one(field(1),infParam%consts(2), infParam%consts(3))
-!        epsilon2SR = ncki_epsilon_two(field(1),infParam%consts(2), infParam%consts(3))
+!        x = field(1)/infParam%consts(3)
+!        epsilon1SR = vhi_epsilon_one(x,infParam%consts(2), infParam%consts(3))
+!        epsilon2SR = vhi_epsilon_two(x,infParam%consts(2), infParam%consts(3))
 
 !        epsilon1JF =  ptrRun%bg%epsilon1JF
         ricciOverH2 = 6._kp*(2._kp-epsilon1)
         ricci = ricciOverH2*hubble*hubble
-        call livewrite('resfield.dat',efold,field(1),x)
-        call livewrite('resslowroll.dat',efold,epsilon1SR, epsilon2SR)
+        call livewrite('resfield.dat',efold,field(1))
+        call livewrite('resslowroll.dat',x,epsilon1SR) !, epsilon2SR)
         call livewrite('resfieldDot.dat',efold,fieldDot(1))
         call livewrite('reshubble.dat',efold,hubble)
-        call livewrite('resepsilons.dat',efold,epsilon1)
+        call livewrite('resepsilons.dat',x,epsilon1)
         call livewrite('resricci.dat',efold,riccioverH2,ricci)
         inum = inum + 1
         ptrRun => ptrRun%ptr             

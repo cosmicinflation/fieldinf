@@ -902,10 +902,44 @@ contains
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)
        matterParam(3) = infParam%consts(3)
+
+
+    case ('arctan')
+!U = c1^4 [1 - 2/pi arctan(F/c2) ]
        
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'Arctan inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)      
+
+    case ('fixnsa','fixnsb')
+!U = c1^4 {3 - (3 + 3 alpha^2) tanh^2[alpha F/sqrt(2)] }
+!U = c1^4 {-3 + (3 - 3 alpha^2) tan^2[alpha F/sqrt(2)] }
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'Constant ns inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+
+
 #endif
 
     case default
+       write(*,*)'model name: ',infParam%name
        stop 'set_infbg_param: no such a model'
 
     end select

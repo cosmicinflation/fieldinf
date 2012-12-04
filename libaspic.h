@@ -106,7 +106,11 @@
   use gmssmisr, only : gmssmi_norm_potential, gmssmi_norm_deriv_potential
   use gmssmisr, only : gmssmi_norm_deriv_second_potential
 
-!brane susy breaking inflatoin
+!renormalizable inflection point inflatoin
+  use ripisr, only : ripi_norm_potential, ripi_norm_deriv_potential
+  use ripisr, only : ripi_norm_deriv_second_potential
+
+!brane susy breaking inflation
   use bsusybisr, only : bsusybi_norm_potential, bsusybi_norm_deriv_potential
   use bsusybisr, only : bsusybi_norm_deriv_second_potential
 
@@ -129,3 +133,14 @@
 !dynamical susy inflation
   use dsisr, only : dsi_norm_potential, dsi_norm_deriv_potential
   use dsisr, only : dsi_norm_deriv_second_potential
+
+!arctan inflation
+  use aisr, only : ai_norm_potential, ai_norm_deriv_potential
+  use aisr, only : ai_norm_deriv_second_potential
+
+!constant ns inflation a and b
+  use cnaisr, only : cnai_norm_potential, cnai_norm_deriv_potential
+  use cnaisr, only : cnai_norm_deriv_second_potential
+
+  use cnbisr, only : cnbi_norm_potential, cnbi_norm_deriv_potential
+  use cnbisr, only : cnbi_norm_deriv_second_potential

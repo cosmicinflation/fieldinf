@@ -261,6 +261,13 @@ contains
           alpha = potParam(2)
           mu = potParam(3)**0.25_kp
 
+       case ('arctan')
+          M4 = potParam(1)
+          mu = potParam(2)
+
+       case ('fixnsa','fixnsb')
+          M4 = potParam(1)
+          alpha = potParam(2)
 
        case default
 
@@ -401,8 +408,11 @@ contains
        case ('nmssmi')
           matter_potential = mssmi_norm_potential(chi,alpha)
 
+       case ('rinfpt')
+          matter_potential = ripi_norm_potential(chi,alpha)
+
        case ('gmssmi')
-          matter_potential = gmssmi_norm_potential(chi,alpha,beta)
+          matter_potential = gmssmi_norm_potential(chi,alpha,beta)       
 
        case ('bsusyb')
           matter_potential = bsusybi_norm_potential(chi,gam)
@@ -421,6 +431,15 @@ contains
 
        case ('dysusy')
           matter_potential = dsi_norm_potential(chi/mu,p)
+
+       case ('arctan')
+          matter_potential = ai_norm_potential(chi/mu)
+
+       case ('fixnsa')
+          matter_potential = cnai_norm_potential(chi,alpha)
+
+       case ('fixnsb')
+          matter_potential = cnbi_norm_potential(chi,alpha)
 
        case default
           write(*,*)'name is ',potName
@@ -572,6 +591,9 @@ contains
        case ('nmssmi')
           deriv_matter_potential(1) = mssmi_norm_deriv_potential(chi,alpha)
 
+       case ('rinfpt')
+          deriv_matter_potential(1) = ripi_norm_deriv_potential(chi,alpha)
+
        case ('gmssmi')
           deriv_matter_potential(1) = gmssmi_norm_deriv_potential(chi,alpha,beta)
 
@@ -593,6 +615,15 @@ contains
        case ('dysusy')
           deriv_matter_potential(1) = dsi_norm_deriv_potential(chi/mu,p)/mu
 
+       case ('arctan')
+          deriv_matter_potential(1) = ai_norm_deriv_potential(chi/mu)/mu
+
+       case ('fixnsa')
+          deriv_matter_potential(1) = cnai_norm_deriv_potential(chi,alpha)
+
+       case ('fixnsb')
+          deriv_matter_potential(1) = cnbi_norm_deriv_potential(chi,alpha)
+
        case default
           write(*,*)'name is ',potName
           stop 'deriv_matter_potential: model not found!'
@@ -602,7 +633,7 @@ contains
     deriv_matter_potential = M4 * deriv_matter_potential
     
 #else
-    stop 'deriv_matter_potential: FieldInf not built agains libsrmodels!'
+    stop 'deriv_matter_potential: FieldInf not built with libaspic support!'
 #endif
 
   end function deriv_matter_potential
@@ -750,6 +781,9 @@ contains
        case ('nmssmi')
           deriv_second_matter_potential(1,1) = mssmi_norm_deriv_second_potential(chi,alpha)
 
+       case ('rinfpt')
+          deriv_second_matter_potential(1,1) = ripi_norm_deriv_second_potential(chi,alpha)
+
        case ('gmssmi')
           deriv_second_matter_potential(1,1) = gmssmi_norm_deriv_second_potential(chi,alpha,beta)
 
@@ -770,6 +804,15 @@ contains
 
        case ('dysusy')
           deriv_second_matter_potential(1,1) = dsi_norm_deriv_second_potential(chi/mu,p)/mu/mu
+
+       case ('arctan')
+          deriv_second_matter_potential(1,1) = ai_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('fixnsa')
+          deriv_second_matter_potential(1,1) = cnai_norm_deriv_second_potential(chi,alpha)
+
+       case ('fixnsb')
+          deriv_second_matter_potential(1,1) = cnbi_norm_deriv_second_potential(chi,alpha)
 
        case default
           write(*,*)'name is ',potName
