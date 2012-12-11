@@ -26,7 +26,7 @@ module infpert
 
   real(kp), parameter :: kphysOverHubbleCreate = 10._kp
  
-  integer, parameter :: entroRef = 2
+  integer, parameter :: entroRef = 1
 
 
   public scalNum  
@@ -90,7 +90,7 @@ contains
     use infprec, only : transfert
     use infbg, only : operator(/=)
     use infbg, only : bg_field_dot_coupled
-    use infbg, only : hubble_parameter_square
+    use infbgfunc, only : hubble_parameter_square
     use inftorad, only : bfold_hubble_fraction, lnMpcToKappa
     use infinout
 
@@ -266,8 +266,8 @@ contains
 
   subroutine pert_tens_bgdot(neqs,bfold,allVar,allVarDot,cosmoData)       
     use infprec, only : transfert
-    use infbg, only : bg_field_dot_coupled, slowroll_first_parameter &
-         , hubble_parameter_square
+    use infbg, only : bg_field_dot_coupled
+    use infbgfunc, only : slowroll_first_parameter, hubble_parameter_square
     use inftorad, only : lnMpcToKappa
     implicit none
         
@@ -405,13 +405,14 @@ contains
 
     use inftools, only : easydverk
     use infprec, only : transfert
-    use infbgmodel, only : metric,deriv_metric,conformal_factor_square
-    use infbgmodel, only : conformal_first_gradient
+!    use infdilaton, only : conformal_factor_square, conformal_first_gradient
+    use infsigma, only : metric, deriv_metric    
+    use infpotential, only : potential, deriv_potential
     use infbg, only : operator(/=)
     use infbg, only : bg_field_dot_coupled
-    use infbg, only : slowroll_first_parameter, slowroll_second_parameter    
-    use infbg, only : hubble_parameter_square
-    use infbg, only : potential, deriv_potential
+    use infbgfunc, only : slowroll_first_parameter, slowroll_second_parameter    
+    use infbgfunc, only : hubble_parameter_square
+    
     use inftorad, only : bfold_hubble_fraction
     use infinout
 
@@ -743,11 +744,12 @@ contains
   
   subroutine pert_scalar_bgdot(neqs,bfold,allVar,allVarDot,cosmoData) 
     use infprec, only : transfert
-    use infbgmodel, only : metric, metric_inverse, deriv_metric
-    use infbg, only : potential, deriv_potential, deriv_second_potential
-    use infbg, only : bg_field_dot_coupled, slowroll_first_parameter
-    use infbg, only : hubble_parameter_square
-    use infbg, only : connection_affine, deriv_connection_affine
+    use infsigma, only : metric, metric_inverse, deriv_metric
+    use infsigma, only : connection_affine, deriv_connection_affine
+    use infpotential, only : potential, deriv_potential, deriv_second_potential
+    use infbg, only : bg_field_dot_coupled
+    use infbgfunc, only : slowroll_first_parameter, hubble_parameter_square
+
     use inftorad, only : lnMpcToKappa
 
     implicit none
@@ -911,9 +913,9 @@ contains
 !return the Bardeen potential and its derivative wrt efold from the
 !constraint equations
     use infprec, only : transfert
-    use infbgmodel, only : metric, deriv_metric
-    use infbg, only : deriv_potential, hubble_parameter_square
-    use infbg, only : slowroll_first_parameter
+    use infsigma, only : metric, deriv_metric
+    use infpotential, only : deriv_potential
+    use infbgfunc, only : slowroll_first_parameter, hubble_parameter_square
     use inftorad, only : lnMpcToKappa
 
     implicit none
@@ -984,9 +986,9 @@ contains
 !otherwise. In case of multiple matter fields, rho_i is not well
 !defined due to possible couplings through the matter potential.
 
-    use infbgmodel, only : conformal_factor_square, conformal_first_gradient
-    use infbgmodel, only : deriv_matter_potential
-    use infbg, only : hubble_parameter_square
+    use infdilaton, only : conformal_factor_square, conformal_first_gradient
+    use infmatter, only : deriv_matter_potential
+    use infbgfunc, only : hubble_parameter_square
     implicit none
 
     complex(kp), dimension(matterNum) :: curvature_matter_density_JF
@@ -1038,8 +1040,8 @@ contains
 !i.e.  zeta = PsiJF + (PsiJF' + HubbleConfJF x PhiJF)/(HubbleConfJF x
 !epsilon1JF)
 
-    use infbgmodel, only : conformal_first_gradient, conformal_second_gradient
-    use infbg, only : slowroll_first_parameter_JF, hubble_parameter_square
+    use infdilaton, only : conformal_first_gradient, conformal_second_gradient
+    use infbgfunc, only : slowroll_first_parameter_JF, hubble_parameter_square
     implicit none
 
     complex(kp) :: curvature_comoving_JF

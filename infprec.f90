@@ -13,7 +13,10 @@ module infprec
 ! integer, parameter :: kp = selected_real_kind(p=32)
 
 !default integration accuracy
-  real(kp), parameter :: tolkp = 1.d-12
+  real(kp), parameter :: tolkp = 1.d-11
+
+!default length for short strings
+  integer, parameter :: lenshort = 6
 
 !workaround for passing argument to old f77 functions. Only pointer
 !can be deferred shape in derived data type.

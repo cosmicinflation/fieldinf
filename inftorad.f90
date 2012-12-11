@@ -61,7 +61,7 @@ contains
   function set_inftorad_cosmo(bgParam,bgIni,bgEnd,lnReheat,inferror)
     use infbgmodel, only : infbgparam
     use infbg, only : infbgdata, infbgphys
-    use infbg, only :  matter_energy_density,  matter_energy_density_JF
+    use infbgfunc, only :  matter_energy_density,  matter_energy_density_JF
     use infbgspline, only : set_infbg_spline  
     implicit none
 

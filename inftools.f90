@@ -963,7 +963,7 @@ contains
       
       !real(kp) :: func
 !      EXTERNAL func
-      PARAMETER (ITMAX=1000,EPS=1d-15)
+      PARAMETER (ITMAX=1000000,EPS=1d-15)
       INTEGER iter
       real(kp) a,b,c,d,e,fa,fb,fc,p,q,r,s,tol1,xm      
       
@@ -982,6 +982,11 @@ contains
          end function func
       end interface
 
+      if (x1.gt.x2) then
+         stop 'zbrent: min > max on input!'
+      endif
+      
+
       notbracketed = .true.
       iex = 0
 
@@ -992,8 +997,8 @@ contains
          fa=func(a,extradata)
          fb=func(b,extradata)
          if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
-            write(*,*)'x1= fa= ',a,fa
-            write(*,*)'x2= fb= ',b,fb            
+            write(*,*)'x1=',a,'f(x1)=',fa
+            write(*,*)'x2=',b,'f(x2)=',fb            
             write(*,*)'zbrent: expanding interval!'
             a = a - abs(a)*tolExpand
             b = b + abs(b)*tolExpand
@@ -1062,7 +1067,8 @@ contains
         endif
         fb=func(b,extradata)
      enddo
-     stop 'zbrent exceeding maximum iterations'
+     !stop 'zbrent exceeding maximum iterations'
+     write(*,*) 'zbrent exceeding maximum iterations'
      zbrent=b
      return
    end function zbrent
