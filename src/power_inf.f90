@@ -134,15 +134,15 @@ contains
 
 
   subroutine SetDefPowerParams(Pin)
-    use infbgmodel, only : fieldNum, dilatonNum
-    use infbgmodel, only : matterParamNum, dilatonParamNum
+    use infbgmodel, only : fieldNum
+    use infdilaton, only : dilatonNum
     use infbgmodel, only : infParamNum
     implicit none
     type (InitialPowerParams), intent(out) :: Pin
 
     Pin%nn = 1
    
-    Pin%bgParamNum = matterParamNum + dilatonParamNum
+    Pin%bgParamNum = infParamNum
 
 !stop inflation according to field values
     Pin%checkStop = checkStopDefault
@@ -162,7 +162,11 @@ contains
 !value for the parameters (see infbg.f90)
     Pin%infParam%name = 'largef'
     Pin%infParam%consts(1:infParamNum) = 0.
-    Pin%infParam%conforms(1:dilatonNum) = 1.
+
+    if (dilatonNum.ne.0) then
+       stop 'SetDefPowerParams: power_inf.f90 needs edition!'
+!       Pin%infParam%conforms(1:dilatonNum) = 1.
+    endif
 
     Pin%infParam%consts(1) = 1e-5
     Pin%infParam%consts(2) = 2.   
@@ -228,7 +232,7 @@ contains
   subroutine SetInfBg(Pin,inferror)
     use infbgmodel, only : operator(==)
     use infbgmodel, only : set_infbg_param, matterNum
-    use infsrmodel, only : field_stopinf
+    use infbounds, only : field_stopinf
     use infbg, only : operator(==)
     use infbg, only : set_infbg_ini, bg_field_evol    
     implicit none
@@ -391,7 +395,7 @@ contains
 
   function HardPriorInThBound(infParam,infIni,inferror)
     use infbgmodel, only : matterNum
-    use infsrmodel, only : field_thbound
+    use infbounds, only : field_thbound
     implicit none
     logical :: HardPriorInThBound
     type(infbgparam), intent(in) :: infParam
@@ -858,9 +862,9 @@ contains
        Keys(num) = 'C4'
        Vals(num) = powerD%initP%infParam%consts(4)
        num=num+1
-       Keys(num) = 'Conf'
-       Vals(num) = powerD%initP%infParam%conforms(1)
-       num=num+1             
+!       Keys(num) = 'Conf'
+!       Vals(num) = powerD%initP%infParam%conforms(1)
+!       num=num+1             
        Keys(num) = 'Field'
        Vals(num) = powerD%initP%infParam%matters(1)    
        num=num+1
@@ -884,7 +888,8 @@ contains
   subroutine InitialPower_ReadParams(InitPower, Ini, WantTensors)
     use IniFile
 !fields
-    use infbgmodel, only : dilatonNum, matterNum
+    use infmatter, only : matterNum
+!    use infdilaton, only : dilatonNum
     real :: mu,nu
 !end fields
 
@@ -905,10 +910,10 @@ contains
             = Ini_Read_Double_Array_File(Ini,'inf_param',i,0._dl)    		  
     end do
     
-    do i=1,dilatonNum
-       InitPower%infParam%conforms(i) &
-            = Ini_Read_Double_Array_File(Ini,'inf_conform',i,1d0)
-    enddo
+!    do i=1,dilatonNum
+!       InitPower%infParam%conforms(i) &
+!            = Ini_Read_Double_Array_File(Ini,'inf_conform',i,1d0)
+!    enddo
 
     do i=1,matterNum
        InitPower%infParam%matters(i) &
