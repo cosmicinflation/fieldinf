@@ -24,24 +24,25 @@ AC_SUBST([FC_MODEXT])
 DATEXT="dat"
 AC_SUBST([DATEXT]) 
 
-AX_F90_LIBRARY_SETUP([aspic],[],[cosmopar.$FC_MODEXT],[libaspic*],
+AC_FC_SRCEXT(F90)
+
+AX_F90_LIBRARY_SETUP([aspic],[],[cosmopar.$FC_MODEXT],[libaspic.so],
 [
 	use cosmopar
 	write(*,*)'kstar= ',kstar
 ])
 
-AM_CONDITIONAL([USE_APIC], [test x$F90_LIBS_aspic != x])
-AM_COND_IF (USE_ASPIC,
+AM_CONDITIONAL([USE_ASPIC],[test x$F90_LIBS_aspic != x])
+AM_COND_IF([USE_ASPIC],
 [
 	LDFLAGS="$(echo "$LDFLAGS" | sed 's/-L /-L/g')"
-
 ],
 [
-	FCFLAGS="$(echo "FCFLAGS" | sed 's/-DPPNAME//g')"
+	FCFLAGS="$(echo "$FCFLAGS" | sed 's/-DPPNAME//g')"
 	FCFLAGS+=" -DNOASPIC"
-	AM_MESG_WARN([libaspic not found!])
-	AM_MESG_WARN([you can specify a path using: --with-aspic=])
-	AM_MESG_WARN([libaspic support DISABLED])
+	AC_MSG_WARN([libaspic not found!])
+	AC_MSG_WARN([you can specify a path using: --with-aspic=])
+	AC_MSG_WARN([libaspic support DISABLED])
 ])	
 
 AM_INIT_AUTOMAKE
