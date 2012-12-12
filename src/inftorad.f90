@@ -1,5 +1,5 @@
 module inftorad
-  use cosmopar
+  use infunits
   use infprec, only : kp
   use infbgmodel, only : fieldNum
   use infbg, only : infbgphys
@@ -19,7 +19,7 @@ module inftorad
   end type inftoradcosmo
 
 
-!for debugging, physical quantities at hubble exit
+!physical quantities at hubble exit
   type infhubblexit
      real(kp) :: kmpc
      real(kp) :: bfold
@@ -43,18 +43,54 @@ module inftorad
 !enforce constant equation of state during reheating for large field models
   logical, parameter :: LargeFieldWreh = .false.
 
-  public inftoradcosmo
+  public inftoradcosmo, print_inftoradcosmo
   public scaleFactorToday, lnMpcToKappa
  
   public set_inftorad_cosmo, bfold_hubble_fraction
 
-
-!for test
-  public infhubblexit, hubble_splinexit
   
+  public infhubblexit, hubble_splinexit
+  public print_infhubblexit
+
 contains
 
 
+  subroutine print_inftoradcosmo(radvar,inname)
+    use infbg, only : print_infbgphys
+    implicit none
+    type(inftoradcosmo), intent(in) :: radvar
+    character(len=*), intent(in), optional :: inname
+    
+    if (present(inname)) then
+       write(*,*)'type inftoradcosmo: ',inname
+    endif
+    write(*,*)'bfoldIni=          ',radvar%bfoldIni
+    write(*,*)'bfoldEnd=          ',radvar%bfoldEnd
+    write(*,*)'efoldEndToToday=   ',radvar%efoldEndToToday
+    write(*,*)'lnRhoEnd=          ',radvar%lnEnergyEnd
+    call print_infbgphys(radvar%bgIni,'bgIni=')
+    call print_infbgphys(radvar%bgEnd,'bgEnd=')
+
+  end subroutine print_inftoradcosmo
+
+
+
+  subroutine print_infhubblexit(hexvar,inname)    
+    implicit none
+    type(infhubblexit), intent(in) :: hexvar
+    character(len=*), intent(in), optional :: inname
+    
+    if (present(inname)) then
+       write(*,*)'type infhubblexit: ',inname
+    endif
+    write(*,*)'kmpc=          ',hexvar%kmpc
+    write(*,*)'bfold=         ',hexvar%bfold
+    write(*,*)'hubble=        ',hexvar%hubble
+    write(*,*)'epsilon1=      ',hexvar%epsilon1
+    write(*,*)'epsilon1(JF)=  ',hexvar%epsilon1JF
+!    write(*,*)'epsilon2=      ',hexvar%epsilon2
+
+  end subroutine print_infhubblexit
 
 
 
@@ -71,9 +107,8 @@ contains
     type(infbgphys), intent(in) :: bgIni
     type(infbgphys), intent(in) :: bgEnd
     
-!ln(aend/areh) + (1/4)ln(rhoend/rhoreh) + (1/4)ln(rhoend). This is the
-!deviations expected from either instantaneous reheating or radiation
-!dominated like reheating
+!ln(aend/areh) + (1/4)ln(rhoend/rhoreh) + (1/4)ln(rhoend). This is
+!ln(R), the rescaled reheating parameter, not ln(Rrad)
     real(kp), intent(in) :: lnReheat
 
 !useful for setting hard prior
@@ -135,8 +170,8 @@ contains
     if (lnEnergyEndInf.le.lnEnergyNuc) then
        write(*,*)'set_inftorad_cosmo: inflation till bbn (111)'
        if (display) then
-          write(*,*)'lnEnergyEndInf = ',lnEnergyEndInf
-          write(*,*)'lnEnergyNucSynth = ',lnEnergyNuc
+          write(*,*)'lnRhoEndInf = ',lnEnergyEndInf
+          write(*,*)'lnRhoNuc = ',lnEnergyNuc
        endif
        if (present(inferror)) then          
           inferror = 111
@@ -348,7 +383,7 @@ contains
 
   function ln_scale_factor_corr_radreheat(lnEnergyEndInf,lnEnergyEndReh,wreh)
 !This is ln(Rrad): the correction from a rad-like reheating period
-!when during reheating one has P=wre x rho, with wre a constant
+!when during reheating one has P=<wre> x rho
 
 !          ln(aend/areh) + (1/4) ln(rhoend/rhoreheat) = (1/4) x
 !          (w-1/3)/(w+1) x ln(rhoend/rhoreheat)
@@ -383,10 +418,11 @@ contains
 
 
 
-   function bfold_plus_ln_hubble(bfold,cosmoData)
+  function bfold_plus_ln_hubble(bfold,cosmoData)
 !returns N + ln[H(N)] - cosmoData%real1, required by zeros finder subroutine:
 !zbrent
     use infprec, only : transfert
+    use infbgspline, only : check_infbg_spline
     use infbgspline, only : splineval_hubble_parameter
     implicit none
 
@@ -394,7 +430,11 @@ contains
     real(kp), intent(in) :: bfold
     real(kp) :: bfold_plus_ln_hubble
 
-    real(kp) :: hubble
+    real(kp) :: hubble    
+
+    if (.not.check_infbg_spline()) then
+       stop 'bfold_plus_ln_hubble: bgdata not splined!'
+    endif
 
     hubble = splineval_hubble_parameter(bfold)
 
@@ -412,7 +452,7 @@ contains
 
   function bfold_hubble_fraction(kmpc,infCosmo,kphysOverHubble,inferror)
 !return the bfold at which k/aH = kphysOverHubble
-    use inftools, only : zbrent
+    use infsolvers, only : zbrent
     use infprec, only : transfert
     implicit none
     real(kp), intent(in) :: kmpc
@@ -464,7 +504,7 @@ contains
 
   function hubble_splinexit(infCosmo,kmpc)
 !spline evaluation of physical quantities at hubble exit (k/aH=1) for the mode kmpc    
-    use infinout
+    use infio
     use infbgspline, only : splineval_hubble_parameter
     use infbgspline, only : splineval_epsilon1
     use infbgspline, only : splineval_epsilon1JF
@@ -507,7 +547,7 @@ contains
     hubble_splinexit%bfold = bfoldExit
     hubble_splinexit%hubble = hubbleExit
     hubble_splinexit%epsilon1 = epsilon1Exit
-    hubble_splinexit%epsilon1 = epsilon1JFExit
+    hubble_splinexit%epsilon1JF = epsilon1JFExit
 
   end function hubble_splinexit
 

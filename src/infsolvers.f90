@@ -1,4 +1,4 @@
-module inftools
+module infsolvers
   use infprec, only : kp,transfert  
   implicit none
 
@@ -22,7 +22,7 @@ contains
 
 !    external :: fcn
 
-    include 'inftools.h'
+    include 'infsolvers.h'
 
    
 !    ind=1    
@@ -50,7 +50,7 @@ contains
 
 !    external :: fcn
 
-    include 'inftools.h'
+    include 'infsolvers.h'
 
    
 
@@ -64,7 +64,7 @@ contains
     if (ind.ne.3) then
        write(*,*) 'unsanedverk: stop ind = ',ind
        write(*,*) 'desesperate accuracy unreachable...'
-       write(*,*) 'try tuning c(4) and c(6) in inftools:unsanedverk!'
+       write(*,*) 'try tuning c(4) and c(6) in infsolvers:unsanedverk!'
        stop
     endif    
   end subroutine tunedverk
@@ -83,7 +83,7 @@ contains
 
 !    external :: fcn
 
-    include 'inftools.h'
+    include 'infsolvers.h'
 
     ind=2
     c = 0._kp
@@ -214,7 +214,7 @@ contains
 !might be dangerous (xlf90) with optional argument, rather use explicit
 !interface
 !      external fcn
-    include 'inftools.h'
+    include 'infsolvers.h'
 
     if (present(extradata)) extradata%update = .false.
 !
@@ -1079,6 +1079,6 @@ contains
 
 
 
- end module inftools
+ end module infsolvers
 
 

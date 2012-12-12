@@ -92,7 +92,7 @@ contains
   subroutine set_power_scal_spline(infCosmo,lnkmpcVec)
     use bspline, only : dbsnak, dbsint
     use inftorad, only : inftoradcosmo
-    use infpert, only : scalNum, power_spectrum_scal   
+    use infpert, only : scalNum, power_spectrum_scal
     implicit none
 
     type(inftoradcosmo), intent(in) :: infCosmo
@@ -131,7 +131,7 @@ contains
 !$omp parallel do &
 !$omp default(shared) &
 !$omp private(i,kmpc,powerScal,j,k) &
-!$omp schedule(dynamic)    
+!$omp schedule(dynamic) 
     do i=1,lnkmpcNum       
        kmpc = exp(lnkmpcVec(i))
        powerScal = power_spectrum_scal(infCosmo,kmpc)

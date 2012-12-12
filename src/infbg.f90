@@ -21,7 +21,7 @@ module infbg
 !to store snapshot (ini or end, or more)
   type infbgphys    
      sequence
-     real(kp) :: efold, hubble, epsilon1, epsilon1JF
+     real(kp) :: efold, hubble, epsilon1, epsilon1JF, epsilon2
      real(kp), dimension(fieldNum) :: field
      real(kp), dimension(fieldNum) :: fieldDot
   end type infbgphys
@@ -48,11 +48,13 @@ module infbg
   public infbgdata, infbgphys
   public operator(==),operator(/=)
   public free_infbg_data, count_infbg_data
+  public print_infbgphys
 
   public set_infbg_ini
   public rescale_potential
   public bg_field_evol, bg_field_dot_coupled
          
+
 
 contains
 
@@ -72,6 +74,7 @@ contains
          .and. (infbgphysA%hubble == infbgphysB%hubble) &
          .and. (infbgphysA%epsilon1 == infbgphysB%epsilon1) &
          .and. (infbgphysA%epsilon1JF == infbgphysB%epsilon1JF) &
+         .and. (infbgphysA%epsilon2 == infbgphysB%epsilon2) &
          .and. all(infbgphysA%field == infbgphysB%field) &
          .and. all(infbgphysA%fieldDot == infbgphysB%fieldDot))
 
@@ -88,6 +91,7 @@ contains
          .or. (infbgphysA%hubble /= infbgphysB%hubble) &
          .or. (infbgphysA%epsilon1 /= infbgphysB%epsilon1) &
          .or. (infbgphysA%epsilon1JF /= infbgphysB%epsilon1JF) &
+         .or. (infbgphysA%epsilon2 /= infbgphysB%epsilon2) &
          .or. any(infbgphysA%field /= infbgphysB%field) &
          .or. any(infbgphysA%fieldDot /= infbgphysB%fieldDot))
 
@@ -117,6 +121,26 @@ contains
     endif
 
   end function count_infbg_data
+
+
+  subroutine print_infbgphys(infvar,inname)
+    implicit none
+    type(infbgphys), intent(in) :: infvar
+    character(len=*), intent(in), optional :: inname
+
+    if (present(inname)) then
+       write(*,*)'infbgphys type: ',inname
+    endif
+    write(*,*)'efold=        ',infvar%efold
+    write(*,*)'hubble=       ',infvar%hubble
+    write(*,*)'epsilon1=     ',infvar%epsilon1
+    write(*,*)'epsilon1(JF)= ',infvar%epsilon1JF
+    write(*,*)'epsilon2=     ',infvar%epsilon2
+    write(*,*)'field value=  ',infvar%field
+    write(*,*)'Dfield/Defold=',infvar%fieldDot
+
+
+  end subroutine print_infbgphys
 
   
 
@@ -172,6 +196,7 @@ contains
     endif
 
     infIni%epsilon1 = slowroll_first_parameter(infIni%field,infIni%fieldDot, .false.)
+    infIni%epsilon2 = slowroll_second_parameter(infIni%field,infIni%fieldDot, .false.)
     infIni%epsilon1JF = slowroll_first_parameter_JF(infIni%field, infIni%fieldDot,.false.)
     infIni%efold = 0._kp
 
@@ -243,10 +268,10 @@ contains
 !physical values (type infbgphys) for which epsilon = epsilon1EndInf  (=1)
 
     use infprec, only : transfert
-    use inftools, only : easydverk, tunedverk, zbrent
+    use infsolvers, only : easydverk, tunedverk, zbrent
     use infdilaton, only : conformal_factor_square
     use infpotential, only : potential
-    use infinout
+    use infio
     
     implicit none
     
@@ -266,7 +291,7 @@ contains
     real(kp) :: epsilon2
 
 !if ptrBgdata input without data number, this is the default storage step
-    real(kp), parameter :: efoldStepDefault = 1_kp
+    real(kp), parameter :: efoldStepDefault = 1._kp
 
 !we cannot discover inflation longer on this computer
     real(kp) :: efoldHuge
@@ -282,7 +307,9 @@ contains
     real(kp) :: hubbleSquare, hubble, hubbleEndInf
     real(kp) :: hubbleSquareIni, hubbleIni
     
-    real(kp) :: efold,efoldNext,efoldStepObs, efoldStepNoObs
+    real(kp) :: efold,efoldNext,efoldStepObs
+!obsolete
+!    real(kp) :: efoldStepNoObs
 
     real(kp) :: efoldBeforeEndInf,efoldEndInf
     real(kp) :: efoldAfterEndInf
@@ -347,7 +374,7 @@ contains
        infObs = infIni
     endif
 
-    efoldExploreOsc = 0.
+    efoldExploreOsc = 0._kp
 
 !enabled by true
    
@@ -355,7 +382,7 @@ contains
 
     checkMatterStop = .false.
 
-    efoldMaxiStop = 200.
+    efoldMaxiStop = 10000._kp
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -399,7 +426,7 @@ contains
 !set initial conditions   
 
     hubbleSquareIni = hubble_parameter_square(infIni%field,infIni%fieldDot,.false.)
-    if (hubbleSquareIni.ge.0d0) then
+    if (hubbleSquareIni.ge.0._kp) then
        hubbleIni = sqrt(hubbleSquareIni)
     else      
        stop 'bg_field_evol: hubbleSquareIni < 0'
@@ -540,11 +567,13 @@ contains
     bg_field_evol%field = fieldEndInf
 
     if (useVelocity) then
-        bg_field_evol%fieldDot = derivFieldEndInf/hubbleEndInf
+       bg_field_evol%fieldDot = derivFieldEndInf/hubbleEndInf
     else
        bg_field_evol%fieldDot = derivFieldEndInf
     endif
     bg_field_evol%epsilon1 = slowroll_first_parameter(fieldEndInf, derivFieldEndInf &
+         , useVelocity)
+    bg_field_evol%epsilon2 = slowroll_second_parameter(fieldEndInf, derivFieldEndInf &
          , useVelocity)
     bg_field_evol%epsilon1JF = slowroll_first_parameter_JF(fieldEndInf, derivFieldEndInf &
          , useVelocity)
@@ -583,19 +612,19 @@ contains
 
 
        if (present(efoldDataNum)) then          
-          if (efoldObs - infIni%efold.gt.0.) then
+          if (efoldObs - infIni%efold.gt.0._kp) then
              longEnoughObs = .true.
-             efoldStepNoObs = 2.*(efoldObs - infIni%efold)/real(efoldDataNum-1)
-             efoldStepObs = 2.*efoldBeforeEndObs/real(efoldDataNum-1)
-             efoldStepNoObs = max(efoldStepNoObs,efoldStepObs)
+!             efoldStepNoObs = 2._kp*(efoldObs - infIni%efold)/real(efoldDataNum-1)
+             efoldStepObs = 2._kp*efoldBeforeEndObs/real(efoldDataNum-1)
+!             efoldStepNoObs = max(efoldStepNoObs,efoldStepObs)
           else
              longEnoughObs = .false.              
-             efoldStepNoObs = 0.
+!             efoldStepNoObs = 0._kp
              efoldStepObs = (efoldEndInf  - infIni%efold)/real(efoldDataNum/2-1)
           endif
        else
           longEnoughObs = .false.
-          efoldStepNoObs = efoldStepDefault
+!          efoldStepNoObs = efoldStepDefault
           efoldStepObs = efoldStepDefault
        endif
 
@@ -618,9 +647,10 @@ contains
 
           hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
           epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
+          epsilon2 =  slowroll_second_parameter(field,derivField,useVelocity)
           epsilon1JF = slowroll_first_parameter_JF(field,derivField,useVelocity)
 
-          if (hubbleSquare.ge.0d0) then
+          if (hubbleSquare.ge.0._kp) then
              hubble = sqrt(hubbleSquare)
           else
              print *,'efold',efold
@@ -639,6 +669,7 @@ contains
           ptrCurrent%bg%hubble = hubble
           ptrCurrent%bg%epsilon1 = epsilon1
           ptrCurrent%bg%epsilon1JF = epsilon1JF
+          ptrCurrent%bg%epsilon2 = epsilon2
           ptrCurrent%bg%field = field
 !          i=i+1
 !             print *,'stored efold',ptrCurrent%bg%efold,i
@@ -655,7 +686,6 @@ contains
              call livewrite('derivfield.dat',efold, ptrCurrent%bg%fieldDot(1))
              call livewrite('hubble.dat',efold,hubble)
              call livewrite('epsilon1.dat',efold,epsilon1,epsilon1JF)
-             epsilon2 = slowroll_second_parameter(field,derivField,useVelocity)
              call livewrite('epsilon2.dat',efold,epsilon2)
              call livewrite('potential.dat',efold,potential(bgVar(1:fieldNum)))
              call livewrite('confsquare.dat',efold &
@@ -674,8 +704,8 @@ contains
                    infObs%hubble = hubble
                    infObs%fieldDot = ptrCurrent%bg%fieldDot
                    infObs%epsilon1 = epsilon1
-                   infObs%epsilon1JF = slowroll_first_parameter_JF(field, derivField &
-                        , useVelocity)
+                   infObs%epsilon2 = epsilon2
+                   infObs%epsilon1JF = epsilon1JF
 !                   print *,'infObs set',infObs
                 endif
              endif
@@ -683,7 +713,7 @@ contains
 
           
           if (longEnoughObs.and.(efold.lt.efoldObs)) then
-             efoldNext = min(efold + efoldStepNoObs,efoldObs)
+             efoldNext = min(efold + efoldStepObs,efoldObs)
           else
              efoldNext = min(efold + efoldStepObs,efoldAfterEndInf + efoldExploreOsc)
           endif
@@ -725,7 +755,7 @@ contains
 
 
   function find_endinf_epsilon(efold,findData)
-    use inftools, only : tunedverk
+    use infsolvers, only : tunedverk
     use infprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
@@ -785,7 +815,7 @@ contains
 
 
   function find_endinf_matter(efold,findData)
-    use inftools, only : tunedverk
+    use infsolvers, only : tunedverk
     use infprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
@@ -844,7 +874,7 @@ contains
   
 
   function find_endinf_hubble(efold,findData)
-    use inftools, only : tunedverk
+    use infsolvers, only : tunedverk
     use infprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
@@ -936,7 +966,7 @@ contains
           if (stopData%yesno1) then
              epsilon1 = slowroll_first_parameter_JF(field,fieldDot,.false.)
           else
-             epsilon1 = fieldDotSquare/2d0
+             epsilon1 = fieldDotSquare/2._kp
           endif
 
           if (stopData%yesno2) then
@@ -972,7 +1002,7 @@ contains
     
     dlnPotVec = matmul(metric_inverse(field),deriv_ln_potential(field))
           
-    fieldDotDot = -christVec - (3d0 - fieldDotSquare/2d0)*(fieldDot + dlnPotVec)
+    fieldDotDot = -christVec - (3._kp - fieldDotSquare/2._kp)*(fieldDot + dlnPotVec)
 
     bgVarDot(1:fieldNum) = fieldDot
     bgVarDot(fieldNum+1:2*fieldNum) = fieldDotDot
@@ -1039,7 +1069,7 @@ contains
           if (stopData%yesno1) then
              epsilon1 = slowroll_first_parameter_JF(field,velocity,.true.)
           else
-             epsilon1 = velocitySquare/2d0/hubbleSquare
+             epsilon1 = velocitySquare/2._kp/hubbleSquare
           endif          
           if (stopData%yesno2) then
              if (stopData%yesno3) then
@@ -1068,7 +1098,7 @@ contains
     endif
    
     fieldDot = velocity/hubble
-    velocityDot =  -3d0*velocity - (christVec + dPotVec)/hubble
+    velocityDot =  -3._kp*velocity - (christVec + dPotVec)/hubble
        
     bgVarDot(1:fieldNum) = fieldDot
     bgVarDot(fieldNum+1:2*fieldNum) = velocityDot

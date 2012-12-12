@@ -30,6 +30,7 @@ module infpert
 
 
   public scalNum  
+  public set_infpert_ini
   public power_spectrum_tens, power_spectrum_scal
   
 
@@ -42,9 +43,29 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+  subroutine set_infpert_ini(infCosmo,ptrBgData)
+    use infbgspline, only : check_infbg_spline
+    use infbgspline, only : set_infbg_spline
+    use infbg, only : infbgdata, operator(/=)
+    use infbg, only : print_infbgphys
+    implicit none
+    type(inftoradcosmo), intent(in) :: infCosmo
+    type(infbgdata), pointer :: ptrBgData
+    
+    type(infbgphys) :: bgEnd, bgObs, bgIni
+    
+    if (check_infbg_spline()) return
+
+!only needed to fastly find the bfoldStar of Bunch-Davis
+    call set_infbg_spline(infCosmo%bgEnd,ptrBgData)
+   
+  end subroutine set_infpert_ini
+
+
+
   function power_spectrum_tens(infCosmo,kmpc)        
     use inftorad, only : infhubblexit, hubble_splinexit
-    use infinout, only : livewrite
+    use infio, only : livewrite
     implicit none
     real(kp) :: power_spectrum_tens
     type(inftoradcosmo), intent(in) :: infCosmo    
@@ -86,13 +107,13 @@ contains
 
   function pert_tens_bgevol(infCosmo,kmpc)
 !this evolves the bg and tens = k^3/2 * h simultaneously
-    use inftools, only : easydverk
+    use infsolvers, only : easydverk
     use infprec, only : transfert
     use infbg, only : operator(/=)
     use infbg, only : bg_field_dot_coupled
     use infbgfunc, only : hubble_parameter_square
     use inftorad, only : bfold_hubble_fraction, lnMpcToKappa
-    use infinout
+    use infio
 
     implicit none
 
@@ -329,7 +350,7 @@ contains
 !computes 1/(2pi^2) * <zeta,zeta>,  <zeta,S1>, <zeta,S2>, <S1,zeta>, <S1,S1> etc...
 !the evolved variables already include the k^3/2 factor.   
     use inftorad, only : infhubblexit, hubble_splinexit
-    use infinout, only : livewrite
+    use infio, only : livewrite
 
     implicit none
     real(kp), dimension(scalNum,scalNum) :: power_spectrum_scal
@@ -403,7 +424,7 @@ contains
 !return the final values of . zeta comoving
 !curvature perturbation, Psi Bardeen potential, Q Mukhanov variable.
 
-    use inftools, only : easydverk
+    use infsolvers, only : easydverk
     use infprec, only : transfert
 !    use infdilaton, only : conformal_factor_square, conformal_first_gradient
     use infsigma, only : metric, deriv_metric    
@@ -414,7 +435,7 @@ contains
     use infbgfunc, only : hubble_parameter_square
     
     use inftorad, only : bfold_hubble_fraction
-    use infinout
+    use infio
 
     implicit none
 

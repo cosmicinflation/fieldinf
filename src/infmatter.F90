@@ -64,12 +64,11 @@ module infmatter
 
   real(kp), dimension(potParamNum), save :: potParam = 0._kp
   character(len=lenshort), save :: potName = 'x'
-!$omp threadprivate(potParam, potName)
  
 !some more easy to use alias for PPNAME
   real(kp), save :: alpha, beta, gam, lambda ,p, q, mu, nu, M4
-!$omp threadprivate(alpha, beta, gam, lambda, p, q, mu, nu, M4)
 
+ 
   public potParamNum, matterNum
 
   public set_potential_param, matter_potential, deriv_matter_potential

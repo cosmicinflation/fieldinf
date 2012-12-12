@@ -1,4 +1,4 @@
-module infinout
+module infio
 
 use infprec, only : kp
 
@@ -362,6 +362,6 @@ contains
   end subroutine kp_binallwrite
 
 
-end module infinout
+end module infio
 
 

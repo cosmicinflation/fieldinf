@@ -1,0 +1,6 @@
+AUTOMAKE_OPTIONS = gnu
+
+dist_doc_DATA = AUTHORS README
+SUBDIRS = src
+
+

@@ -1,7 +1,12 @@
-!Some cosmological parameters used for inflation. This module sets
-!their fiducial values because observable predictions have only a weak
-!dependence in this (may change with increased data accuracy).
-module cosmopar
+!Some cosmological parameter values used for inflation. This module
+!sets their standard values because observable predictions have only a
+!weak dependence in this (may change with increased data accuracy). If
+!aspic is found, use the one defined in libaspic
+
+module infunits
+#if !defined (NOASPIC)
+  use cosmopar
+#else
   use infprec, only : kp
   implicit none
   
@@ -21,10 +26,6 @@ module cosmopar
 !100MeV
 !!  real(kp), parameter :: lnRhoNuc = -178.55
 
-!only used for reheating using slow-roll (libslowroll)
-!COBE quadrupole moment
-  real(kp), parameter :: QrmsOverT = 6e-6
-!Best scalar amp for slow-roll (update with new constraints)
-  real(kp), parameter :: powerAmpScalar = 2.165e-9
+#endif
 
-end module cosmopar
+end module infunits
