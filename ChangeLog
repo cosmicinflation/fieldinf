@@ -1,0 +1,479 @@
+commit 1b27862a405fdae135c074fc59279fb58fbc2ec3
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 12 18:52:18 2012 +0100
+
+    Update power_inf to new calls
+
+ src/power_inf.f90 |   33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
+
+commit ed9d1e6e0c92cf92f6abb9bc3f34e7c707182fbb
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 12 17:17:17 2012 +0100
+
+    nuke old README
+
+ README |   94 ----------------------------------------------------------------
+ 1 file changed, 94 deletions(-)
+
+commit 09d3a4f271f3ec5f9efb862a47adecc9b5f5f886
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 12 17:04:21 2012 +0100
+
+    Fix configure.ac
+
+ configure.ac |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+commit fe3a1c86b946cee83b318818718cb182b4b66b2e
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 12 16:53:27 2012 +0100
+
+    Moving everything to gnu standards
+
+ AUTHORS              |    1 +
+ COPYING              |  674 +++++++++++++++++++++++++
+ Makefile             |   52 --
+ Makefile.am          |    6 +
+ binfspline.f90       |  524 -------------------
+ configure.ac         |   52 ++
+ cosmopar.f90         |   30 --
+ infbackmain.f90      |  173 -------
+ infbg.f90            | 1079 ---------------------------------------
+ infbgfunc.f90        |  214 --------
+ infbgmodel.F90       |  961 -----------------------------------
+ infbgspline.f90      |  297 -----------
+ infbounds.f90        |  124 -----
+ infdilaton.f90       |   64 ---
+ infinout.f90         |  367 --------------
+ infmatter.F90        |  856 -------------------------------
+ infpert.f90          | 1204 -------------------------------------------
+ infpertmain.f90      |  291 -----------
+ infpotential.f90     |  155 ------
+ infpowspline.f90     |  292 -----------
+ infprec.f90          |   37 --
+ infsigma.f90         |  209 --------
+ infsric.F90          | 1375 --------------------------------------------------
+ inftools.f90         | 1084 ---------------------------------------
+ inftools.h           |   11 -
+ inftorad.f90         |  515 -------------------
+ libaspic.h           |  146 ------
+ power_inf.f90        |  948 ----------------------------------
+ src/Makefile.am      |   39 ++
+ src/Makefile_noauto  |   49 ++
+ src/binfspline.f90   |  524 +++++++++++++++++++
+ src/fieldmain.f90    |  174 +++++++
+ src/gurumain.f90     |  220 ++++++++
+ src/infbg.f90        | 1109 ++++++++++++++++++++++++++++++++++++++++
+ src/infbgfunc.f90    |  214 ++++++++
+ src/infbgmodel.F90   |  961 +++++++++++++++++++++++++++++++++++
+ src/infbgspline.f90  |  297 +++++++++++
+ src/infbounds.f90    |  124 +++++
+ src/infdilaton.f90   |   64 +++
+ src/infio.f90        |  367 ++++++++++++++
+ src/infmatter.F90    |  855 +++++++++++++++++++++++++++++++
+ src/infpert.f90      | 1225 ++++++++++++++++++++++++++++++++++++++++++++
+ src/infpotential.f90 |  155 ++++++
+ src/infpowspline.f90 |  292 +++++++++++
+ src/infprec.f90      |   37 ++
+ src/infsigma.f90     |  209 ++++++++
+ src/infsolvers.f90   | 1084 +++++++++++++++++++++++++++++++++++++++
+ src/infsolvers.h     |   11 +
+ src/infsric.F90      | 1375 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/inftorad.f90     |  555 ++++++++++++++++++++
+ src/infunits.F90     |   31 ++
+ src/libaspic.h       |  146 ++++++
+ src/power_inf.f90    |  948 ++++++++++++++++++++++++++++++++++
+ 53 files changed, 11798 insertions(+), 11008 deletions(-)
+
+commit cbd5d2ad6b01fc2426c2a186c9d87062f55b31ec
+Merge: 5bdd9c5 4d97e9f
+Author: chris <chris@ringeval.com>
+Date:   Tue Dec 11 14:48:30 2012 +0100
+
+    Merging with encyclopedia branch
+
+commit 4d97e9fef966716b8330d0f32a6871d3ace1c89a
+Author: chris <chris@ringeval.com>
+Date:   Tue Dec 4 20:15:53 2012 +0100
+
+    Supporting ripi, ai, cnai, cnbi
+
+ infbackmain.f90 |   31 +++++++-------
+ infbgmodel.F90  |   34 ++++++++++++++++
+ infmatter.F90   |   47 +++++++++++++++++++++-
+ infpertmain.f90 |    7 ++--
+ infsric.F90     |  120 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ libaspic.h      |   17 +++++++-
+ 6 files changed, 232 insertions(+), 24 deletions(-)
+
+commit fa83676e7214aa84e1f563fd4a4905bd9c62c11d
+Author: chris <chris@ringeval.com>
+Date:   Mon Nov 5 12:05:16 2012 +0100
+
+    Importing 9 new models: mssmi, twi, gmssmi, bsusybi, ti, psni, ncki, vhi
+
+ infbackmain.f90 |   40 +++----
+ infbgmodel.F90  |  177 ++++++++++++++++++++++++++++--
+ infbounds.f90   |   21 ++--
+ infmatter.F90   |  140 +++++++++++++++++++++---
+ infpertmain.f90 |   17 ++-
+ infsric.F90     |  319 +++++++++++++++++++++++++++++++++++++++++++++++++++----
+ libaspic.h      |   36 ++++++-
+ 7 files changed, 669 insertions(+), 81 deletions(-)
+
+commit 864c2bbf33d0a00f52542c8b185d6d9456e4acfc
+Author: chris <chris@ringeval.com>
+Date:   Fri Sep 21 15:27:17 2012 +0200
+
+    Supporting bei,rgi,lmi1,lmi2,rmi1,rmi2 models from aspic
+
+ infbackmain.f90 |   34 +++++++---------
+ infbgmodel.F90  |   57 ++++++++++++++++++++++++++
+ infbounds.f90   |   16 ++++----
+ infmatter.F90   |   79 ++++++++++++++++++++++++++++-------
+ infpertmain.f90 |   20 ++++-----
+ infsric.F90     |  122 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ libaspic.h      |   15 +++++++
+ 7 files changed, 290 insertions(+), 53 deletions(-)
+
+commit 46224f06cba4fb9f19c0ff69d51d81aced8de2dd
+Author: chris <chris@ringeval.com>
+Date:   Tue Sep 18 15:59:11 2012 +0200
+
+    adding support for lmi models (pffff)
+
+ infbackmain.f90 |   51 ++++++++++++++++++++++++-----------
+ infbg.f90       |    9 ++++---
+ infbgmodel.F90  |   27 ++++++++++++++++++-
+ infbounds.f90   |   13 +++++++--
+ infmatter.F90   |   43 +++++++++++++++++++++++-------
+ infpertmain.f90 |   15 ++++++++---
+ infsric.F90     |   79 ++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ inftools.f90    |    5 ++++
+ libaspic.h      |    7 +++++
+ 9 files changed, 209 insertions(+), 40 deletions(-)
+
+commit a3ff864306d19ed8395b0fec6a9f51f4ae65d5f7
+Author: chris <chris@ringeval.com>
+Date:   Mon Sep 10 15:29:27 2012 +0200
+
+    update to new libaspic
+
+ Makefile        |    4 ++--
+ infbackmain.f90 |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit e568e97c1053d704ba6818e1989a66998cd0b7f7
+Author: chris <chris@ringeval.com>
+Date:   Mon Sep 10 14:31:47 2012 +0200
+
+    update headers with aspic names
+
+ infbackmain.f90 |   41 +++++++++++++++++------------
+ infbgmodel.F90  |    2 +-
+ infmatter.F90   |    4 +--
+ infpertmain.f90 |    5 ++--
+ libaspic.h      |   77 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ srlib.h         |   77 -------------------------------------------------------
+ 6 files changed, 107 insertions(+), 99 deletions(-)
+
+commit 6203f614d922a6431f3da9e1f02a7bccafb12349
+Author: chris <chris@ringeval.com>
+Date:   Fri Mar 23 14:52:40 2012 +0100
+
+    testing twisted inflation
+
+ infbackmain.f90 |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 3f14ebdb9f4e47b42b4216b8e7417412bb13cea0
+Author: chris <chris@ringeval.com>
+Date:   Thu Mar 22 18:22:10 2012 +0100
+
+    importing hi, twi, dwi and mhi
+
+ infbackmain.f90 |   52 +++++++++++--------------
+ infbgmodel.F90  |   91 +++++++++++++++++++++++++++++++++++++++----
+ infbounds.f90   |    4 ++
+ infmatter.F90   |   55 ++++++++++++++++++++++++--
+ infpertmain.f90 |   12 +++---
+ infprec.f90     |    2 +-
+ infsric.F90     |  116 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ srlib.h         |   18 ++++++++-
+ 8 files changed, 303 insertions(+), 47 deletions(-)
+
+commit fb569f60dfd333ceb6ba48348294ba39100f4569
+Author: chris <chris@ringeval.com>
+Date:   Thu Mar 8 19:21:45 2012 +0100
+
+    removing unsed use module
+
+ infpert.f90 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3bdbca8afe380dbabff15c47d70c9026e081aa30
+Author: chris <chris@ringeval.com>
+Date:   Thu Jan 12 16:31:59 2012 +0100
+
+    testing without -DPP12
+
+ Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d86e1eb3729fa30966fdc05c305caee3746c9318
+Author: chris <chris@ringeval.com>
+Date:   Thu Jan 12 16:15:55 2012 +0100
+
+    importing models kahmo2 and colwei
+
+ Makefile        |    2 +-
+ infbgmodel.F90  |   23 +++++++++++++++-
+ infmatter.F90   |   23 ++++++++++++++++
+ infpertmain.f90 |   10 +++----
+ infsric.F90     |   81 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ srlib.h         |    8 ++++++
+ 6 files changed, 138 insertions(+), 9 deletions(-)
+
+commit c272de3c185af26ffa0776c4f44fe9f2305e09b4
+Author: chris <chris@ringeval.com>
+Date:   Wed Jan 11 17:31:46 2012 +0100
+
+    Adding models SFI, LI and II
+
+ Makefile        |    3 ++-
+ infbgmodel.F90  |   38 ++++++++++++++++++++++++++++
+ infbounds.f90   |    5 ++++
+ infmatter.F90   |   40 ++++++++++++++++++++++++++++-
+ infpertmain.f90 |   12 ++++-----
+ infsric.F90     |   75 ++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ inftools.f90    |    5 ++--
+ srlib.h         |   14 ++++++++++-
+ 8 files changed, 177 insertions(+), 15 deletions(-)
+
+commit c10d98e1b81af06ccebf450c9b717007220cc37e
+Author: chris <chris@ringeval.com>
+Date:   Mon Dec 5 18:46:10 2011 +0100
+
+    Added hard-coded IC function for largef in case libsrmodels is off
+
+ infsric.F90 |   36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
+
+commit b5fef29e23c9d26ae9c6bf8907d0822cd92a62dc
+Author: chris <chris@ringeval.com>
+Date:   Fri Nov 18 11:34:17 2011 +0100
+
+    Importing khamod, hfline, powlaw models. Works agains srmodels 0.0.3
+
+ infbgmodel.F90  |  141 ++++++++++++++++++++++++++++++++++++++++++++-----------
+ infbounds.f90   |    4 ++
+ infmatter.F90   |  139 +++++++++++++++++++++++++++++++++++++++++++++---------
+ infpertmain.f90 |   23 +++++++--
+ infsric.F90     |  121 +++++++++++++++++++++++++++++++++++++++++++++++
+ inftools.f90    |    4 +-
+ srlib.h         |   41 ++++++++++++++++
+ 7 files changed, 416 insertions(+), 57 deletions(-)
+
+commit b840ac5c8986b5ec3a46512fa1d228f7e540623d
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 17 10:24:30 2011 +0100
+
+    Works against all models of srmodels 0.0.2
+
+ Makefile        |    4 +-
+ infbg.f90       |    4 +-
+ infbgmodel.F90  |  141 ++++++++++++++++++++++++++++++++++++++++----------
+ infmatter.F90   |  153 +++++++++++++++++++++++++++++++++++++++++++++++--------
+ infpertmain.f90 |   19 +++----
+ infsric.F90     |  153 +++++++++++++++++++++++++++++++++++++++++++++++++------
+ 6 files changed, 392 insertions(+), 82 deletions(-)
+
+commit dc48ab145ccfca28c6f67e965a14d88f5696cfe4
+Author: chris <chris@ringeval.com>
+Date:   Tue Nov 15 19:37:56 2011 +0100
+
+    Deep cleaning of the sources + optimizations (using compilation directives)
+
+ Makefile         |    7 +-
+ infbackmain.f90  |    9 +-
+ infbg.f90        |  512 ++----------------------------------------------------
+ infbgfunc.f90    |  214 +++++++++++++++++++++++
+ infbgmodel.F90   |  357 +++----------------------------------
+ infdilaton.f90   |   64 +++++++
+ infmatter.F90    |  315 +++++++++++++++++++++++++++++++++
+ infpert.f90      |   46 ++---
+ infpertmain.f90  |   11 +-
+ infpotential.f90 |  155 +++++++++++++++++
+ infprec.f90      |    3 +
+ infsigma.f90     |  209 ++++++++++++++++++++++
+ infsric.F90      |   87 ++++++----
+ inftorad.f90     |    2 +-
+ 14 files changed, 1091 insertions(+), 900 deletions(-)
+
+commit 488875bc060918a997fcf3ae0cd1038969632605
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 10 19:40:22 2011 +0100
+
+    No longer needs of special functions
+
+ Makefile       |    2 +-
+ hyper2F1.f90   | 1871 --------------------------------------------------------
+ specialinf.f90 |  541 ----------------
+ 3 files changed, 1 insertion(+), 2413 deletions(-)
+
+commit 9ac111a8ce1368355fd5ae2684d9ce90a55ccea8
+Author: chris <chris@ringeval.com>
+Date:   Tue Oct 18 11:22:15 2011 +0200
+
+    fix sr function names
+
+ infsric.F90 |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit 23327383e796becc8f22043d57d4e6829a7c8f0f
+Author: chris <chris@ringeval.com>
+Date:   Tue Oct 18 08:49:45 2011 +0200
+
+    sr modules and function changed in libsrmodels
+
+ infsric.F90 |   90 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 45 insertions(+), 45 deletions(-)
+
+commit b060b93aaa7ededc473bab38a3261d50b0c36693
+Author: chris <chris@ringeval.com>
+Date:   Mon Oct 17 12:14:16 2011 +0200
+
+    adding Mp in GeV for libsrmodels
+
+ cosmopar.f90 |    2 ++
+ 1 file changed, 2 insertions(+)
+
+commit d39118c86b838d57e3b09c4bb4a6402afa669d29
+Author: chris <chris@ringeval.com>
+Date:   Mon Oct 10 18:38:35 2011 +0200
+
+    can now call libsrmodels.so.0
+
+ Makefile        |   18 +++--
+ infbackmain.f90 |    2 +-
+ infbgmodel.F90  |    2 +-
+ infbounds.f90   |    2 +-
+ infpertmain.f90 |   15 ++--
+ infsric.F90     |  238 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ infsric.f90     |   61 --------------
+ 7 files changed, 260 insertions(+), 78 deletions(-)
+
+commit d09b6b1cca5959a977daac4cceb5ec423e8e51e1
+Author: chris <chris@ringeval.com>
+Date:   Tue Oct 4 17:15:36 2011 +0200
+
+    comment added
+
+ cosmopar.f90 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ef22ba15ca087adf5576cf9979366ece1e906a6d
+Author: chris <chris@ringeval.com>
+Date:   Mon Oct 3 18:55:42 2011 +0200
+
+    fixing missing symbols in cosmopar
+
+ cosmopar.f90 |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 04e843ccb9f994fc64bd0d421c2d12429ca717b5
+Author: chris <chris@ringeval.com>
+Date:   Fri Sep 30 15:11:54 2011 +0200
+
+    fixing old references to infsrmodel
+
+ Makefile        |    5 +++--
+ infbackmain.f90 |    2 +-
+ infbg.f90       |   36 ++++--------------------------------
+ 3 files changed, 8 insertions(+), 35 deletions(-)
+
+commit 89299018f97b07506daf081d6f0ecbfae7c3d695
+Author: chris <chris@ringeval.com>
+Date:   Fri Sep 30 15:10:26 2011 +0200
+
+    separating slow-roll ic from field theoretical bounds, infsrmodel removed
+
+ infbounds.f90  |   97 +++++
+ infsric.f90    |   61 +++
+ infsrmodel.F90 | 1212 --------------------------------------------------------
+ 3 files changed, 158 insertions(+), 1212 deletions(-)
+
+commit 5bdd9c59402da8eafd2acc0c156107f886d74303
+Author: chris <chris@ringeval.com>
+Date:   Fri Aug 5 13:38:01 2011 +0200
+
+    changes in README
+
+ README |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7679b3cf2794fbe0a01097644d46203696ce0302
+Author: chris <chris@ringeval.com>
+Date:   Fri Aug 5 10:30:17 2011 +0200
+
+    adding power_inf wrapper for camb
+
+ power_inf.f90 |  948 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 948 insertions(+)
+
+commit 92a880aa5e355f3ffc67a97fc4dbf81e148427ef
+Author: chris <chris@ringeval.com>
+Date:   Fri Aug 5 10:28:57 2011 +0200
+
+    Remove master Makefile
+
+ Makefile |   45 ---------------------------------------------
+ 1 file changed, 45 deletions(-)
+
+commit 7cb7d858130400b858e54ed7e0e992d65233f85d
+Author: chris <chris@ringeval.com>
+Date:   Fri Aug 5 10:21:08 2011 +0200
+
+    creating fieldinf branch for camb/cosmomc module
+
+ README          |   93 +++++++++++++++++++
+ infbackmain.f90 |  155 -------------------------------
+ infpertmain.f90 |  277 -------------------------------------------------------
+ 3 files changed, 93 insertions(+), 432 deletions(-)
+
+commit 7b2f13b6b28d2819da623f419b1ed8e357ebd01c
+Author: chris <chris@ringeval.com>
+Date:   Fri Aug 5 10:12:49 2011 +0200
+
+    move srevol.f90 to slowroll project
+
+ srevol.f90 |  698 ------------------------------------------------------------
+ 1 file changed, 698 deletions(-)
+
+commit b5bdc23a1e0da83b3258188361351e27428029d7
+Author: chris <chris@ringeval.com>
+Date:   Thu Aug 4 16:58:09 2011 +0200
+
+    initialising fields repository
+
+ Makefile         |   45 ++
+ binfspline.f90   |  524 +++++++++++++++
+ cosmopar.f90     |   18 +
+ hyper2F1.f90     | 1871 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ infbackmain.f90  |  155 +++++
+ infbg.f90        | 1582 +++++++++++++++++++++++++++++++++++++++++++++
+ infbgmodel.F90   |  691 ++++++++++++++++++++
+ infbgspline.f90  |  297 +++++++++
+ infinout.f90     |  367 +++++++++++
+ infpert.f90      | 1202 +++++++++++++++++++++++++++++++++++
+ infpertmain.f90  |  277 ++++++++
+ infpowspline.f90 |  292 +++++++++
+ infprec.f90      |   34 +
+ infsrmodel.F90   | 1212 +++++++++++++++++++++++++++++++++++
+ inftools.f90     | 1078 +++++++++++++++++++++++++++++++
+ inftools.h       |   11 +
+ inftorad.f90     |  515 +++++++++++++++
+ specialinf.f90   |  541 ++++++++++++++++
+ srevol.f90       |  698 ++++++++++++++++++++
+ 19 files changed, 11410 insertions(+)

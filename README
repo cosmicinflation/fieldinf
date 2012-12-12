@@ -1,0 +1,37 @@
+This package compiles and install FieldInf, a collection of fast
+modern fortran routines for integrating, out of any approximations,
+linear cosmological perturbations during inflation.
+
+As such, it provides an exact integration of the primordial power
+spectra, computed in a way which is consistent with the reheating, as
+well as various other background and perturbed quantities (check out
+the two example programs provided). Moreover, it supports libaspic and
+you can compare slow-roll versus exact predictions.
+
+The code is released as GNU software, you are free and welcome to
+improve this code and distribute the source code along the rules
+specified in COPYING.
+
+* Compilation and installation of the FieldInf library:
+  ./configure
+  make
+  make install
+  
+* Support for libaspic is provided by appending its installation path
+  to the configure script:
+  ./configure --with-aspic=/usr/local
+  make
+  make install
+
+  See INSTALL for more options.
+
+* Compilation of the tutorial programs (fieldmain and gurumain):
+  ./configure
+  make check
+
+* A basic and easily editable makefile is provided in the "src/"
+  directory to fastly compile the example programs locally:
+  make -f Makefile_noauto
+
+* Checkout the MAN pages for a complete documentation (TODO)
+  man fieldinf
