@@ -1,0 +1,4 @@
+* version 1.0.9
+
+- 8 new models tested and imported from libaspic
+  csi, oi, cnci, sbi, ssi, rmi, lpi, cndi, check ChangeLog

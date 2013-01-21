@@ -1,3 +1,32 @@
+commit 60e51aa16296f536b0eb583250a66b32ce84da7d
+Author: chris <chris@ringeval.com>
+Date:   Mon Jan 21 17:27:12 2013 +0100
+
+    importing 8 aspic models: csi, oi, cnci, sbi, ssi, rmi, lpi, cndi
+
+ Makefile.am         |    1 +
+ configure.ac        |    2 +-
+ src/Makefile.am     |    3 +-
+ src/infbg.f90       |    3 +-
+ src/infbgmodel.F90  |  204 ++++++++++++++++++---
+ src/infbgspline.f90 |   31 +++-
+ src/infbounds.f90   |   56 +++++-
+ src/infmatter.F90   |  200 +++++++++++++++++---
+ src/infprec.f90     |    4 +
+ src/infsric.F90     |  661 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/libaspic.h      |   40 +++-
+ 11 files changed, 1130 insertions(+), 75 deletions(-)
+
+commit ebad72b0ede31e27d878b328aa149ddf48f8ca24
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 12 19:37:47 2012 +0100
+
+    Editing ChangeLog and README
+
+ ChangeLog |  479 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ README    |   37 ++++++
+ 2 files changed, 516 insertions(+)
+
 commit 1b27862a405fdae135c074fc59279fb58fbc2ec3
 Author: chris <chris@ringeval.com>
 Date:   Wed Dec 12 18:52:18 2012 +0100
