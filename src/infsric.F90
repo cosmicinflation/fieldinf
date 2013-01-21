@@ -726,14 +726,14 @@ contains
 
 
   function twi_initial_field(infParam,efold)
-    use twisr, only : twi_x_trajectory, twi_x_endsr,phi0eps1
+    use twisr, only : twi_x_trajectory, twi_x_epstwounity,phi0eps1
     implicit none
     real(kp), dimension(matterNum) :: twi_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), dimension(2) :: fieldStop
     real(kp), intent(in) :: efold
 
-    real(kp) :: mu, xEnd, xIni, xEps, bfold
+    real(kp) :: mu, xEnd, xIni, xEpsTwo, bfold
 
     bfold = -efold
    
@@ -743,13 +743,13 @@ contains
 
     xEnd = fieldStop(1)
     if (mu.lt.phi0eps1) then
-       xEps = twi_x_endsr(mu)
-       if (xEnd.lt.xEps) then
+       xEpsTwo = twi_x_epstwounity(mu)
+       if (xEnd.lt.xEpsTwo) then
           write(*,*) 'twi_initial_field: xEnd is in slow-roll violation region'
        endif
     endif
 
-    if (display) write(*,*)'twi_initial_field: xend= ',xEnd,xEps
+    if (display) write(*,*)'twi_initial_field: xend= ',xEnd,xEpsTwo
 
     xIni = twi_x_trajectory(bfold,xEnd,mu)
 
