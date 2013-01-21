@@ -34,8 +34,7 @@ contains
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
        
-    case ('runmas')
-
+    case ('grunma')
        field_stopinf(1) = infParam%consts(matterParamNum)
 !for nu>0
        if (infParam%consts(matterParamNum).lt.infParam%consts(3)) then
@@ -48,6 +47,38 @@ contains
           field_stopinf(2) = -field_stopinf(2)
        endif
 
+    case ('runma1')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = -1._kp
+       
+       if (field_stopinf(1).gt.infParam%consts(3)) then
+          stop 'field_stopinf: runmass 1 should have phiend < mu!'
+       endif
+
+    case ('runma2')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
+       
+       if (field_stopinf(1).lt.infParam%consts(3)) then
+          stop 'field_stopinf: runmass 2 should have phiend > mu!'
+       endif
+
+    case ('runma3')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
+       
+       if (field_stopinf(1).gt.infParam%consts(3)) then
+          stop 'field_stopinf: runmass 3 should have phiend < mu!'
+       endif
+       
+    case ('runma4')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = -1._kp
+       
+       if (field_stopinf(1).lt.infParam%consts(3)) then
+          stop 'field_stopinf: runmass 4 should have phiend > mu!'
+       endif
+
     case ('kklmmt')
        field_stopinf(1) = infParam%consts(matterParamNum)*infParam%consts(3)
        field_stopinf(2) = -1._kp
@@ -57,40 +88,49 @@ contains
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
 
-
     case ('powlaw')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
-
 
     case ('interm')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
 
-
     case ('twisti')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
     
-
     case ('logmd2')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
 
-
     case ('ricci2')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
-
 
     case ('bsusyb')
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
 
     case ('dysusy')
-
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
+
+    case ('nszero')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = -1._kp
+
+    case ('fixnsc')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
+
+    case ('fixnsd')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = -1._kp
+
+    case default
+       write(*,*)'model name: ',infParam%name
+       stop 'field_stopinf: no such a model'
 
     end select
 

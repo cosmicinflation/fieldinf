@@ -256,42 +256,45 @@ contains
        matterParam(5) = 1._kp
 
 
-    case ('runmas')
+    case ('grunma','runma1','runma2','runma3','runma4')
 
 ! U = c1^4 { 1 + c4[1/c2 - ln(F/c3)] F^c2 }
 
 !fieldstop value required (checkout infbounds.f90)
 
        badParams = ((infParam%consts(3).le.0._kp).or.(infParam%consts(3).gt.1._kp) &
-            .or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(1).le.0._kp))
+
+       badParams = badParams.or. ( &
+            (infParam%name.ne.'grunma').and.(infParam%consts(2).ne.2._kp) )
+       badParams = badParams .or. ( &
+            (infParam%name.eq.'runma1').and.(infParam%consts(4).le.0._kp) )
+       badParams = badParams .or. ( &
+            (infParam%name.eq.'runma2').and.(infParam%consts(4).le.0._kp) )
+       badParams = badParams .or. ( &
+            (infParam%name.eq.'runma3').and.(infParam%consts(4).ge.0._kp) )
+       badParams = badParams .or. ( &
+            (infParam%name.eq.'runma4').and.(infParam%consts(4).ge.0._kp) )
+
        
        if  (badParams) then
           write(*,*)'model name: ',infParam%name
           write(*,*)'consts = ',infParam%consts(1:4)
-          stop 'running mass: improper params'
+          stop '(generalized) running mass: improper params'
        endif
-       
-       kpbuffer = infParam%consts(4)/infParam%consts(2) &
-               + infParam%consts(4)*log(infParam%consts(3))
-       matterParam(1) = infParam%consts(1)*kpbuffer**0.25_kp
 
+
+       kpbuffer = infParam%consts(4)*(1._kp/infParam%consts(2) &
+            + log(infParam%consts(3)))
+       matterParam(1) = infParam%consts(1) * sign(abs(kpbuffer)**0.25_kp,kpbuffer)
        matterParam(2) = infParam%consts(2)
        matterParam(3) = infParam%consts(1)
 
-       kpbuffer = infParam%consts(4)
-       matterParam(4) = -infParam%consts(1)*kpbuffer**0.25_kp
-       
-       matterParam(1) = infParam%consts(1) * sign(abs(kpbuffer)**0.25,kpbuffer)
-
-       kpbuffer = infParam%consts(4)
-       matterParam(4) = - infParam%consts(1) * sign(abs(kpbuffer)**0.25,kpbuffer)
-
+       matterParam(4) = -infParam%consts(1) &
+            * sign(abs(infParam%consts(4))**0.25_kp,infParam%consts(4))
+     
        matterParam(5) = 1._kp
-
-
        
-
 
     case('kklmmt')
 
@@ -445,7 +448,64 @@ contains
        matterParam(1) = infParam%consts(2)**0.25_kp * matterParam(3)
 
 
+    case ('nszero')
+!U = c1^4 / [1 - c2 F]^2
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
+       
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'constant spectrum inflation: improper params'
+       endif
+
+       matterParam(5) = -2._kp
+       matterParam(4) = 0._kp
+       matterParam(3) = 1._kp/sqrt(infParam%consts(1))
+       matterParam(2) = 1._kp
+       matterParam(1) = - infParam%consts(2)**0.25_kp * matterParam(3)
+
+
+    case ('sugrab')
+!U = c1^4 [ 1 + F^4 (c3 ln F - c2) ]
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
+       badParams = badParams.or.(infParam%consts(3).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'supergravity brane inflation: improper params'
+       endif
+       
+       matterParam(5) = 1._kp
+       matterParam(4) = infParam%consts(1) * infParam%consts(3)**0.25_kp
+       matterParam(3) = infParam%consts(1)
+       matterParam(2) = 4._kp
+       matterParam(1) = - infParam%consts(1) * infParam%consts(2)**0.25_kp
+
+    case ('logpot','logpo1','logpo2','logpo3')
+!U = c1^4 (F/c3)^c2 [ln(F/c3)]^c4
+
+       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp)
+
+       badParams = badParams.or.( &
+            (infParam%name.eq.'logpo2').and.(modulo(infParam%consts(4),2._kp).ne.0._kp))
+       badParams = badParams.or.( &
+            (infParam%name.eq.'logpo3').and.(modulo(infParam%consts(4),2._kp).ne.0._kp))
+
+       matterParam(5) = infParam%consts(4)
+       matterParam(4) = (infParam%consts(1) &
+            /infParam%consts(3)**(infParam%consts(2)*0.25_kp))**(1._kp/infParam%consts(4))
+       matterParam(3) = 0._kp
+       matterParam(2) = infParam%consts(2)/infParam%consts(4)
+       matterParam(1) = -sign(abs(log(infParam%consts(3)))**0.25_kp,log(infParam%consts(3))) &
+            * (infParam%consts(1)/infParam%consts(3)**(infParam%consts(2)*0.25_kp)) &
+            **(1._kp/infParam%consts(4))
+
+
 #ifndef PP5
+
 
     case ('gmixlf')
 ! U = c1^4 F^c2 [1 + c3 F^c4]
@@ -655,13 +715,13 @@ contains
        matterParam(12) = 2._kp
 
 
-       case ('nckahi')
+    case ('nckahi')
 !U = c1^4 [ 1 + c2 ln F + c3 F^2 ]
 
-          badParams = ((infParam%consts(1).le.0._kp) &
-               .or.(infParam%consts(2).le.0._kp))
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).le.0._kp))
 
-        if (badParams) then          
+       if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
           stop 'non-canonical Kahler inflation: improper params'
@@ -677,6 +737,67 @@ contains
        matterParam(12) = 2._kp
 
 
+    case ('oifold')
+!U = c1^4 (F/c3)^4 [ c2 ln^2(F/c3) - 1 ]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.infParam%consts(2).le.0._kp)
+       badParams = badParams.or.(infParam%consts(3).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'orientifold inflation: improper params'
+       endif
+
+       matterParam(12) = 4._kp
+       matterParam(7:11) = 0._kp
+       matterParam(6) = -infParam%consts(1)/infParam%consts(3)
+       matterParam(5) = 2._kp
+       matterParam(4) = sqrt(infParam%consts(1)/infParam%consts(3)) &
+            * infParam%consts(2)**0.125_kp            
+       matterParam(3) = 0._kp
+       matterParam(2) = 2._kp
+       matterParam(1) = -sqrt(infParam%consts(1)/infParam%consts(3)) &
+            * (sqrt(infParam%consts(3)) * log(infParam%consts(3)))**0.25_kp
+
+    case ('sneusy','sneus1','sneus2','sneus3','sneus4','sneus5','sneus6')
+!U = c1^4 [1 + alpha F^2 + beta F^4 ]
+
+       badParams = (infParam%consts(1).le.0._kp)
+
+       badParams = badParams.or. ( (infparam%name.eq.'sneus1').and.(.not.( &
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).gt.0._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'sneus2').and.(.not.( &
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).lt.0._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'sneus3').and.(.not.( &
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'sneus4').and.(.not.( &
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'sneus5').and.(.not.( &
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).gt.0._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'sneus6').and.(.not.( &
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).gt.0._kp))))
+       
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'sneutrino susy inflation: improper params'
+       endif
+
+
+       matterParam(12) = 4._kp
+       matterParam(7:11) = 0._kp
+       matterParam(6) = infParam%consts(1) &
+            * sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
+       matterParam(5) = 1._kp
+       matterParam(4) = 0._kp
+       matterParam(3) = infParam%consts(1)
+       matterParam(2) = 2._kp
+       matterParam(1) = infParam%consts(1) &
+            * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
+
+       
 #ifndef PP12
 
     case ('kahmod')
@@ -733,7 +854,7 @@ contains
        matterParam(17) = -2._kp*infParam%consts(2)
        matterParam(18) = 1._kp
 
-    case ('logmd1','logmd2')
+    case ('logmdi','logmd1','logmd2')
 !U = c1^4 F^c2 exp(-c3 F^c4) with c2 = 4*(1-c4)
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp) &
@@ -919,9 +1040,13 @@ contains
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)      
 
-    case ('fixnsa','fixnsb')
-!U = c1^4 {3 - (3 + 3 alpha^2) tanh^2[alpha F/sqrt(2)] }
-!U = c1^4 {-3 + (3 - 3 alpha^2) tan^2[alpha F/sqrt(2)] }
+    case ('fixnsa','fixnsb','fixnsc')
+!U = c1^4 {3 - (3 + 3 c2^2) tanh^2[c2 F/sqrt(2)] }
+!U = c1^4 {-3 + (3 - 3 c2^2) tan^2[c2 F/sqrt(2)] }
+
+!U = c1^4 {-3 + (3 + alpha^2) /tanh^2[c2 F/sqrt(2)] }
+!fieldstop value required (checkout infbounds.f90)
+
 
        badParams = ((infParam%consts(1).le.0._kp) &
             .or. (infParam%consts(2).le.0._kp))
@@ -934,6 +1059,33 @@ contains
 
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)
+
+    
+    case ('fixnsd')
+!U = c1^4 / [ 1 + c3 cos(c2 F) ]^2
+!fieldstop value required (checkout infbounds.f90)
+
+       badParams =  ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'Constant ns inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+       matterParam(3) = infParam%consts(3)
+
+
+    case ('f-term')
+!2 params kappa and M
+       
+       matterParam(1) = 1._kp
+       matterParam(2) = infParam%consts(2)
+       matterParam(5) = infParam%consts(3)
 
 
 #endif

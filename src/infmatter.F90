@@ -1,5 +1,5 @@
 module infmatter
-  use infprec, only : kp, lenshort
+  use infprec, only : kp, lenshort, pi
 #if defined (PPNAME) && !defined (NOASPIC)
   include 'libaspic.h'
 #endif
@@ -68,6 +68,7 @@ module infmatter
 !some more easy to use alias for PPNAME
   real(kp), save :: alpha, beta, gam, lambda ,p, q, mu, nu, M4
 
+  real(kp) :: M, kappa, phic
  
   public potParamNum, matterNum
 
@@ -162,6 +163,30 @@ contains
           p = -potParam(2)
           mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
 
+       case ('nszero')
+          M4= 1._kp/potParam(3)**2
+          alpha = - potParam(1)/potParam(3)
+          
+       case ('sugrab')
+          M4 = potParam(3)
+          alpha = -potParam(1)/potParam(3)
+          beta = potParam(4)/potParam(3)
+
+       case ('runmas','runma1','runma2','runma3','runma4')
+          M4 = potParam(3)          
+          nu = -potParam(4)/potParam(3)
+          mu = exp(-potParam(1)/potParam(4) - 1._kp/2._kp)
+          potName = 'runmas'
+
+
+       case ('logpot','logpo1','logpo2','logpo3')
+          q = potParam(5)
+          p = potParam(2)*potParam(5)
+          mu = exp(-potParam(1)/potParam(4))
+          M4 = potParam(4)**potParam(5) &
+               * exp(-potParam(1)/potParam(4)*potParam(2)*potParam(5))
+          potName = 'logpot'
+
 #ifndef PP5
        case ('gmixlf')
           M4 = potParam(1)
@@ -206,6 +231,16 @@ contains
           alpha = potParam(4)/potParam(3)
           beta = potParam(6)/potParam(3)
 
+       case ('oifold')
+          mu = exp(-potParam(1)/potParam(4))
+          M4 = -potParam(6) * exp(-4*potParam(1)/potParam(4))
+          alpha = -potParam(4)**2/potParam(6) 
+
+       case ('sneusy','sneus1','sneus2','sneus3','sneus4','sneus5','sneus6')
+          M4 = potParam(3)
+          alpha = potParam(1)/potParam(3)
+          beta = potParam(6)/potParam(3)
+          potName='sneusy'
 
 #ifndef PP12
        case ('kahmod')
@@ -221,11 +256,12 @@ contains
        case ('higgsi')
           M4 = potParam(3)
 
-       case ('logmd1','logmd2')
+       case ('logmdi','logmd1','logmd2')
           M4 = potParam(15)
           alpha = potParam(16)
           beta = -potParam(17)
           gam = potParam(18)
+          potName = 'logmdi'
 
        case ('nmssmi','gmssmi','rinfpt')
           M4 = potParam(1)
@@ -264,17 +300,29 @@ contains
           M4 = potParam(1)
           mu = potParam(2)
 
-       case ('fixnsa','fixnsb')
+       case ('fixnsa','fixnsb','fixnsc')
           M4 = potParam(1)
           alpha = potParam(2)
+
+       case ('fixnsd')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          beta = potParam(3)**0.25_kp
+
+!       case ('f-term')
+!          M4 = potParam(1)
+!          kappa = potParam(2)
+!          mu = potParam(5)
+!          lambda = kappa**2  * mu**4
+!          phic = sqrt(2._kp) * mu
+!          M = 2._kp * mu
+          
 
        case default
 
           stop 'set_potential_param: not such a model'
 
        end select
-
-
 
 
 
@@ -296,7 +344,13 @@ contains
 
     real(kp) :: chi,lnchi
 
+!    real(kp) :: phi,psi
+
     chi = matter(1)
+    
+!    phi = matter(1)
+!    psi=  matter(2)
+
 
 #ifndef PPNAME
 
@@ -386,11 +440,8 @@ contains
        case ('mhitop')
           matter_potential = mhi_norm_potential(chi/mu)
 
-       case ('logmd1')
-          matter_potential = lmi1_norm_potential(chi,gam,beta)
-
-       case ('logmd2')
-          matter_potential = lmi2_norm_potential(chi,gam,beta)
+       case ('logmdi')
+          matter_potential = lmi_norm_potential(chi,gam,beta)
 
        case ('ricci1')
           matter_potential = rpi1_norm_potential(chi/q,p)
@@ -440,6 +491,35 @@ contains
        case ('fixnsb')
           matter_potential = cnbi_norm_potential(chi,alpha)
 
+       case ('fixnsc')
+          matter_potential = cnci_norm_potential(chi,alpha)
+
+       case ('fixnsd')
+          matter_potential = cndi_norm_potential(chi,alpha,beta)
+
+       case ('nszero')
+          matter_potential = csi_norm_potential(chi,alpha)
+
+       case ('oifold')
+          matter_potential = oi_norm_potential(chi/mu,alpha,mu)
+          
+       case ('sugrab')
+          matter_potential = sbi_norm_potential(chi,alpha,beta)
+
+       case ('sneusy')
+          matter_potential = ssi_norm_potential(chi,alpha,beta)
+
+       case ('runmas')
+          matter_potential = rmi_norm_potential(chi/mu,2._kp*nu,mu)
+
+       case ('logpot')
+          matter_potential = lpi_norm_potential(chi/mu,p,q)
+
+!       case ('f-term')
+!          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
+!               + 2._kp * phi**2 * psi**2 / M**2 / phic**2 &
+!               + 16._kp * lambda / M**4 * log(2._kp)/ (4._kp * Pi**2 * phic) * phi) 
+
        case default
           write(*,*)'name is ',potName
           stop 'matter_potential: model not found!'
@@ -451,8 +531,7 @@ contains
 #else
     stop 'matter_potential: FieldInf not built agains libsrmodels!'
 #endif
-
-
+   
     if (matter_potential.lt.0._kp) then
        write(*,*)'matterField = ',chi
        write(*,*)'potParam = ',potParam
@@ -470,7 +549,13 @@ contains
 
     real(kp) :: chi, lnchi, expchi, expchi2
 
+!    real(kp) :: phi,psi
+
     chi = matter(1)
+
+!    phi = matter(1)
+!    psi= matter(2)
+
 
 #ifndef PPNAME
        
@@ -569,11 +654,8 @@ contains
        case ('mhitop')
           deriv_matter_potential(1) = mhi_norm_deriv_potential(chi/mu)/mu
 
-       case ('logmd1')
-          deriv_matter_potential(1) = lmi1_norm_deriv_potential(chi,gam,beta)
-
-       case ('logmd2')
-          deriv_matter_potential(1) = lmi2_norm_deriv_potential(chi,gam,beta)
+       case ('logmdi')
+          deriv_matter_potential(1) = lmi_norm_deriv_potential(chi,gam,beta)
 
        case ('ricci1')
           deriv_matter_potential(1) = rpi1_norm_deriv_potential(chi/q,p)/q
@@ -623,6 +705,36 @@ contains
        case ('fixnsb')
           deriv_matter_potential(1) = cnbi_norm_deriv_potential(chi,alpha)
 
+       case ('fixnsc')
+          deriv_matter_potential(1) = cnci_norm_deriv_potential(chi,alpha)
+
+       case ('fixnsd')
+          deriv_matter_potential(1) = cndi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('nszero')
+          deriv_matter_potential(1) = csi_norm_deriv_potential(chi,alpha)
+
+       case ('oifold')
+          deriv_matter_potential(1) = oi_norm_deriv_potential(chi/mu,alpha)/mu
+          
+       case ('sugrab')
+          deriv_matter_potential(1) = sbi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('sneusy')
+          deriv_matter_potential(1) = ssi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('runmas')
+          deriv_matter_potential(1) = rmi_norm_deriv_potential(chi/mu,2._kp*nu,mu)/mu
+
+       case ('logpot')
+          deriv_matter_potential(1) = lpi_norm_deriv_potential(chi/mu,p,q)/mu
+
+!       case ('f-term')
+!          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
+!               / (4._kp * Pi**2 * phic)+ 4._kp * phi *psi**2 / M**2 / phic**2 )
+!          deriv_matter_potential(2) = lambda*(- 4._kp * (1._kp - psi**2 / M**2 ) &
+!               * psi / M**2 +4._kp * psi * phi**2 / M**2 / phic**2 ) 
+
        case default
           write(*,*)'name is ',potName
           stop 'deriv_matter_potential: model not found!'
@@ -646,8 +758,14 @@ contains
 
     real(kp) :: chi, lnchi, expchi, expchi2, coschi
 
+!    real(kp) :: phi, psi
+
     chi = matter(1)
-   
+    
+!    phi = matter(1)
+!    psi = matter(2)
+
+
 #ifndef PPNAME
      
     if (chi.gt.0._kp) then
@@ -759,11 +877,8 @@ contains
        case ('mhitop')
           deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu)/mu/mu
 
-       case ('logmd1')
-          deriv_second_matter_potential(1,1) = lmi1_norm_deriv_second_potential(chi,gam,beta)
-
-       case ('logmd2')
-          deriv_second_matter_potential(1,1) = lmi2_norm_deriv_second_potential(chi,gam,beta)
+       case ('logmdi')
+          deriv_second_matter_potential(1,1) = lmi_norm_deriv_second_potential(chi,gam,beta)
 
        case ('ricci1')
           deriv_second_matter_potential(1,1) = rpi1_norm_deriv_second_potential(chi/q,p)/q/q
@@ -793,7 +908,8 @@ contains
           deriv_second_matter_potential(1,1) = ti_norm_deriv_second_potential(chi/mu,alpha)/mu/mu
 
        case ('psenat')
-          deriv_second_matter_potential(1,1) = psni_norm_deriv_second_potential(chi/mu,alpha)/mu/mu
+          deriv_second_matter_potential(1,1) = psni_norm_deriv_second_potential(chi/mu &
+               ,alpha)/mu/mu
 
        case ('nckahi')
           deriv_second_matter_potential(1,1) = ncki_norm_deriv_second_potential(chi,alpha,beta)
@@ -813,6 +929,40 @@ contains
        case ('fixnsb')
           deriv_second_matter_potential(1,1) = cnbi_norm_deriv_second_potential(chi,alpha)
 
+       case ('fixnsc')
+          deriv_second_matter_potential(1,1) = cnci_norm_deriv_second_potential(chi,alpha)
+
+       case ('fixnsd')
+          deriv_second_matter_potential(1,1) = cndi_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('nszero')
+          deriv_second_matter_potential(1,1) = csi_norm_deriv_second_potential(chi,alpha)
+
+       case ('oifold')
+          deriv_second_matter_potential(1,1) = oi_norm_deriv_second_potential(chi/mu &
+               ,alpha)/mu/mu
+
+       case ('sugrab')
+          deriv_second_matter_potential(1,1) = sbi_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('sneusy')
+          deriv_second_matter_potential(1,1) = ssi_norm_deriv_second_potential(chi,alpha,beta)
+
+       case ('runmas')
+          deriv_second_matter_potential(1,1) = rmi_norm_deriv_second_potential(chi/mu &
+               ,2._kp*nu,mu)/mu/mu
+
+       case ('logpot')
+          deriv_second_matter_potential(1,1) = lpi_norm_deriv_second_potential(chi/mu,p,q)/mu/mu
+
+!       case ('f-term')
+!          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
+!          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 
+!          deriv_second_matter_potential(2,1) = lambda * 8. * phi * psi / M**2 / phic**2 
+!          deriv_second_matter_potential(2,2) = lambda*(- 4. * (1. - psi**2 / M**2 )  &
+!               / M**2  + 8. * psi**2 / M**4  + 4. * phi**2 / M**2 / phic**2 ) 
+
+
        case default
           write(*,*)'name is ',potName
           stop 'deriv_second_matter_potential: model not found!'
@@ -824,7 +974,7 @@ contains
 #else
     stop 'deriv_second_matter_potential: FieldInf not built agains libsrmodels!'
 #endif
- 
+
 
   end function deriv_second_matter_potential
 

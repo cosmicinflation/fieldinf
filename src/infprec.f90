@@ -3,6 +3,7 @@ module infprec
 
   public
 
+
 !quad precision
 !  integer, parameter :: kp = kind(1.0_16)
 
@@ -17,6 +18,9 @@ module infprec
 
 !default length for short strings
   integer, parameter :: lenshort = 6
+
+!pi
+  real(kp), parameter :: pi = 3.141592653589793238_kp
 
 !workaround for passing argument to old f77 functions. Only pointer
 !can be deferred shape in derived data type.

@@ -8,7 +8,7 @@ version_info="0:0:0"
 AC_SUBST(version_info)
 
 
-FCFLAGS=" -O -fopenmp -DPPNAME"
+FCFLAGS=" -O -fopenmp -DPPNAME "
 
 FIINCDIR="fieldinf"
 AC_SUBST([FIINCDIR])

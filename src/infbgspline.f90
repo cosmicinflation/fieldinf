@@ -33,14 +33,14 @@ module infbgspline
   integer, save :: bcoefNum
   integer, save :: splineNum
   real(kp), dimension(:), allocatable, save :: bfoldKnot, epsilon1JFBcoef
-  real(kp), dimension(:), allocatable, save :: hubbleBcoef, epsilon1Bcoef
+  real(kp), dimension(:), allocatable, save :: hubbleBcoef, epsilon1Bcoef, epsilon2Bcoef
   real(kp), dimension(:,:), allocatable, save :: fieldBcoef, fieldDotBcoef
 
   
 
   public free_infbg_spline,set_infbg_spline, check_infbg_spline
   public splineval_hubble_parameter,splineval_epsilon1,splineval_epsilon1JF
-  public splineval_field,splineval_fielddot
+  public splineval_epsilon2,splineval_field,splineval_fielddot
 
 contains
 
@@ -54,6 +54,7 @@ contains
          .or. allocated(epsilon1JFBcoef) &
          .or. allocated(hubbleBcoef) &
          .or. allocated(epsilon1Bcoef) &
+         .or. allocated(epsilon2Bcoef) &
          .or. allocated(fieldBcoef) &
          .or. allocated(fieldDotBcoef))
     
@@ -68,6 +69,7 @@ contains
        deallocate(bfoldKnot)
        deallocate(hubbleBcoef)
        deallocate(epsilon1Bcoef)
+       deallocate(epsilon2Bcoef)
        deallocate(epsilon1JFBcoef)
        deallocate(fieldBcoef)
        deallocate(fieldDotBcoef)       
@@ -99,7 +101,7 @@ contains
 
 !the background computation need to go further than epsilon1 > 1 (spline).
     real(kp), allocatable, dimension(:) :: bcoefTemp, dataTemp
-    real(kp), allocatable, dimension(:) :: bfold, hubble, epsilon1,epsilon1JF
+    real(kp), allocatable, dimension(:) :: bfold, hubble, epsilon1, epsilon2, epsilon1JF
     real(kp), allocatable, dimension(:,:) :: field, fieldDot
 
     i = 0
@@ -109,6 +111,9 @@ contains
        stop 'set_infbg_spline: splineBg already associated'
     endif
     
+    if (.not.associated(ptrFirstBgData)) then
+       stop 'set_infbg_spline: no data found!'
+    endif
 
     bgdataNum = count_infbg_data(ptrFirstBgdata)
     if (display) then
@@ -124,6 +129,7 @@ contains
     allocate(bfold(bgdataNum))
     allocate(hubble(bgdataNum))
     allocate(epsilon1(bgdataNum))
+    allocate(epsilon2(bgdataNum))
     allocate(epsilon1JF(bgdataNum))
     allocate(field(bgdataNum,fieldNum))
     allocate(fieldDot(bgdataNum,fieldNum))
@@ -131,6 +137,7 @@ contains
     allocate(bfoldKnot(bgdataNum + order))
     allocate(hubbleBcoef(bcoefNum))
     allocate(epsilon1Bcoef(bcoefNum))
+    allocate(epsilon2Bcoef(bcoefNum))
     allocate(epsilon1JFBcoef(bcoefNum))
     allocate(fieldBcoef(bcoefNum,splineNum))
     allocate(fieldDotBcoef(bcoefNum,splineNum))
@@ -144,6 +151,7 @@ contains
           if (bfold(i).eq.0.) bfold(i) = epsilon(1.0_kp)
           hubble(i) = ptrRun%bg%hubble
           epsilon1(i) = ptrRun%bg%epsilon1
+          epsilon2(i) = ptrRun%bg%epsilon2
           epsilon1JF(i) = ptrRun%bg%epsilon1JF
           field(i,:) = ptrRun%bg%field(:)
           fieldDot(i,:) = ptrRun%bg%fieldDot(:)
@@ -170,6 +178,8 @@ contains
          ,hubbleBcoef)
     call dbsint(bgdataNum,bfold,epsilon1,order,bfoldKnot &
          ,epsilon1Bcoef)
+    call dbsint(bgdataNum,bfold,epsilon2,order,bfoldKnot &
+         ,epsilon2Bcoef)
     call dbsint(bgdataNum,bfold,epsilon1JF,order,bfoldKnot &
          ,epsilon1JFBcoef)
 
@@ -189,7 +199,7 @@ contains
     deallocate(bcoefTemp)
     deallocate(dataTemp)
 
-    deallocate(bfold,hubble,epsilon1,epsilon1JF,field,fieldDot)
+    deallocate(bfold,hubble,epsilon1,epsilon2,epsilon1JF,field,fieldDot)
 
   end subroutine set_infbg_spline
 
@@ -224,6 +234,19 @@ contains
          ,bcoefNum,epsilon1Bcoef)
    
   end function splineval_epsilon1
+
+  
+  function splineval_epsilon2(bfold)   
+    use bspline
+    implicit none
+       
+    real(kp) :: splineval_epsilon2   
+    real(kp), intent(in) :: bfold
+        
+    splineval_epsilon2 = dbsval(bfold,order,bfoldKnot &
+         ,bcoefNum,epsilon2Bcoef)
+   
+  end function splineval_epsilon2
 
 
 

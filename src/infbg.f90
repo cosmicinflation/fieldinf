@@ -175,6 +175,7 @@ contains
        infIni%field(1:matterNum) = slowroll_initial_matter(infParam)
     endif
 
+!this starts on the attractor
     infIni%fieldDot &
          = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
 
@@ -334,7 +335,7 @@ contains
 !Physics says in JF, but both are the same up to 2% when the dilaton coupling are set to 1
 !Today dilaton couplings are 0.01 maxi, and they are constant or null in our model.
 !Integration stops when epsilon1(useJF or not) > epsilon1Stop
-    real(kp), parameter :: epsilon1Stop = 1
+    real(kp), parameter :: epsilon1Stop = 1._kp
     logical, parameter :: useEpsilon1JF = .false.
 
 !zbrent accuracy on efoldEnd for which epsilon=epsilon1Stop

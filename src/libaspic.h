@@ -77,11 +77,8 @@
   use mhisr, only : mhi_norm_deriv_second_potential
 
 !logamediate inflation
-  use lmi1sr, only : lmi1_norm_potential, lmi1_norm_deriv_potential
-  use lmi1sr, only : lmi1_norm_deriv_second_potential
-
-  use lmi2sr, only : lmi2_norm_potential, lmi2_norm_deriv_potential
-  use lmi2sr, only : lmi2_norm_deriv_second_potential
+  use lmicommon, only : lmi_norm_potential, lmi_norm_deriv_potential
+  use lmicommon, only : lmi_norm_deriv_second_potential
 
 !R + R^p inflation
   use rpi1sr, only : rpi1_norm_potential, rpi1_norm_deriv_potential
@@ -138,9 +135,40 @@
   use aisr, only : ai_norm_potential, ai_norm_deriv_potential
   use aisr, only : ai_norm_deriv_second_potential
 
-!constant ns inflation a and b
+!constant ns inflation a, b, c and d
   use cnaisr, only : cnai_norm_potential, cnai_norm_deriv_potential
   use cnaisr, only : cnai_norm_deriv_second_potential
 
   use cnbisr, only : cnbi_norm_potential, cnbi_norm_deriv_potential
   use cnbisr, only : cnbi_norm_deriv_second_potential
+
+  use cncisr, only : cnci_norm_potential, cnci_norm_deriv_potential
+  use cncisr, only : cnci_norm_deriv_second_potential
+
+  use cndisr, only : cndi_norm_potential, cndi_norm_deriv_potential
+  use cndisr, only : cndi_norm_deriv_second_potential
+
+!constant spectrum inflation
+  use csisr, only : csi_norm_potential, csi_norm_deriv_potential
+  use csisr, only : csi_norm_deriv_second_potential
+
+!orientifold inflation
+  use oisr, only : oi_norm_potential, oi_norm_deriv_potential
+  use oisr, only : oi_norm_deriv_second_potential
+
+!supergravity brane inflation
+  use sbisr, only : sbi_norm_potential, sbi_norm_deriv_potential
+  use sbisr, only : sbi_norm_deriv_second_potential
+
+!sneutrino supersymmetric inflation
+  use ssicommon, only : ssi_norm_potential, ssi_norm_deriv_potential
+  use ssicommon, only : ssi_norm_deriv_second_potential
+
+!running mass inflation
+  use rmicommon, only : rmi_norm_potential, rmi_norm_deriv_potential
+  use rmicommon, only : rmi_norm_deriv_second_potential
+
+!lograithmic potential inflation
+  use lpicommon, only : lpi_norm_potential, lpi_norm_deriv_potential
+  use lpicommon, only : lpi_norm_deriv_second_potential
+
