@@ -1,3 +1,22 @@
+commit 947f54d6f047f0373d5ae6cd8b5e7f6fcf607c27
+Author: chris <chris@ringeval.com>
+Date:   Mon Jan 21 17:39:54 2013 +0100
+
+    Fix aspic API changes for twi
+
+ src/infsric.F90 |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 6c0891d5139e2ac0d5c509a726b8c604513a7180
+Author: chris <chris@ringeval.com>
+Date:   Mon Jan 21 17:31:43 2013 +0100
+
+    version 1.0.9
+
+ ChangeLog |   29 +++++++++++++++++++++++++++++
+ NEWS      |    4 ++++
+ 2 files changed, 33 insertions(+)
+
 commit 60e51aa16296f536b0eb583250a66b32ce84da7d
 Author: chris <chris@ringeval.com>
 Date:   Mon Jan 21 17:27:12 2013 +0100
