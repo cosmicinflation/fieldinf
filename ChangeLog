@@ -1,3 +1,26 @@
+commit fb5b592b2941f04de08475c1452d488ab4a2139d
+Author: chris <chris@ringeval.com>
+Date:   Tue Feb 26 10:56:20 2013 +0100
+
+    Update cwi,pni,mni,oi,mssmi
+
+ src/infbg.f90      |    2 +-
+ src/infbgmodel.F90 |   89 ++++++++++++++++++----------------
+ src/infmatter.F90  |   80 ++++++++++++++----------------
+ src/infsric.F90    |  236 +++++++++++++++++++++++++++++++++++++++--------------------------------------------------
+ src/libaspic.h     |   16 +++---
+ 5 files changed, 195 insertions(+), 228 deletions(-)
+
+commit a6fb325dc2c028f2d5d543ce2f2cd35b9d27292d
+Author: chris <chris@ringeval.com>
+Date:   Mon Jan 21 17:41:02 2013 +0100
+
+    Edit Changelog
+
+ ChangeLog |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+	
 commit 947f54d6f047f0373d5ae6cd8b5e7f6fcf607c27
 Author: chris <chris@ringeval.com>
 Date:   Mon Jan 21 17:39:54 2013 +0100
