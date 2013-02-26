@@ -16,13 +16,9 @@
   use rcqisr, only : rcqi_norm_potential, rcqi_norm_deriv_potential
   use rcqisr, only : rcqi_norm_deriv_second_potential
 
-!natural with a plus sign
-  use pnisr, only : pni_norm_potential, pni_norm_deriv_potential
-  use pnisr, only : pni_norm_deriv_second_potential
-
-!natural with a minus sign
-  use mnisr, only : mni_norm_potential, mni_norm_deriv_potential
-  use mnisr, only : mni_norm_deriv_second_potential
+!natural inflation
+  use nisr, only : ni_norm_potential, ni_norm_deriv_potential
+  use nisr, only : ni_norm_deriv_second_potential
 
 !exponential susy
   use esisr, only : esi_norm_potential, esi_norm_deriv_potential
@@ -160,9 +156,9 @@
   use sbisr, only : sbi_norm_potential, sbi_norm_deriv_potential
   use sbisr, only : sbi_norm_deriv_second_potential
 
-!sneutrino supersymmetric inflation
-  use ssicommon, only : ssi_norm_potential, ssi_norm_deriv_potential
-  use ssicommon, only : ssi_norm_deriv_second_potential
+!spontaneous symmetry breaking inflation
+  use ssbicommon, only : ssbi_norm_potential, ssbi_norm_deriv_potential
+  use ssbicommon, only : ssbi_norm_deriv_second_potential
 
 !running mass inflation
   use rmicommon, only : rmi_norm_potential, rmi_norm_deriv_potential

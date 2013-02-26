@@ -383,7 +383,7 @@ contains
 
     checkMatterStop = .false.
 
-    efoldMaxiStop = 10000._kp
+    efoldMaxiStop = 1000._kp
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

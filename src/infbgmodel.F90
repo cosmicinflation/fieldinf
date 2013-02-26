@@ -371,12 +371,11 @@ contains
           
 
     case ('colwei')
-! U = c1^4 [1 + c2 ln(F/c3) F^c4]
+! U = c1^4 [1 + c2 ln(F/c3) (F/c3)^c4]
        
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
        badParams = badParams.or.(infParam%consts(4).ne.4._kp)
-       badParams = badParams &
-            .or.(infParam%consts(3).ne.(4._kp*exp(1._kp)/infParam%consts(2))**0.25_kp)
+       badParams = badParams.or.(infParam%consts(2).ne.(4._kp*exp(1._kp)))
 
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
@@ -385,11 +384,13 @@ contains
        endif
 
        matterParam(1) = -infParam%consts(1) &
-            * sign((infParam%consts(2)* log(infParam%consts(3)))**0.25_kp &
-            , infParam%consts(2)* log(infParam%consts(3)))
+            /(infParam%consts(3)**(0.25_kp*infParam%consts(4))) &
+            * sign(abs(infParam%consts(2)*log(infParam%consts(3)))**0.25_kp &
+            , infParam%consts(2)*log(infParam%consts(3)))
        matterParam(2) = infParam%consts(4)
        matterParam(3) = infParam%consts(1)
-       matterParam(4) = infParam%consts(1) * infParam%consts(2)**0.25_kp
+       matterParam(4) = infParam%consts(1) &
+            * (infParam%consts(2)/infParam%consts(3)**infParam%consts(4))**0.25_kp
        matterParam(5) = 1._kp
 
     case ('tdwell')
@@ -581,18 +582,14 @@ contains
 
 
     case ('natinf')
-!U = c1^4 [1 + c2 cos(F/c3)]
+!U = c1^4 [1 + cos(F/c2)]
 
-!c2 is +-1 for plus sign natural inflation or -1 for minus signa
-!natural inflation
-
-       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp) &
-            .or.(abs(infParam%consts(2)).ne.1._kp))
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
 
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
-          write(*,*)'consts = ',infParam%consts(1:3)
-          stop 'natural with plus or minus: improper params'
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'natural inflation: improper params'
        endif
        
        matterParam(1:4) = 0._kp
@@ -600,9 +597,8 @@ contains
        matterParam(6) = infparam%consts(1)
        matterParam(7) = 0._kp
        matterParam(8) = 0._kp
-       matterParam(9) = infparam%consts(1) &
-            * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
-       matterParam(10) = 1._kp/infParam%consts(3)
+       matterParam(9) = infparam%consts(1)
+       matterParam(10) = 1._kp/infParam%consts(2)
        matterParam(11) = 0._kp
        matterParam(12) = 0._kp
        
@@ -751,31 +747,31 @@ contains
 
        matterParam(12) = 4._kp
        matterParam(7:11) = 0._kp
-       matterParam(6) = -infParam%consts(1)/infParam%consts(3)
+       matterParam(6) = -infParam%consts(1)*infParam%consts(2)**0.25_kp &
+            /infParam%consts(3)
        matterParam(5) = 2._kp
-       matterParam(4) = sqrt(infParam%consts(1)/infParam%consts(3)) &
-            * infParam%consts(2)**0.125_kp            
+       matterParam(4) = sqrt(infParam%consts(1)/infParam%consts(3))
        matterParam(3) = 0._kp
        matterParam(2) = 2._kp
        matterParam(1) = -sqrt(infParam%consts(1)/infParam%consts(3)) &
-            * (sqrt(infParam%consts(3)) * log(infParam%consts(3)))**0.25_kp
+            * sign(abs(log(infParam%consts(3)))**0.25_kp,log(infParam%consts(3)))
 
-    case ('sneusy','sneus1','sneus2','sneus3','sneus4','sneus5','sneus6')
+    case ('ssbinf','spsyb1','spsyb2','spsyb3','spsyb4','spsyb5','spsyb6')
 !U = c1^4 [1 + alpha F^2 + beta F^4 ]
 
        badParams = (infParam%consts(1).le.0._kp)
 
-       badParams = badParams.or. ( (infparam%name.eq.'sneus1').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb1').and.(.not.( &
             (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).gt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'sneus2').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb2').and.(.not.( &
             (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).lt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'sneus3').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb3').and.(.not.( &
             (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'sneus4').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb4').and.(.not.( &
             (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'sneus5').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb5').and.(.not.( &
             (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).gt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'sneus6').and.(.not.( &
+       badParams = badParams.or. ( (infparam%name.eq.'spsyb6').and.(.not.( &
             (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).gt.0._kp))))
        
 
@@ -880,26 +876,30 @@ contains
 
 
     case ('nmssmi','gmssmi','rinfpt')
-!U = c1^4 [ F^2 -  c3 F^c2 + c4 F^c5] 
+!U = c1^4 [ (F/c6)^2 -  c3 (F/c6)^c2 + c4 (F/c6)^c5] 
 
-       badParams =  ((infParam%consts(1).le.0._kp) &
+       badParams = (infParam%consts(1).le.0._kp) &
             .or.(infParam%consts(3).lt.0._kp) &
-            .or.(infParam%consts(4).lt.0._kp))
+            .or.(infParam%consts(4).lt.0._kp) &
+            .or.(infParam%consts(6).le.0._kp)
 
        if (infParam%name.eq.'nmssmi') then
-!c2=6; c5=10 and c4=9/20 c3^2
+!c2=6; c5=10 and c3=2/3  and c4=1/5 c6=mu
           badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
                .or.(infParam%consts(5).ne.10._kp) &
-               .or.(9._kp/20._kp*infParam%consts(3)**2.ne.infParam%consts(4))
+               .or.(infParam%consts(3).ne.2._kp/3._kp) &
+               .or.(infParam%consts(4).ne.1._kp/5._kp)
        elseif (infParam%name.eq.'rinfpt') then
-!c2=3; c5=4 and c4=9/32 c3^2
+!c2=3; c5=4 and c4=9/32 c3^2 c6=1
           badParams = badParams.or.(infParam%consts(2).ne.3._kp) &
                .or.(infParam%consts(5).ne.4._kp) &
-               .or.(9._kp/32._kp*infParam%consts(3)**2.ne.infParam%consts(4))
+               .or.(9._kp/32._kp*infParam%consts(3)**2.ne.infParam%consts(4)) &
+               .or.(infParam%consts(6).ne.1._kp)
        elseif (infParam%name.eq.'gmssmi') then
-!c5=2(c2-1)
+!c3=-2/3 alpha and c4=alpha/5
           badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
-               .or.(infParam%consts(5).ne.10._kp)
+               .or.(infParam%consts(5).ne.10._kp) &
+               .or.(1.5_kp*infParam%consts(3).ne.5._kp*infParam%consts(4))
        endif
        
 
@@ -909,16 +909,21 @@ contains
           stop 'MSSM inflation: improper params'
        endif
 
-       matterParam(1) = infParam%consts(1)
+       matterParam(1) = infParam%consts(1)/sqrt(infParam%consts(6))
        matterParam(2) = 2._kp
        matterParam(3:4) = 0._kp
        matterParam(5) = 1._kp
-
-       matterParam(6) = -infParam%consts(1)*infparam%consts(3)**0.25_kp
-       matterParam(7:11) = 0._kp
+       
+       matterParam(6) = -infParam%consts(1) &
+            *sign(abs(infparam%consts(3)/infParam%consts(6)**infParam%consts(2))**0.25_kp &
+            , infparam%consts(3))
+       matterParam(7:10) = 0._kp
+       matterParam(11) = infParam%consts(6)
        matterParam(12) = infparam%consts(2)
 
-       matterParam(13) = infparam%consts(1)*infparam%consts(4)**0.25_kp
+       matterParam(13) = infparam%consts(1) &
+            * sign(abs(infparam%consts(4)/infParam%consts(6)**infParam%consts(5))**0.25_kp &
+            ,infParam%consts(4))
        matterParam(14) = infParam%consts(5)
        matterParam(15:18) = 0._kp
 
