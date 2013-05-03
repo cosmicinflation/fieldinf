@@ -1,3 +1,27 @@
+commit 12769d88a85759f0ffe8c4a80fbfa6e90f0c6871
+Author: chris <chris@ringeval.com>
+Date:   Fri May 3 16:46:35 2013 +0200
+
+    Adding four new models: whri, imi, osti and grippi + new ripi
+
+ configure.ac       |   4 +-
+ src/infbgmodel.F90 |  92 +++++++++++++++++++++++++++-----
+ src/infbounds.f90  |   4 ++
+ src/infmatter.F90  |  85 ++++++++++++++++++++++++-----
+ src/infsric.F90    | 197 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ src/libaspic.h     |  27 ++++++++--
+ 6 files changed, 364 insertions(+), 45 deletions(-)
+
+commit ec5d1031b94b806e9081c46326293d54c092db88
+Author: chris <chris@ringeval.com>
+Date:   Tue Feb 26 11:06:42 2013 +0100
+
+    Update news and ChangeLog
+
+ ChangeLog | 23 +++++++++++++++++++++++
+ NEWS      |  6 +++---
+ 2 files changed, 26 insertions(+), 3 deletions(-)
+
 commit fb5b592b2941f04de08475c1452d488ab4a2139d
 Author: chris <chris@ringeval.com>
 Date:   Tue Feb 26 10:56:20 2013 +0100
@@ -20,7 +44,6 @@ Date:   Mon Jan 21 17:41:02 2013 +0100
  ChangeLog |   19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-	
 commit 947f54d6f047f0373d5ae6cd8b5e7f6fcf607c27
 Author: chris <chris@ringeval.com>
 Date:   Mon Jan 21 17:39:54 2013 +0100

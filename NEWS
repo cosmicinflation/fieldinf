@@ -1,4 +1,6 @@
-* version 1.0.10
+* version 1.0.11
 
-- Support new libaspic api
-  changes for cwi,oi,pni,mni,mssmi,gmssmi,rpi included and tested
+- Clean configure.ac
+- Support 4 new models:
+  whri, osti, imi and gripi. Test/Support for new ripi and old ripi.
+
