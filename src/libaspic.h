@@ -99,9 +99,9 @@
   use gmssmisr, only : gmssmi_norm_potential, gmssmi_norm_deriv_potential
   use gmssmisr, only : gmssmi_norm_deriv_second_potential
 
-!renormalizable inflection point inflatoin
-  use ripisr, only : ripi_norm_potential, ripi_norm_deriv_potential
-  use ripisr, only : ripi_norm_deriv_second_potential
+!original renormalizable inflection point inflation
+  use oripisr, only : oripi_norm_potential, oripi_norm_deriv_potential
+  use oripisr, only : oripi_norm_deriv_second_potential
 
 !brane susy breaking inflation
   use bsusybisr, only : bsusybi_norm_potential, bsusybi_norm_deriv_potential
@@ -164,7 +164,26 @@
   use rmicommon, only : rmi_norm_potential, rmi_norm_deriv_potential
   use rmicommon, only : rmi_norm_deriv_second_potential
 
-!lograithmic potential inflation
+!logarithmic potential inflation
   use lpicommon, only : lpi_norm_potential, lpi_norm_deriv_potential
   use lpicommon, only : lpi_norm_deriv_second_potential
 
+!open string tachyonic inflation
+  use ostisr, only : osti_norm_potential, osti_norm_deriv_potential
+  use ostisr, only : osti_norm_deriv_second_potential
+
+!Witten O'Raifeartaigh Higgs inflation
+  use wrhisr, only : wrhi_norm_potential, wrhi_norm_deriv_potential
+  use wrhisr, only : wrhi_norm_deriv_second_potential
+
+!Inverse monomial inflation
+  use imisr, only : imi_norm_potential, imi_norm_deriv_potential
+  use imisr, only : imi_norm_deriv_second_potential
+
+!renormalizable inflection point inflation
+  use ripisr, only : ripi_norm_potential, ripi_norm_deriv_potential
+  use ripisr, only : ripi_norm_deriv_second_potential
+
+!generalized renormalizable inflection point inflatoin
+  use gripisr, only : gripi_norm_potential, gripi_norm_deriv_potential
+  use gripisr, only : gripi_norm_deriv_second_potential

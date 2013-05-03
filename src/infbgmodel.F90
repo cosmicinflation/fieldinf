@@ -332,7 +332,6 @@ contains
        
             
 
-
     case ('rcquad')
 ! U = c1^4 F^4 [1 - c2 ln(F)]
           
@@ -485,16 +484,25 @@ contains
        matterParam(2) = 4._kp
        matterParam(1) = - infParam%consts(1) * infParam%consts(2)**0.25_kp
 
-    case ('logpot','logpo1','logpo2','logpo3')
+    case ('logpot','logpo1','logpo2','logpo3','witorh')
 !U = c1^4 (F/c3)^c2 [ln(F/c3)]^c4
 
-       badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp)
+       badParams = (infParam%consts(3).le.0._kp).or.(infParam%consts(1).le.0._kp)
 
        badParams = badParams.or.( &
             (infParam%name.eq.'logpo2').and.(modulo(infParam%consts(4),2._kp).ne.0._kp))
        badParams = badParams.or.( &
             (infParam%name.eq.'logpo3').and.(modulo(infParam%consts(4),2._kp).ne.0._kp))
 
+       badParams = badParams.or.((infParam%name.eq.'witorh').and. &
+            ((infParam%consts(2).ne.0._kp).or.(infParam%consts(4).ne.2._kp)))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'logpot / Witten O.Raifeartaigh inflation: improper params'
+       endif
+       
        matterParam(5) = infParam%consts(4)
        matterParam(4) = (infParam%consts(1) &
             /infParam%consts(3)**(infParam%consts(2)*0.25_kp))**(1._kp/infParam%consts(4))
@@ -504,6 +512,44 @@ contains
             * (infParam%consts(1)/infParam%consts(3)**(infParam%consts(2)*0.25_kp)) &
             **(1._kp/infParam%consts(4))
 
+
+    case ('ostach')
+!U = -c1^4 (F/c3)^2 ln[(F/c3)^2]
+
+       badParams = (infParam%consts(3).le.0._kp).or.(infParam%consts(1).le.0._kp)
+       badParams = badParams.or.(infParam%consts(2).ne.2._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'open string tachyonic inflation: improper params'
+       endif
+       
+       matterParam(5) = 1._kp
+       matterParam(4) = -infParam%consts(2)**0.25_kp * infParam%consts(1) &
+            /infParam%consts(3)**(infParam%consts(2)*0.25_kp)
+       matterParam(3) = 0._kp
+       matterParam(2) = infParam%consts(2)
+       matterParam(1) = infParam%consts(2)**0.25_kp &
+            * sign(abs(log(infParam%consts(3)))**0.25_kp,log(infParam%consts(3))) &
+            * (infParam%consts(1)/infParam%consts(3)**(infParam%consts(2)*0.25_kp))
+
+
+     case ('invmon')
+! U = c1^4 F^(-c2)       
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'inverse monomial inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = -infParam%consts(2)
+       matterParam(3) = 0._kp
+       matterParam(4) = 0._kp
+       matterParam(5) = 1._kp
 
 #ifndef PP5
 
@@ -517,7 +563,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:infParamNum)
-          stop 'mixed field: improper params'
+          stop 'mixed field inflation: improper params'
        endif
 
 
@@ -875,7 +921,7 @@ contains
        matterParam(18) = infParam%consts(4)
 
 
-    case ('nmssmi','gmssmi','rinfpt')
+    case ('nmssmi','gmssmi','orifpt','nrifpt','grifpt')
 !U = c1^4 [ (F/c6)^2 -  c3 (F/c6)^c2 + c4 (F/c6)^c5] 
 
        badParams = (infParam%consts(1).le.0._kp) &
@@ -883,30 +929,48 @@ contains
             .or.(infParam%consts(4).lt.0._kp) &
             .or.(infParam%consts(6).le.0._kp)
 
-       if (infParam%name.eq.'nmssmi') then
 !c2=6; c5=10 and c3=2/3  and c4=1/5 c6=mu
+       if (infParam%name.eq.'nmssmi') then
           badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
                .or.(infParam%consts(5).ne.10._kp) &
                .or.(infParam%consts(3).ne.2._kp/3._kp) &
                .or.(infParam%consts(4).ne.1._kp/5._kp)
-       elseif (infParam%name.eq.'rinfpt') then
-!c2=3; c5=4 and c4=9/32 c3^2 c6=1
+
+!c2=6; c5=10; c3=-2/3 alpha and c4=alpha/5
+       elseif (infParam%name.eq.'gmssmi') then
+          badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
+               .or.(infParam%consts(5).ne.10._kp) &
+               .or.(1.5_kp*infParam%consts(3).ne.5._kp*infParam%consts(4))
+
+!c2=3; c5=4; c3=4/3 and c4=1/2 (grifpt with alpha=1)
+       elseif (infParam%name.eq.'nrifpt') then
+          badParams = badParams.or.(infParam%consts(2).ne.3._kp) &
+               .or. (infParam%consts(5).ne.4._kp) &
+               .or. (3._kp/4._kp * infParam%consts(3).ne.1._kp) &
+               .or. (2._kp*infParam%consts(4).ne.1._kp)
+
+!c2=3; c5=4; c3=4/3 alpha and c4=alpha/2
+       elseif (infParam%name.eq.'grifpt') then
+          badParams = badParams.or.(infParam%consts(2).ne.3._kp) &
+               .or. (infParam%consts(5).ne.4._kp) &
+               .or. (3._kp/4._kp * infParam%consts(3).ne.2._kp*infParam%consts(4))
+
+!original parametrization, for test only, use nrifpt instead which is
+!grifpt with alpha=1
+! c2=3; c5=4 and c4=9/32 c3^2 c6=1
+       elseif (infParam%name.eq.'orifpt') then
           badParams = badParams.or.(infParam%consts(2).ne.3._kp) &
                .or.(infParam%consts(5).ne.4._kp) &
                .or.(9._kp/32._kp*infParam%consts(3)**2.ne.infParam%consts(4)) &
                .or.(infParam%consts(6).ne.1._kp)
-       elseif (infParam%name.eq.'gmssmi') then
-!c3=-2/3 alpha and c4=alpha/5
-          badParams = badParams.or.(infParam%consts(2).ne.6._kp) &
-               .or.(infParam%consts(5).ne.10._kp) &
-               .or.(1.5_kp*infParam%consts(3).ne.5._kp*infParam%consts(4))
+
        endif
        
 
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:5)
-          stop 'MSSM inflation: improper params'
+          stop 'MSSM / RINFPT inflation: improper params'
        endif
 
        matterParam(1) = infParam%consts(1)/sqrt(infParam%consts(6))

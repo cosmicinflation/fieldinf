@@ -129,8 +129,8 @@ contains
     case ('nmssmi')
        slowroll_initial_matter = mssmi_initial_field(infParam,efold)
 
-    case ('rinfpt')
-       slowroll_initial_matter = ripi_initial_field(infParam,efold)
+    case ('orifpt')
+       slowroll_initial_matter = oripi_initial_field(infParam,efold)
 
     case ('gmssmi')
        slowroll_initial_matter = gmssmi_initial_field(infParam,efold)
@@ -215,6 +215,21 @@ contains
 
     case ('logpo3')
        slowroll_initial_matter = lpi3_initial_field(infParam,efold)
+
+    case ('ostach')
+       slowroll_initial_matter = osti_initial_field(infParam,efold)
+
+    case ('witorh')
+       slowroll_initial_matter = wrhi_initial_field(infParam,efold)
+
+    case ('invmon')
+       slowroll_initial_matter = imi_initial_field(infParam,efold)
+
+    case ('nrifpt')
+       slowroll_initial_matter = ripi_initial_field(infParam,efold)
+
+    case ('grifpt')
+       slowroll_initial_matter = gripi_initial_field(infParam,efold)
 
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
@@ -980,29 +995,29 @@ contains
   
 
 
-  function ripi_initial_field(infParam, efold)
-    use ripisr, only : ripi_x_trajectory, ripi_x_endinf
+  function oripi_initial_field(infParam, efold)
+    use oripisr, only : oripi_x_trajectory, oripi_x_endinf
     implicit none
-    real(kp), dimension(matterNum) :: ripi_initial_field
+    real(kp), dimension(matterNum) :: oripi_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
     real(kp) :: bfold
     real(kp) :: xEnd, xIni
-    real(kp) :: alpha
+    real(kp) :: mu
 
     bfold = -efold
-    alpha = infParam%consts(3)
+    mu = infParam%consts(6)
    
-    xEnd = ripi_x_endinf(alpha)
+    xEnd = oripi_x_endinf(mu)
 
-    if (display) write(*,*)'ripi_initial_field: xend= ',xEnd
+    if (display) write(*,*)'oripi_initial_field: xend= ',xEnd
 
-    xIni = ripi_x_trajectory(bfold,xEnd,alpha)
+    xIni = oripi_x_trajectory(bfold,xEnd,mu)
 
-    ripi_initial_field(:) = xIni
+    oripi_initial_field(:) = xIni*mu
 
-  end function ripi_initial_field
+  end function oripi_initial_field
 
 
 
@@ -1886,7 +1901,165 @@ contains
   end function lpi3_initial_field
 
 
+
+  function osti_initial_field(infParam,efold)
+    use ostisr, only : osti_x_endinf,osti_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: osti_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, p
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+   
+    if (p.ne.2._kp) then
+       stop 'osti_initial_field: p >< 2!'
+    endif
+
+    xEnd = osti_x_endinf(mu)
+
+    if (display) write(*,*)'osti_initial_field: xend= ',xEnd
+
+    xIni = osti_x_trajectory(bfold,xEnd,mu)
+
+    osti_initial_field(:) = xIni*mu
+
+  end function osti_initial_field
+
+
  
+  function wrhi_initial_field(infParam,efold)
+    use wrhisr, only : wrhi_x_endinf,wrhi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: wrhi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, p, q
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    p = infParam%consts(2)
+    q = infParam%consts(4)
+    mu = infParam%consts(3)
+   
+    if ((p.ne.0._kp).and.(q.ne.2._kp)) then
+       write(*,*)'p= q= ',p,q
+       stop 'wrhi_initial_field: wrong parameters value'
+    endif
+
+    xEnd = wrhi_x_endinf(mu)
+
+    if (display) write(*,*)'wrhi_initial_field: xend= ',xEnd
+
+    xIni = wrhi_x_trajectory(bfold,xEnd,mu)
+
+    wrhi_initial_field(:) = xIni*mu
+
+  end function wrhi_initial_field
+
+
+
+  function imi_initial_field(infParam,efold)
+    use imisr, only : imi_x_trajectory, imi_xendmin
+    implicit none
+    real(kp), dimension(matterNum) :: imi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) ::p, XIni, xEnd, bfold, xEndMin
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+
+    fieldStop = field_stopinf(infParam)
+       
+    xEnd = fieldStop(1)
+
+    if (display) write(*,*)'imi_initial_field: xend= ',xEnd
+   
+    xEndMin = imi_xendmin(p,efold)
+    if (xEnd.lt.xEndMin) then
+       write(*,*)'xend= xendmin= ',xEnd,xEndMin
+       stop 'imi_initial_field: xend too small!'
+    endif
+
+    xIni = imi_x_trajectory(bfold,xEnd,p)
+
+    imi_initial_field(:) = xIni 
+
+  end function imi_initial_field
+
+
+  function ripi_initial_field(infParam, efold)
+    use ripisr, only : ripi_x_trajectory, ripi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: ripi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha, mu
+
+    bfold = -efold
+    alpha = 2._kp*infParam%consts(4)
+    mu = infParam%consts(6)
+   
+    if (alpha.ne.1._kp) then
+       stop 'ripi_initial_field: improper params!'
+    endif
+
+    xEnd = ripi_x_endinf(mu)
+
+    if (display) write(*,*)'ripi_initial_field: xend= ',xEnd
+
+    xIni = ripi_x_trajectory(bfold,xEnd,mu)
+
+    ripi_initial_field(:) = xIni*mu
+
+  end function ripi_initial_field
+
+
+ function gripi_initial_field(infParam, efold)
+    use gripisr, only : gripi_x_trajectory, gripi_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: gripi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: alpha, mu
+
+    bfold = -efold
+    alpha = 2._kp*infParam%consts(4)
+    mu = infParam%consts(6)
+   
+    if (3._kp/4._kp*infParam%consts(3).ne.alpha) then
+       stop 'gripi_initial_field: improper params!'
+    endif
+
+    xEnd = gripi_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'gripi_initial_field: xend= ',xEnd
+
+    xIni = gripi_x_trajectory(bfold,xEnd,alpha,mu)
+
+    gripi_initial_field(:) = xIni*mu
+
+  end function gripi_initial_field
+
+
+
 
 #ifdef NOYET
   

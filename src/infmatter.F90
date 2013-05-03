@@ -178,14 +178,27 @@ contains
           mu = exp(-potParam(1)/potParam(4) - 1._kp/2._kp)
           potName = 'runmas'
 
-
-       case ('logpot','logpo1','logpo2','logpo3')
+       case ('logpot','logpo1','logpo2','logpo3','witorh')
           q = potParam(5)
           p = potParam(2)*potParam(5)
           mu = exp(-potParam(1)/potParam(4))
           M4 = potParam(4)**potParam(5) &
                * exp(-potParam(1)/potParam(4)*potParam(2)*potParam(5))
-          potName = 'logpot'
+
+          if (potName.ne.'witorh') then
+             potName = 'logpot'
+          endif
+
+       case ('ostach')
+          p = potParam(2)
+          mu = exp(potParam(1)/potParam(4))
+          M4 = -potParam(4) * exp(potParam(1)/potParam(4)*potParam(2))
+          potName = 'ostach'
+
+       case ('invmon')
+          M4 = potParam(1)
+          p = -potParam(2)
+
 
 #ifndef PP5
        case ('gmixlf')
@@ -260,18 +273,17 @@ contains
           gam = potParam(18)
           potName = 'logmdi'
 
-       case ('nmssmi','gmssmi','rinfpt')
-!for convenience only
+       case ('nmssmi','gmssmi','orifpt','nrifpt','grifpt')
+!convenience
           mu = potParam(11)
-
           M4 = potParam(1)*potParam(11)**2
           p = potParam(12)
           q = potParam(14)
           alpha = - potParam(6)*potParam(11)**(potParam(12)-2._kp)/potParam(1)
           beta = potParam(13)*potParam(11)**(potParam(5)-2._kp)/potParam(1)
 
+          print *,'test',mu,alpha,p,q,beta
           
-
        case ('bsusyb')
           M4 = potParam(7)
           gam = potParam(17)/sqrt(6._kp)
@@ -457,8 +469,8 @@ contains
        case ('nmssmi')
           matter_potential = mssmi_norm_potential(chi/mu,mu)
 
-       case ('rinfpt')
-          matter_potential = ripi_norm_potential(chi,alpha)
+       case ('orifpt')
+          matter_potential = oripi_norm_potential(chi/mu)
 
        case ('gmssmi')
           matter_potential = gmssmi_norm_potential(chi/mu,1.5_kp*alpha,mu)
@@ -513,6 +525,22 @@ contains
 
        case ('logpot')
           matter_potential = lpi_norm_potential(chi/mu,p,q)
+
+       case ('ostach')
+          matter_potential = osti_norm_potential(chi/mu)
+
+       case ('witorh')
+          matter_potential = wrhi_norm_potential(chi/mu)
+
+       case ('invmon')
+          matter_potential = imi_norm_potential(chi,p)
+
+       case ('nrifpt')
+          matter_potential = ripi_norm_potential(chi/mu)
+
+       case ('grifpt')
+          matter_potential = gripi_norm_potential(chi/mu,3._kp/4._kp*alpha)
+
 
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -668,8 +696,8 @@ contains
        case ('nmssmi')
           deriv_matter_potential(1) = mssmi_norm_deriv_potential(chi/mu,mu)/mu
 
-       case ('rinfpt')
-          deriv_matter_potential(1) = ripi_norm_deriv_potential(chi,alpha)
+       case ('orifpt')
+          deriv_matter_potential(1) = oripi_norm_deriv_potential(chi/mu)/mu
 
        case ('gmssmi')
           deriv_matter_potential(1) = gmssmi_norm_deriv_potential(chi/mu,1.5_kp*alpha,mu)/mu
@@ -724,6 +752,21 @@ contains
 
        case ('logpot')
           deriv_matter_potential(1) = lpi_norm_deriv_potential(chi/mu,p,q)/mu
+
+       case ('ostach')
+          deriv_matter_potential(1) = osti_norm_deriv_potential(chi/mu)/mu
+
+       case ('witorh')
+          deriv_matter_potential(1) = wrhi_norm_deriv_potential(chi/mu)/mu
+
+       case ('invmon')
+          deriv_matter_potential(1) = imi_norm_deriv_potential(chi,p)
+
+       case ('nrifpt')
+          deriv_matter_potential(1) = ripi_norm_deriv_potential(chi/mu)/mu
+
+       case ('grifpt')
+          deriv_matter_potential(1) = gripi_norm_deriv_potential(chi/mu,3._kp/4._kp*alpha)/mu
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -888,8 +931,8 @@ contains
        case ('nmssmi')
           deriv_second_matter_potential(1,1) = mssmi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
 
-       case ('rinfpt')
-          deriv_second_matter_potential(1,1) = ripi_norm_deriv_second_potential(chi,alpha)
+       case ('orifpt')
+          deriv_second_matter_potential(1,1) = oripi_norm_deriv_second_potential(chi/mu)/mu/mu
 
        case ('gmssmi')
           deriv_second_matter_potential(1,1) = gmssmi_norm_deriv_second_potential(chi/mu &
@@ -948,6 +991,22 @@ contains
 
        case ('logpot')
           deriv_second_matter_potential(1,1) = lpi_norm_deriv_second_potential(chi/mu,p,q)/mu/mu
+
+       case ('ostach')
+          deriv_second_matter_potential(1,1) = osti_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('witorh')
+          deriv_second_matter_potential(1,1) = wrhi_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('invmon')
+          deriv_second_matter_potential(1,1) = imi_norm_deriv_second_potential(chi,p)
+
+       case ('nrifpt')
+          deriv_second_matter_potential(1,1) = ripi_norm_deriv_second_potential(chi/mu)/mu/mu
+
+       case ('grifpt')
+          deriv_second_matter_potential(1,1) = gripi_norm_deriv_second_potential(chi/mu &
+               ,3._kp/4._kp*alpha)/mu/mu
 
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

@@ -128,6 +128,10 @@ contains
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = -1._kp
 
+    case ('invmon')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       field_stopinf(2) = +1._kp
+
     case default
        write(*,*)'model name: ',infParam%name
        stop 'field_stopinf: no such a model'
