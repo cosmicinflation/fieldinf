@@ -1,4 +1,5 @@
-!This module provides the initial power spectra, computed from the inflationary module
+!This module provides the initial power spectra for CAMB, computed
+!from the inflationary module
 
 module InitialPower   
   use precision, only : dl
@@ -11,7 +12,7 @@ module InitialPower
 
   private
  
-  logical, parameter :: display=.false.
+  logical, parameter :: display=.true.
    
   character(LEN=*), parameter :: Power_Name = 'power_inf'
   integer, parameter :: nnmax= 1 
@@ -862,6 +863,9 @@ contains
        Keys(num) = 'C4'
        Vals(num) = powerD%initP%infParam%consts(4)
        num=num+1
+       Keys(num) = 'C5'
+       Vals(num) = powerD%initP%infParam%consts(4)
+       num=num+1
 !       Keys(num) = 'Conf'
 !       Vals(num) = powerD%initP%infParam%conforms(1)
 !       num=num+1             
@@ -874,7 +878,7 @@ contains
        Keys(num) = 'HubbleEnd'
        Vals(num) = powerD%infCosmo%bgEnd%hubble
        num=num+1
-       Keys(num) = 'EnergyEndInf'
+       Keys(num) = 'RhoEndInf'
        Vals(num) = powerD%infCosmo%lnEnergyEnd
        num=num+1
        Keys(num) = 'EfoldEndToToday'
