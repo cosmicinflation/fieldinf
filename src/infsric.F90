@@ -581,7 +581,7 @@ contains
 
 
   function ii_initial_field(infParam,efold)
-    use iisr, only : ii_x_trajectory, ii_prior_xendmin
+    use iisr, only : ii_x_trajectory, ii_xendmin
     implicit none
     real(kp), dimension(matterNum) :: ii_initial_field
     type(infbgparam), intent(in) :: infParam
@@ -600,7 +600,7 @@ contains
 
     if (display) write(*,*)'ii_initial_field: xend= ',xEnd
 
-    xEndMin = ii_prior_xendmin(beta,bfold)
+    xEndMin = ii_xendmin(efold,beta)
 
     if (xEnd.lt.xEndMin) then
        write(*,*)'xEndMin= bfold= ',xEndMin,bfold
@@ -1986,7 +1986,7 @@ contains
 
     if (display) write(*,*)'imi_initial_field: xend= ',xEnd
    
-    xEndMin = imi_xendmin(p,efold)
+    xEndMin = imi_xendmin(efold,p)
     if (xEnd.lt.xEndMin) then
        write(*,*)'xend= xendmin= ',xEnd,xEndMin
        stop 'imi_initial_field: xend too small!'

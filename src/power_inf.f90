@@ -12,7 +12,7 @@ module InitialPower
 
   private
  
-  logical, parameter :: display=.true.
+  logical, parameter :: display=.false.
    
   character(LEN=*), parameter :: Power_Name = 'power_inf'
   integer, parameter :: nnmax= 1 
