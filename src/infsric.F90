@@ -9,9 +9,9 @@ module infsric
 
   private
 
-  logical, parameter :: display = .true.
+  logical, parameter :: display = .false.
   
-  integer, parameter :: efoldBound = 110._kp
+  integer, parameter :: efoldBound = 120._kp
 
   
   public slowroll_initial_matter
