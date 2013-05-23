@@ -6,7 +6,7 @@ module infbgmodel
 
   private
  
-  logical, parameter :: display = .true.
+  logical, parameter :: display = .false.
 
   
 !totalnumber of background scalar fields
