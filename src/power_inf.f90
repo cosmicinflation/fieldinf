@@ -12,7 +12,7 @@ module InitialPower
 
   private
  
-  logical, parameter :: display=.false.
+  logical, parameter :: display=.true.
    
   character(LEN=*), parameter :: Power_Name = 'power_inf'
   integer, parameter :: nnmax= 1 
@@ -158,7 +158,7 @@ contains
     Pin%lnkmpcNum = 12._kp
       
     Pin%lnReheat = 0._kp
-    Pin%kstar = 0.05._kp
+    Pin%kstar = 0.05_kp
 
 !value for the parameters (see infbg.f90)
     Pin%infParam%name = 'largef'
@@ -169,7 +169,7 @@ contains
 !       Pin%infParam%conforms(1:dilatonNum) = 1.
     endif
 
-    Pin%infParam%consts(1) = 1.e-5._kp
+    Pin%infParam%consts(1) = 1d-5
     Pin%infParam%consts(2) = 2._kp
     Pin%infParam%consts(3:4) = 0._kp
     Pin%infParam%consts(5) = 1._kp
