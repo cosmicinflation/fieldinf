@@ -153,29 +153,29 @@ contains
    
 !range and sampling of the power spectra spline
     Pin%useSpline = useSplineDefault 
-    Pin%lnkmpcMin = -14.
-    Pin%lnkmpcMax = 0.
-    Pin%lnkmpcNum = 12
+    Pin%lnkmpcMin = -14._kp
+    Pin%lnkmpcMax = 0._kp
+    Pin%lnkmpcNum = 12._kp
       
-    Pin%lnReheat = 0.
-    Pin%kstar = 0.05
+    Pin%lnReheat = 0._kp
+    Pin%kstar = 0.05._kp
 
 !value for the parameters (see infbg.f90)
     Pin%infParam%name = 'largef'
-    Pin%infParam%consts(1:infParamNum) = 0.
+    Pin%infParam%consts(1:infParamNum) = 0._kp
 
     if (dilatonNum.ne.0) then
        stop 'SetDefPowerParams: power_inf.f90 needs edition!'
 !       Pin%infParam%conforms(1:dilatonNum) = 1.
     endif
 
-    Pin%infParam%consts(1) = 1e-5
-    Pin%infParam%consts(2) = 2.   
-    Pin%infParam%consts(3:4) = 0.
-    Pin%infParam%consts(5) = 1.
+    Pin%infParam%consts(1) = 1.e-5._kp
+    Pin%infParam%consts(2) = 2._kp
+    Pin%infParam%consts(3:4) = 0._kp
+    Pin%infParam%consts(5) = 1._kp
 
     if (infParamNum.gt.5) then
-       Pin%infParam%consts(6:infParamNum) = 0.
+       Pin%infParam%consts(6:infParamNum) = 0._kp
     endif
 
   end subroutine SetDefPowerParams

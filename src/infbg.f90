@@ -232,7 +232,7 @@ contains
     ptrRun => null()
 
 !see infbgmodel U propto M^4
-    infParam%consts(1) = infParam%consts(1)*scale**0.25
+    infParam%consts(1) = infParam%consts(1)*scale**0.25._kp
 
     updateBgParams = set_infbg_param(infParam)
     if (.not.updateBgParams) stop 'rescale_potential: updating params failed!'
