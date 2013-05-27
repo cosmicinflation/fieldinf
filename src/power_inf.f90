@@ -127,8 +127,8 @@ contains
     implicit none
     type(exportinfprop), intent(out) :: export
 
-    export%lnM = log(powerD%infParam%consts(1))
-    export%lnRrad = powerD%lnReheat &
+    export%lnM = log(powerD%initP%infParam%consts(1))
+    export%lnRrad = powerD%initP%lnReheat &
          - 0.25*powerD%infCosmo%lnEnergyEnd
     export%lnRhoEnd = powerD%infCosmo%lnEnergyEnd
     export%efoldEndToToday = powerD%infCosmo%efoldEndToToday
