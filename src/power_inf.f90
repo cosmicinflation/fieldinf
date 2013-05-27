@@ -48,7 +48,9 @@ module InitialPower
 
 
   type ExportInfProp
-     real(kp) :: lnEnergyEnd
+     real(kp) :: lnM
+     real(kp) :: lnRrad
+     real(kp) :: lnRhoEnd
      real(kp) :: efoldEndToToday
   end type ExportInfProp
 
@@ -125,7 +127,10 @@ contains
     implicit none
     type(exportinfprop), intent(out) :: export
 
-    export%lnEnergyEnd = powerD%infCosmo%lnEnergyEnd
+    export%lnM = log(powerD%infParam%consts(1))
+    export%lnRrad = powerD%lnReheat &
+         - 0.25*powerD%infCosmo%lnEnergyEnd
+    export%lnRhoEnd = powerD%infCosmo%lnEnergyEnd
     export%efoldEndToToday = powerD%infCosmo%efoldEndToToday
    
   end subroutine UpdateInfProp
