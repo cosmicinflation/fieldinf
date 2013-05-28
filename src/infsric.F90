@@ -220,7 +220,7 @@ contains
        slowroll_initial_matter = osti_initial_field(infParam,efold)
 
     case ('witorh')
-       slowroll_initial_matter = wrhi_initial_field(infParam,efold)
+       slowroll_initial_matter = wri_initial_field(infParam,efold)
 
     case ('invmon')
        slowroll_initial_matter = imi_initial_field(infParam,efold)
@@ -1933,10 +1933,10 @@ contains
 
 
  
-  function wrhi_initial_field(infParam,efold)
-    use wrhisr, only : wrhi_x_endinf,wrhi_x_trajectory
+  function wri_initial_field(infParam,efold)
+    use wrisr, only : wri_x_endinf,wri_x_trajectory
     implicit none
-    real(kp), dimension(matterNum) :: wrhi_initial_field
+    real(kp), dimension(matterNum) :: wri_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -1951,18 +1951,18 @@ contains
    
     if ((p.ne.0._kp).and.(q.ne.2._kp)) then
        write(*,*)'p= q= ',p,q
-       stop 'wrhi_initial_field: wrong parameters value'
+       stop 'wri_initial_field: wrong parameters value'
     endif
 
-    xEnd = wrhi_x_endinf(mu)
+    xEnd = wri_x_endinf(mu)
 
-    if (display) write(*,*)'wrhi_initial_field: xend= ',xEnd
+    if (display) write(*,*)'wri_initial_field: xend= ',xEnd
 
-    xIni = wrhi_x_trajectory(bfold,xEnd,mu)
+    xIni = wri_x_trajectory(bfold,xEnd,mu)
 
-    wrhi_initial_field(:) = xIni*mu
+    wri_initial_field(:) = xIni*mu
 
-  end function wrhi_initial_field
+  end function wri_initial_field
 
 
 

@@ -173,8 +173,8 @@
   use ostisr, only : osti_norm_deriv_second_potential
 
 !Witten O'Raifeartaigh Higgs inflation
-  use wrhisr, only : wrhi_norm_potential, wrhi_norm_deriv_potential
-  use wrhisr, only : wrhi_norm_deriv_second_potential
+  use wrisr, only : wri_norm_potential, wri_norm_deriv_potential
+  use wrisr, only : wri_norm_deriv_second_potential
 
 !Inverse monomial inflation
   use imisr, only : imi_norm_potential, imi_norm_deriv_potential

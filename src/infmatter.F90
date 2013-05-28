@@ -530,7 +530,7 @@ contains
           matter_potential = osti_norm_potential(chi/mu,mu)
 
        case ('witorh')
-          matter_potential = wrhi_norm_potential(chi/mu,mu)
+          matter_potential = wri_norm_potential(chi/mu,mu)
 
        case ('invmon')
           matter_potential = imi_norm_potential(chi,p)
@@ -757,7 +757,7 @@ contains
           deriv_matter_potential(1) = osti_norm_deriv_potential(chi/mu,mu)/mu
 
        case ('witorh')
-          deriv_matter_potential(1) = wrhi_norm_deriv_potential(chi/mu,mu)/mu
+          deriv_matter_potential(1) = wri_norm_deriv_potential(chi/mu,mu)/mu
 
        case ('invmon')
           deriv_matter_potential(1) = imi_norm_deriv_potential(chi,p)
@@ -996,7 +996,7 @@ contains
           deriv_second_matter_potential(1,1) = osti_norm_deriv_second_potential(chi/mu,mu)/mu/mu
 
        case ('witorh')
-          deriv_second_matter_potential(1,1) = wrhi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = wri_norm_deriv_second_potential(chi/mu,mu)/mu/mu
 
        case ('invmon')
           deriv_second_matter_potential(1,1) = imi_norm_deriv_second_potential(chi,p)
