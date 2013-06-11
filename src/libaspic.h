@@ -76,7 +76,7 @@
   use lmicommon, only : lmi_norm_potential, lmi_norm_deriv_potential
   use lmicommon, only : lmi_norm_deriv_second_potential
 
-!R + R^p inflation
+!R + R^2p inflation
   use rpi1sr, only : rpi1_norm_potential, rpi1_norm_deriv_potential
   use rpi1sr, only : rpi1_norm_deriv_second_potential
 
@@ -172,7 +172,7 @@
   use ostisr, only : osti_norm_potential, osti_norm_deriv_potential
   use ostisr, only : osti_norm_deriv_second_potential
 
-!Witten O'Raifeartaigh Higgs inflation
+!Witten O Raifeartaigh Higgs inflation
   use wrisr, only : wri_norm_potential, wri_norm_deriv_potential
   use wrisr, only : wri_norm_deriv_second_potential
 

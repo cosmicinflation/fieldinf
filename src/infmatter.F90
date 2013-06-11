@@ -68,7 +68,7 @@ module infmatter
 !some more easy to use alias for PPNAME
   real(kp), save :: alpha, beta, gam, lambda ,p, q, mu, nu, M4
 
-  real(kp) :: M, kappa, phic
+!  real(kp) :: M, kappa, phic
  
   public potParamNum, matterNum
 
