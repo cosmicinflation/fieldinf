@@ -1,4 +1,4 @@
-AC_INIT([fieldinf], [1.0.12], [chris@ringeval.com])
+AC_INIT([fieldinf], [1.1.0], [chris@ringeval.com])
 
 AC_PROG_FC
 AC_PROG_CPP

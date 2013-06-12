@@ -1,3 +1,12 @@
+commit 171e50e8ea1303b8b754e18c3e694064b1779b8d
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 12 16:33:11 2013 +0200
+
+    editing changelog
+
+ ChangeLog | 421 +++++++++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 279 insertions(+), 142 deletions(-)
+
 commit cf42c69e9359c5b3b7134b14349d3a9f4b1a4877
 Author: chris <chris@ringeval.com>
 Date:   Wed Jun 12 16:32:50 2013 +0200
