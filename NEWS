@@ -1,6 +1,2 @@
-* version 1.0.11
-
-- Clean configure.ac
-- Support 4 new models:
-  whri, osti, imi and gripi. Test/Support for new ripi and old ripi.
-
+* version 1.0.12
+- support for new libaspic version 0.2.4
