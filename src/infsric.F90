@@ -616,13 +616,12 @@ contains
 
 
   function kmiii_initial_field(infParam,efold)
-    use kmiiisr, only : kmiii_x_endinf,kmiii_x_trajectory,kmiii_alphamin
+    use kmiiisr, only : kmiii_x_endinf,kmiii_x_trajectory
     implicit none
     real(kp), dimension(matterNum) :: kmiii_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
-    real(kp) :: alphaMin
     real(kp) :: alpha, beta, xEnd, xIni, bfold
 
     bfold = -efold
@@ -633,14 +632,6 @@ contains
 !model valid for alpha < beta e    
 
     if (alpha.ge.beta*exp(1._kp)) stop 'kmiii_initial_field: alpha > beta e!'
-
-    alphaMin = kmiii_alphamin(beta)
-
-    if (alpha.lt.alphaMin) then
-       write(*,*)'beta= ',beta
-       write(*,*)'alpha= alphamin= ',alpha,alphamin
-       stop 'kmiii_initial_field: inflation never stops'
-    endif
 
     xEnd = kmiii_x_endinf(alpha,beta)
 
