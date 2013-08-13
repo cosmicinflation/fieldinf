@@ -26,7 +26,7 @@ AC_SUBST([DATEXT])
 
 AC_FC_SRCEXT(F90)
 
-AX_F90_LIBRARY_SETUP([aspic],[],[cosmopar.$FC_MODEXT],[libaspic.so],
+AX_F90_LIBRARY_SETUP([aspic],[aspic.h],[],[libaspic.so],
 [
 	use cosmopar
 	write(*,*)'kstar= ',kstar
