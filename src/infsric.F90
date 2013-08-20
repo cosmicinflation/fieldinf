@@ -231,6 +231,12 @@ contains
     case ('grifpt')
        slowroll_initial_matter = gripi_initial_field(infParam,efold)
 
+    case ('branei')
+       slowroll_initial_matter = bi_initial_field(infParam,efold)
+
+    case ('kklmmt')
+       slowroll_initial_matter = kklti_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -2051,41 +2057,8 @@ contains
 
 
 
-
-#ifdef NOYET
-  
-  function sfbi_initial_field(infParam,efold)
-    use sfbisr, only : sfbi_x_endinf,sfbi_x_trajectory
-    implicit none
-    real(kp), dimension(matterNum) :: sfbi_initial_field
-    type(infbgparam), intent(in) :: infParam
-    real(kp), intent(in) :: efold
-
-    real(kp) :: p, mu, xEnd, xIni, bfold
-
-    bfold = -efold
-
-    p = infParam%consts(2)
-    mu = infParam%consts(3)
-
-    if (mu.le.0._kp) stop 'kksf_initial_field: improper mu<0!'
-    if (p.lt.0._kp) stop 'kksf_initial_field: improper p<0!'
-
-    xEnd = sfbi_x_endinf(p,mu)
-
-    if (display) write(*,*)'kksf_initial_field: xend= ',xEnd
-
-    xIni = kksf_x_trajectory(bfold,xEnd,p,mu)
-
-    sfbi_initial_field(:) = xIni * mu
-
-  end function sfbi_initial_field
-  
-
-
-  
   function bi_initial_field(infParam,efold)
-    use bisr, only : bi_x_endinf,bi_x_trajectory
+    use bisr, only : bi_x_epsoneunity, bi_x_trajectory
     implicit none
     real(kp), dimension(matterNum) :: bi_initial_field
     type(infbgparam), intent(in) :: infParam
@@ -2100,10 +2073,7 @@ contains
     mu = infParam%consts(3)
 
     if (mu.le.0._kp) stop 'bi_initial_field: improper mu<0!'
-    if (p.lt.2._kp) stop 'bi_initial_field: improper p<0!'
-    if (infParam%consts(5).ne.-1._kp) then
-       stop 'bi_initial_field: improper consts(5)'
-    endif
+    if (p.lt.0._kp) stop 'bi_initial_field: improper p<0!'
 
     fieldUv = field_thbound(infParam)
     fieldStop = field_stopinf(infParam)
@@ -2111,7 +2081,7 @@ contains
     xUv = fieldUv(1)/mu
     xStrg = fieldStop(1)/mu
 
-    xEps = bi_x_endinf(p,mu)
+    xEps = bi_x_epsoneunity(p,mu)
 
 !if phistrg occurs before slow-roll violation
     xEnd = max(xStrg,xEps)
@@ -2120,17 +2090,75 @@ contains
 
     if (xEnd.gt.xUv) then
        write(*,*)'bi_initial_field: xEnd > XUv!'
+       write(*,*)'xEnd= xUV= ',xEnd,xUV
+       stop
     endif
 
     xIni = bi_x_trajectory(bfold,xEnd,p,mu)
 
-    bi_initial_field(:) = xIni * mu
+    if (xIni.gt.xUv) then
+       write(*,*)'bi_initial_field: xIni > XUv!'
+       write(*,*)'xIni= xUV= ',xIni,xUV
+       stop
+    endif
 
+    bi_initial_field(:) = xIni * mu
+    
   end function bi_initial_field
+  
+   
+  
+  function kklti_initial_field(infParam,efold)
+    use kkltisr, only : kklti_x_epsoneunity, kklti_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: kklti_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: p, mu, xEnd, xEps, xIni, xUv, xStrg, bfold
+    real(kp), dimension(2) :: fieldUv, fieldStop
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    if (mu.le.0._kp) stop 'kklti_initial_field: improper mu<0!'
+    if (p.lt.2._kp) stop 'kklti_initial_field: improper p<0!'
+    
+
+    fieldUv = field_thbound(infParam)
+    fieldStop = field_stopinf(infParam)
+
+    xUv = fieldUv(1)/mu
+    xStrg = fieldStop(1)/mu
+
+    xEps = kklti_x_epsoneunity(p,mu)
+
+!if phistrg occurs before slow-roll violation
+    xEnd = max(xStrg,xEps)
+
+    if (display) write(*,*)'kklti_initial_field: xend= ',xEnd
+
+    if (xEnd.gt.xUv) then
+       write(*,*)'kklti_initial_field: xEnd > XUv!'
+       write(*,*)'xEnd= xUV= ',xEnd,xUV
+       stop
+    endif
+
+    xIni = kklti_x_trajectory(bfold,xEnd,p,mu)
+
+    if (xIni.gt.xUv) then
+       write(*,*)'kklti_initial_field: xIni > XUv!'
+       write(*,*)'xIni= xUV= ',xIni,xUV
+       stop
+    endif
+
+    kklti_initial_field(:) = xIni * mu
+
+  end function kklti_initial_field
 
   
-#endif  
-
 
 #endif
 

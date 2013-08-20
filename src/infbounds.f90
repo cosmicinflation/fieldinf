@@ -79,10 +79,13 @@ contains
           stop 'field_stopinf: runmass 4 should have phiend > mu!'
        endif
 
+    case ('branei')
+       field_stopinf(1) = infParam%consts(matterParamNum)*infParam%consts(3)
+       field_stopinf(2) = -1._kp
+
     case ('kklmmt')
        field_stopinf(1) = infParam%consts(matterParamNum)*infParam%consts(3)
        field_stopinf(2) = -1._kp
-       print *, 'fieldStop = infParam(matterParamNum)'
 
     case ('mixlf')
        field_stopinf(1) = infParam%consts(matterParamNum)
@@ -153,10 +156,13 @@ contains
     
     select case (infParam%name)
 
+    case ('branei')
+       field_thbound(1) = infParam%consts(matterParamNum-1)
+       field_thbound(2) = +1._kp
+
     case ('kklmmt')
        field_thbound(1) = infParam%consts(matterParamNum-1)
        field_thbound(2) = +1._kp
-       print *, 'fieldUv = infParam%consts(matterParamNum-1)'
 
     case default
        stop 'no theoretical field bound implemented for this model!'

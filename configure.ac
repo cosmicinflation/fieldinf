@@ -1,4 +1,4 @@
-AC_INIT([fieldinf], [1.1.0], [chris@ringeval.com])
+AC_INIT([fieldinf], [1.1.1], [chris@ringeval.com])
 
 AC_PROG_FC
 AC_PROG_CPP
@@ -8,7 +8,7 @@ version_info="0:1:0"
 AC_SUBST(version_info)
 
 
-FCFLAGS+=" -fopenmp"
+FCFLAGS+=" -fopenmp -DPPNAME"
 
 FIINCDIR="fieldinf"
 AC_SUBST([FIINCDIR])

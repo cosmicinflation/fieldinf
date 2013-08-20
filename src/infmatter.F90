@@ -131,6 +131,16 @@ contains
           p = potParam(2)
           mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
 
+       case ('branei')
+          M4 = potParam(3)
+          p = -potParam(2)
+          mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
+
+       case ('kklmmt')
+          M4 = 1._kp/potParam(3)
+          p = -potParam(2)
+          mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
+
        case ('gswli')
           M4 = potParam(3)
           alpha = potParam(4)/potParam(3)
@@ -427,6 +437,12 @@ contains
        case ('smallf')
           matter_potential = sfi_norm_potential(chi/mu,p,mu)
 
+       case ('branei')
+          matter_potential = bi_norm_potential(chi/mu,p,mu)
+
+       case ('kklmmt')
+          matter_potential = kklti_norm_potential(chi/mu,p,mu)
+
        case ('gswli')
           matter_potential = li_norm_potential(chi,alpha)
 
@@ -653,6 +669,12 @@ contains
 
        case ('smallf')
           deriv_matter_potential(1) = sfi_norm_deriv_potential(chi/mu,p,mu)/mu
+
+       case ('branei')
+          deriv_matter_potential(1) = bi_norm_deriv_potential(chi/mu,p,mu)/mu
+
+       case ('kklmmt')
+          deriv_matter_potential(1) = kklti_norm_deriv_potential(chi/mu,p,mu)/mu
 
        case ('gswli')
           deriv_matter_potential(1) = li_norm_deriv_potential(chi,alpha)
@@ -888,6 +910,12 @@ contains
 
        case ('smallf')
           deriv_second_matter_potential(1,1) = sfi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+
+       case ('branei')
+          deriv_second_matter_potential(1,1) = bi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+
+       case ('kklmmt')
+          deriv_second_matter_potential(1,1) = kklti_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
 
        case ('gswli')
           deriv_second_matter_potential(1,1) = li_norm_deriv_second_potential(chi,alpha)

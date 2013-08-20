@@ -206,6 +206,27 @@ contains
        endif
 
 
+    case ('branei')
+
+! U = c1^4 [1 - (F/c3)^-c2]
+
+       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
+            .or.(infParam%consts(3).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'brane inflation: improper params'
+       endif
+
+       matterParam(1) = - infParam%consts(1) &
+            /(infParam%consts(3)**(-infParam%consts(2)/4._kp))
+       matterParam(2) = -infParam%consts(2)
+       matterParam(3) = infParam%consts(1)
+       matterParam(4) = 0._kp
+       matterParam(5) = 1._kp
+
+      
        
 
     case ('hybrid')
@@ -297,34 +318,32 @@ contains
        
 
     case('kklmmt')
-
-! U = c1^4 * [1 - (F/c3)^(-c2)] with c2 > 0 for c5=1 or
 ! U = c1^4 / [1 + (F/c3)^(-c2)] with c2 > 0 for c5=-1
 !
-! c6 is Phi_string related to the flux number N
+! + Phi_string/mu related to the flux number N
 !
-! c7 is PhiUv related to the brane tension of the string coupling
+! + PhiUv related to the brane tension and the string coupling
 
+!the case c5=+1 is branei
+      
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
-            .or.(infParam%consts(3).le.0._kp) &
-            .or.(abs(infParam%consts(5)).ne.1._kp) &
+            .or.(infParam%consts(3).le.0._kp) &            
             .or.(infParam%consts(matterParamNum-1).lt.0._kp))
 
        if (badParams) then
           write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:5)
+          write(*,*)'consts = ',infParam%consts(1:4)
           stop 'kklmmt: improper params'
        endif
 
 
-       matterParam(1) = - sign(infParam%consts(1)**infParam%consts(5) &
-            /(infParam%consts(3)**(-infParam%consts(2)/4._kp)) &
-            ,infParam%consts(5))
+       matterParam(1) = 1._kp/infParam%consts(1) &
+            /(infParam%consts(3)**(-infParam%consts(2)/4._kp))
        matterParam(2) = -infParam%consts(2)
-       matterParam(3) = infParam%consts(1)**infParam%consts(5)
+       matterParam(3) = 1._kp/infParam%consts(1)
        matterParam(4) = 0._kp
-       matterParam(5) = infParam%consts(5)
+       matterParam(5) = -1._kp
 
 !those are necessary model parameters: checkout infbounds.f90
 !fieldUv: prevents brane out of the throat

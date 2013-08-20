@@ -187,3 +187,11 @@
 !generalized renormalizable inflection point inflatoin
   use gripisr, only : gripi_norm_potential, gripi_norm_deriv_potential
   use gripisr, only : gripi_norm_deriv_second_potential
+
+!brane inflation potential in the large x limit
+  use bisr, only : bi_norm_potential, bi_norm_deriv_potential
+  use bisr, only : bi_norm_deriv_second_potential
+
+!kklt brane inflation potential (witout assuming the large x limit)
+  use kkltisr, only : kklti_norm_potential, kklti_norm_deriv_potential
+  use kkltisr, only : kklti_norm_deriv_second_potential
