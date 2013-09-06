@@ -1,3 +1,29 @@
+commit b69341c556d43cb8c1ea2f1ccafeea968c8d2a5b
+Author: chris <fieldinf@ringeval.info>
+Date:   Fri Sep 6 17:39:48 2013 +0200
+
+    adding a testsuite
+
+ Makefile.am        |  4 ++++
+ configure.ac       |  7 +++++--
+ src/fieldmain.f90  |  2 --
+ src/gurumain.f90   |  2 --
+ tests/Makefile.am  | 41 +++++++++++++++++++++++++++++++++++++++++
+ tests/testsuite.at | 17 +++++++++++++++++
+ 6 files changed, 67 insertions(+), 6 deletions(-)
+
+commit da018beebd924240c6049cdc1e259ed8ed05976c
+Author: chris <fieldinf@ringeval.info>
+Date:   Fri Sep 6 17:29:39 2013 +0200
+
+    bumping relnum, updating logs
+
+ ChangeLog    | 150 +++++++++++++++++++++++++++++++++++++++++++++-----------------------------
+ NEWS         |   4 +-
+ configure.ac |   4 +-
+ 3 files changed, 95 insertions(+), 63 deletions(-)
+
+
 commit 82acdcae042ae7020edb717f2663a78029928c69
 Author: chris <fieldinf@ringeval.info>
 Date:   Tue Aug 20 20:16:39 2013 +0200
