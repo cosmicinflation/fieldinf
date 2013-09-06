@@ -1,4 +1,4 @@
-AC_INIT([fieldinf], [1.1.1], [fieldinf@ringeval.info])
+AC_INIT([fieldinf],[1.1.1],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
 
 AC_PROG_FC
 AC_PROG_CPP
@@ -45,9 +45,12 @@ AM_COND_IF([USE_ASPIC],
 	AC_MSG_WARN([libaspic support DISABLED])
 ])	
 
+AC_CONFIG_TESTDIR([tests])
+
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])                 
+                 tests/Makefile
+                 src/Makefile])
 
 AC_OUTPUT

@@ -1,0 +1,17 @@
+AT_INIT([maininf])
+
+AT_COLOR_TESTS
+
+AT_SETUP([running fieldmain])
+x=$abs_top_srcdir/src/fieldmain
+AT_KEYWORDS ([$x])
+AT_CHECK([$x],[],[ignore],[stderr])
+AT_CHECK([cat stderr],[])
+AT_CLEANUP
+
+AT_SETUP([running gurumain])
+x=$abs_top_srcdir/src/gurumain
+AT_KEYWORDS ([$x])
+AT_CHECK([$x],[],[ignore],[stderr])
+AT_CHECK([cat stderr],[])
+AT_CLEANUP

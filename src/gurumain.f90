@@ -84,7 +84,6 @@ program gurumain
   write(*,*)
 
   write(*,*)'INITIAL CONDITIONS SET!'
-  read(*,*)
 
 
 
@@ -151,7 +150,6 @@ program gurumain
   ptrRun => null()
 
   write(*,*)'BACKGROUND DATA DUMPED'
-  read(*,*)
 
 
 

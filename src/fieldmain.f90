@@ -90,7 +90,6 @@ program fieldmain
   write(*,*)
 
   write(*,*)'INITIAL CONDITIONS SET!'
-  read(*,*)
 
 
 
@@ -113,7 +112,6 @@ program fieldmain
   write(*,*)
 
   write(*,*)'BACKGROUND INTEGRATED'
-  read(*,*)
 
 
 
