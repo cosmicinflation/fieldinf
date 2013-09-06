@@ -1,5 +1,37 @@
+commit 82acdcae042ae7020edb717f2663a78029928c69
+Author: chris <fieldinf@ringeval.info>
+Date:   Tue Aug 20 20:16:39 2013 +0200
+
+    Added support for brane inflation and KKLMMT
+
+ configure.ac       |  4 +--
+ src/infbgmodel.F90 | 43 ++++++++++++++++++--------
+ src/infbounds.f90  | 10 ++++--
+ src/infmatter.F90  | 28 +++++++++++++++++
+ src/infsric.F90    | 90 +++++++++++++++++++++++++++++++++++-------------------
+ src/libaspic.h     |  8 +++++
+ 6 files changed, 136 insertions(+), 47 deletions(-)
+
+commit 68e1eb08c8631d6aee76d94129678dc5d2be339a
+Author: chris <fieldinf@ringeval.info>
+Date:   Tue Aug 13 20:30:02 2013 +0200
+
+    fix triggering qaspic
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e951820fa5e2ea901c59833fe271e902ad845e32
+Author: chris <fieldinf@ringeval.info>
+Date:   Tue Aug 13 16:42:12 2013 +0200
+
+    change of api for kmiii
+
+ src/infsric.F90 | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
 commit 171e50e8ea1303b8b754e18c3e694064b1779b8d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Jun 12 16:33:11 2013 +0200
 
     editing changelog
@@ -8,7 +40,7 @@ Date:   Wed Jun 12 16:33:11 2013 +0200
  1 file changed, 279 insertions(+), 142 deletions(-)
 
 commit cf42c69e9359c5b3b7134b14349d3a9f4b1a4877
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Jun 12 16:32:50 2013 +0200
 
     bump revision number
@@ -18,7 +50,7 @@ Date:   Wed Jun 12 16:32:50 2013 +0200
  2 files changed, 3 insertions(+), 7 deletions(-)
 
 commit 721d2bfa2a368528efc0ea03cdf5c033a6834140
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Jun 11 11:25:18 2013 +0200
 
     cleaning unused variables
@@ -28,7 +60,7 @@ Date:   Tue Jun 11 11:25:18 2013 +0200
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 commit e94355e2d3d1e95a9508296d66162803824f6590
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue May 28 18:22:08 2013 +0200
 
     Bumping rel num in configure
@@ -37,7 +69,7 @@ Date:   Tue May 28 18:22:08 2013 +0200
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 commit 56dd0d408e08d966bea7b3da82bfe5534c6c3fff
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue May 28 18:19:33 2013 +0200
 
     Following renaming of whri->wri in aspic
@@ -48,7 +80,7 @@ Date:   Tue May 28 18:19:33 2013 +0200
  3 files changed, 15 insertions(+), 15 deletions(-)
 
 commit a586e53f3f04efa339380106ef78c5d813a07677
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon May 27 20:17:40 2013 +0200
 
     Fix types in power_inf
@@ -57,7 +89,7 @@ Date:   Mon May 27 20:17:40 2013 +0200
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 commit a2fed73f356beaa627a5510654edc07915473eb4
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon May 27 20:12:56 2013 +0200
 
     Fix Updateinfprop
@@ -66,7 +98,7 @@ Date:   Mon May 27 20:12:56 2013 +0200
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 commit 7b539a0dc269c73912007d873493b79d227d8c18
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 14:58:23 2013 +0200
 
     display off efoldbound->120
@@ -75,7 +107,7 @@ Date:   Thu May 23 14:58:23 2013 +0200
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 commit 21e73dbd01b16ad064aa9bf3a57c5e0af876287e
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 14:57:12 2013 +0200
 
     switch display off
@@ -85,7 +117,7 @@ Date:   Thu May 23 14:57:12 2013 +0200
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 commit befc97b6cd8b9b9477a96c37bb61d46f8229350a
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 14:35:58 2013 +0200
 
     fix two dots
@@ -94,7 +126,7 @@ Date:   Thu May 23 14:35:58 2013 +0200
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 commit 2310c7d96f932751d2d4345ba0e7110f1d89226e
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 14:34:40 2013 +0200
 
     fix two dots
@@ -103,7 +135,7 @@ Date:   Thu May 23 14:34:40 2013 +0200
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 commit 49e69cb6d3b4298de8e7484a6029caec881b7cab
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 14:32:41 2013 +0200
 
     enforcing precision kp
@@ -113,7 +145,7 @@ Date:   Thu May 23 14:32:41 2013 +0200
  2 files changed, 12 insertions(+), 12 deletions(-)
 
 commit e8dac94e395059142272b29a17ff15fcb92b721c
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu May 23 11:48:48 2013 +0200
 
     Fixing new aspic API calls
@@ -124,7 +156,7 @@ Date:   Thu May 23 11:48:48 2013 +0200
  3 files changed, 46 insertions(+), 46 deletions(-)
 
 commit 777ad4c936a3b92d6a358ea5e82c8858885e5ac8
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed May 22 19:44:45 2013 +0200
 
     adding c5 in logs camb
@@ -133,7 +165,7 @@ Date:   Wed May 22 19:44:45 2013 +0200
  1 file changed, 7 insertions(+), 3 deletions(-)
 
 commit 8a47c6008f04c58c060f96e0caa6064ef2a374f7
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri May 3 16:49:48 2013 +0200
 
     Edit log files
@@ -143,7 +175,7 @@ Date:   Fri May 3 16:49:48 2013 +0200
  2 files changed, 29 insertions(+), 4 deletions(-)
 
 commit 12769d88a85759f0ffe8c4a80fbfa6e90f0c6871
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri May 3 16:46:35 2013 +0200
 
     Adding four new models: whri, imi, osti and grippi + new ripi
@@ -157,7 +189,7 @@ Date:   Fri May 3 16:46:35 2013 +0200
  6 files changed, 364 insertions(+), 45 deletions(-)
 
 commit ec5d1031b94b806e9081c46326293d54c092db88
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Feb 26 11:06:42 2013 +0100
 
     Update news and ChangeLog
@@ -167,7 +199,7 @@ Date:   Tue Feb 26 11:06:42 2013 +0100
  2 files changed, 26 insertions(+), 3 deletions(-)
 
 commit fb5b592b2941f04de08475c1452d488ab4a2139d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Feb 26 10:56:20 2013 +0100
 
     Update cwi,pni,mni,oi,mssmi
@@ -180,7 +212,7 @@ Date:   Tue Feb 26 10:56:20 2013 +0100
  5 files changed, 195 insertions(+), 228 deletions(-)
 
 commit a6fb325dc2c028f2d5d543ce2f2cd35b9d27292d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Jan 21 17:41:02 2013 +0100
 
     Edit Changelog
@@ -189,7 +221,7 @@ Date:   Mon Jan 21 17:41:02 2013 +0100
  1 file changed, 19 insertions(+)
 
 commit 947f54d6f047f0373d5ae6cd8b5e7f6fcf607c27
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Jan 21 17:39:54 2013 +0100
 
     Fix aspic API changes for twi
@@ -198,7 +230,7 @@ Date:   Mon Jan 21 17:39:54 2013 +0100
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 commit 6c0891d5139e2ac0d5c509a726b8c604513a7180
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Jan 21 17:31:43 2013 +0100
 
     version 1.0.9
@@ -208,7 +240,7 @@ Date:   Mon Jan 21 17:31:43 2013 +0100
  2 files changed, 33 insertions(+)
 
 commit 60e51aa16296f536b0eb583250a66b32ce84da7d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Jan 21 17:27:12 2013 +0100
 
     importing 8 aspic models: csi, oi, cnci, sbi, ssi, rmi, lpi, cndi
@@ -227,7 +259,7 @@ Date:   Mon Jan 21 17:27:12 2013 +0100
  11 files changed, 1130 insertions(+), 75 deletions(-)
 
 commit ebad72b0ede31e27d878b328aa149ddf48f8ca24
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Dec 12 19:37:47 2012 +0100
 
     Editing ChangeLog and README
@@ -237,7 +269,7 @@ Date:   Wed Dec 12 19:37:47 2012 +0100
  2 files changed, 516 insertions(+)
 
 commit 1b27862a405fdae135c074fc59279fb58fbc2ec3
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Dec 12 18:52:18 2012 +0100
 
     Update power_inf to new calls
@@ -246,7 +278,7 @@ Date:   Wed Dec 12 18:52:18 2012 +0100
  1 file changed, 19 insertions(+), 14 deletions(-)
 
 commit ed9d1e6e0c92cf92f6abb9bc3f34e7c707182fbb
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Dec 12 17:17:17 2012 +0100
 
     nuke old README
@@ -255,7 +287,7 @@ Date:   Wed Dec 12 17:17:17 2012 +0100
  1 file changed, 94 deletions(-)
 
 commit 09d3a4f271f3ec5f9efb862a47adecc9b5f5f886
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Dec 12 17:04:21 2012 +0100
 
     Fix configure.ac
@@ -264,7 +296,7 @@ Date:   Wed Dec 12 17:04:21 2012 +0100
  1 file changed, 9 insertions(+), 8 deletions(-)
 
 commit fe3a1c86b946cee83b318818718cb182b4b66b2e
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Dec 12 16:53:27 2012 +0100
 
     Moving everything to gnu standards
@@ -328,13 +360,13 @@ Date:   Wed Dec 12 16:53:27 2012 +0100
 
 commit cbd5d2ad6b01fc2426c2a186c9d87062f55b31ec
 Merge: 5bdd9c5 4d97e9f
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Dec 11 14:48:30 2012 +0100
 
     Merging with encyclopedia branch
 
 commit 4d97e9fef966716b8330d0f32a6871d3ace1c89a
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Dec 4 20:15:53 2012 +0100
 
     Supporting ripi, ai, cnai, cnbi
@@ -348,7 +380,7 @@ Date:   Tue Dec 4 20:15:53 2012 +0100
  6 files changed, 232 insertions(+), 24 deletions(-)
 
 commit fa83676e7214aa84e1f563fd4a4905bd9c62c11d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Nov 5 12:05:16 2012 +0100
 
     Importing 9 new models: mssmi, twi, gmssmi, bsusybi, ti, psni, ncki, vhi
@@ -363,7 +395,7 @@ Date:   Mon Nov 5 12:05:16 2012 +0100
  7 files changed, 669 insertions(+), 81 deletions(-)
 
 commit 864c2bbf33d0a00f52542c8b185d6d9456e4acfc
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Sep 21 15:27:17 2012 +0200
 
     Supporting bei,rgi,lmi1,lmi2,rmi1,rmi2 models from aspic
@@ -378,7 +410,7 @@ Date:   Fri Sep 21 15:27:17 2012 +0200
  7 files changed, 290 insertions(+), 53 deletions(-)
 
 commit 46224f06cba4fb9f19c0ff69d51d81aced8de2dd
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Sep 18 15:59:11 2012 +0200
 
     adding support for lmi models (pffff)
@@ -395,7 +427,7 @@ Date:   Tue Sep 18 15:59:11 2012 +0200
  9 files changed, 209 insertions(+), 40 deletions(-)
 
 commit a3ff864306d19ed8395b0fec6a9f51f4ae65d5f7
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Sep 10 15:29:27 2012 +0200
 
     update to new libaspic
@@ -405,7 +437,7 @@ Date:   Mon Sep 10 15:29:27 2012 +0200
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 commit e568e97c1053d704ba6818e1989a66998cd0b7f7
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Sep 10 14:31:47 2012 +0200
 
     update headers with aspic names
@@ -419,7 +451,7 @@ Date:   Mon Sep 10 14:31:47 2012 +0200
  6 files changed, 107 insertions(+), 99 deletions(-)
 
 commit 6203f614d922a6431f3da9e1f02a7bccafb12349
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Mar 23 14:52:40 2012 +0100
 
     testing twisted inflation
@@ -428,7 +460,7 @@ Date:   Fri Mar 23 14:52:40 2012 +0100
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 commit 3f14ebdb9f4e47b42b4216b8e7417412bb13cea0
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Mar 22 18:22:10 2012 +0100
 
     importing hi, twi, dwi and mhi
@@ -444,7 +476,7 @@ Date:   Thu Mar 22 18:22:10 2012 +0100
  8 files changed, 303 insertions(+), 47 deletions(-)
 
 commit fb569f60dfd333ceb6ba48348294ba39100f4569
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Mar 8 19:21:45 2012 +0100
 
     removing unsed use module
@@ -453,7 +485,7 @@ Date:   Thu Mar 8 19:21:45 2012 +0100
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 commit 3bdbca8afe380dbabff15c47d70c9026e081aa30
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Jan 12 16:31:59 2012 +0100
 
     testing without -DPP12
@@ -462,7 +494,7 @@ Date:   Thu Jan 12 16:31:59 2012 +0100
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 commit d86e1eb3729fa30966fdc05c305caee3746c9318
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Jan 12 16:15:55 2012 +0100
 
     importing models kahmo2 and colwei
@@ -476,7 +508,7 @@ Date:   Thu Jan 12 16:15:55 2012 +0100
  6 files changed, 138 insertions(+), 9 deletions(-)
 
 commit c272de3c185af26ffa0776c4f44fe9f2305e09b4
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Wed Jan 11 17:31:46 2012 +0100
 
     Adding models SFI, LI and II
@@ -492,7 +524,7 @@ Date:   Wed Jan 11 17:31:46 2012 +0100
  8 files changed, 177 insertions(+), 15 deletions(-)
 
 commit c10d98e1b81af06ccebf450c9b717007220cc37e
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Dec 5 18:46:10 2011 +0100
 
     Added hard-coded IC function for largef in case libsrmodels is off
@@ -501,7 +533,7 @@ Date:   Mon Dec 5 18:46:10 2011 +0100
  1 file changed, 33 insertions(+), 3 deletions(-)
 
 commit b5fef29e23c9d26ae9c6bf8907d0822cd92a62dc
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Nov 18 11:34:17 2011 +0100
 
     Importing khamod, hfline, powlaw models. Works agains srmodels 0.0.3
@@ -516,7 +548,7 @@ Date:   Fri Nov 18 11:34:17 2011 +0100
  7 files changed, 416 insertions(+), 57 deletions(-)
 
 commit b840ac5c8986b5ec3a46512fa1d228f7e540623d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Nov 17 10:24:30 2011 +0100
 
     Works against all models of srmodels 0.0.2
@@ -530,7 +562,7 @@ Date:   Thu Nov 17 10:24:30 2011 +0100
  6 files changed, 392 insertions(+), 82 deletions(-)
 
 commit dc48ab145ccfca28c6f67e965a14d88f5696cfe4
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Nov 15 19:37:56 2011 +0100
 
     Deep cleaning of the sources + optimizations (using compilation directives)
@@ -552,7 +584,7 @@ Date:   Tue Nov 15 19:37:56 2011 +0100
  14 files changed, 1091 insertions(+), 900 deletions(-)
 
 commit 488875bc060918a997fcf3ae0cd1038969632605
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Nov 10 19:40:22 2011 +0100
 
     No longer needs of special functions
@@ -563,7 +595,7 @@ Date:   Thu Nov 10 19:40:22 2011 +0100
  3 files changed, 1 insertion(+), 2413 deletions(-)
 
 commit 9ac111a8ce1368355fd5ae2684d9ce90a55ccea8
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Oct 18 11:22:15 2011 +0200
 
     fix sr function names
@@ -572,7 +604,7 @@ Date:   Tue Oct 18 11:22:15 2011 +0200
  1 file changed, 9 insertions(+), 9 deletions(-)
 
 commit 23327383e796becc8f22043d57d4e6829a7c8f0f
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Oct 18 08:49:45 2011 +0200
 
     sr modules and function changed in libsrmodels
@@ -581,7 +613,7 @@ Date:   Tue Oct 18 08:49:45 2011 +0200
  1 file changed, 45 insertions(+), 45 deletions(-)
 
 commit b060b93aaa7ededc473bab38a3261d50b0c36693
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Oct 17 12:14:16 2011 +0200
 
     adding Mp in GeV for libsrmodels
@@ -590,7 +622,7 @@ Date:   Mon Oct 17 12:14:16 2011 +0200
  1 file changed, 2 insertions(+)
 
 commit d39118c86b838d57e3b09c4bb4a6402afa669d29
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Oct 10 18:38:35 2011 +0200
 
     can now call libsrmodels.so.0
@@ -605,7 +637,7 @@ Date:   Mon Oct 10 18:38:35 2011 +0200
  7 files changed, 260 insertions(+), 78 deletions(-)
 
 commit d09b6b1cca5959a977daac4cceb5ec423e8e51e1
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Tue Oct 4 17:15:36 2011 +0200
 
     comment added
@@ -614,7 +646,7 @@ Date:   Tue Oct 4 17:15:36 2011 +0200
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 commit ef22ba15ca087adf5576cf9979366ece1e906a6d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Mon Oct 3 18:55:42 2011 +0200
 
     fixing missing symbols in cosmopar
@@ -623,7 +655,7 @@ Date:   Mon Oct 3 18:55:42 2011 +0200
  1 file changed, 10 insertions(+)
 
 commit 04e843ccb9f994fc64bd0d421c2d12429ca717b5
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Sep 30 15:11:54 2011 +0200
 
     fixing old references to infsrmodel
@@ -634,7 +666,7 @@ Date:   Fri Sep 30 15:11:54 2011 +0200
  3 files changed, 8 insertions(+), 35 deletions(-)
 
 commit 89299018f97b07506daf081d6f0ecbfae7c3d695
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Sep 30 15:10:26 2011 +0200
 
     separating slow-roll ic from field theoretical bounds, infsrmodel removed
@@ -645,7 +677,7 @@ Date:   Fri Sep 30 15:10:26 2011 +0200
  3 files changed, 158 insertions(+), 1212 deletions(-)
 
 commit 5bdd9c59402da8eafd2acc0c156107f886d74303
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Aug 5 13:38:01 2011 +0200
 
     changes in README
@@ -654,7 +686,7 @@ Date:   Fri Aug 5 13:38:01 2011 +0200
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 commit 7679b3cf2794fbe0a01097644d46203696ce0302
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Aug 5 10:30:17 2011 +0200
 
     adding power_inf wrapper for camb
@@ -663,7 +695,7 @@ Date:   Fri Aug 5 10:30:17 2011 +0200
  1 file changed, 948 insertions(+)
 
 commit 92a880aa5e355f3ffc67a97fc4dbf81e148427ef
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Aug 5 10:28:57 2011 +0200
 
     Remove master Makefile
@@ -672,7 +704,7 @@ Date:   Fri Aug 5 10:28:57 2011 +0200
  1 file changed, 45 deletions(-)
 
 commit 7cb7d858130400b858e54ed7e0e992d65233f85d
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Aug 5 10:21:08 2011 +0200
 
     creating fieldinf branch for camb/cosmomc module
@@ -683,7 +715,7 @@ Date:   Fri Aug 5 10:21:08 2011 +0200
  3 files changed, 93 insertions(+), 432 deletions(-)
 
 commit 7b2f13b6b28d2819da623f419b1ed8e357ebd01c
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Fri Aug 5 10:12:49 2011 +0200
 
     move srevol.f90 to slowroll project
@@ -692,7 +724,7 @@ Date:   Fri Aug 5 10:12:49 2011 +0200
  1 file changed, 698 deletions(-)
 
 commit b5bdc23a1e0da83b3258188361351e27428029d7
-Author: chris <chris@ringeval.com>
+Author: chris <fieldinf@ringeval.info>
 Date:   Thu Aug 4 16:58:09 2011 +0200
 
     initialising fields repository

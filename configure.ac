@@ -1,10 +1,10 @@
-AC_INIT([fieldinf], [1.1.1], [chris@ringeval.com])
+AC_INIT([fieldinf], [1.1.1], [fieldinf@ringeval.info])
 
 AC_PROG_FC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 
-version_info="0:1:0"
+version_info="1:0:1"
 AC_SUBST(version_info)
 
 
