@@ -291,12 +291,16 @@ contains
           q = potParam(14)
           alpha = - potParam(6)*potParam(11)**(potParam(12)-2._kp)/potParam(1)
           beta = potParam(13)*potParam(11)**(potParam(5)-2._kp)/potParam(1)
-
-          print *,'test',mu,alpha,p,q,beta
           
        case ('bsusyb')
           M4 = potParam(7)
           gam = potParam(17)/sqrt(6._kp)
+
+       case ('nformi','nform1','nform2','nform3','nform4')
+          M4 = potParam(15)
+          alpha = potParam(17)
+          beta = potParam(18)
+          potName='nformi'
 
 #endif
 #endif     
@@ -557,6 +561,8 @@ contains
        case ('grifpt')
           matter_potential = gripi_norm_potential(chi/mu,3._kp/4._kp*alpha,mu)
 
+       case('nformi')
+          matter_potential = nfi_norm_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -789,6 +795,9 @@ contains
 
        case ('grifpt')
           deriv_matter_potential(1) = gripi_norm_deriv_potential(chi/mu,3._kp/4._kp*alpha,mu)/mu
+
+       case ('nformi')
+          deriv_matter_potential(1) = nfi_norm_deriv_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1035,6 +1044,9 @@ contains
        case ('grifpt')
           deriv_second_matter_potential(1,1) = gripi_norm_deriv_second_potential(chi/mu &
                ,3._kp/4._kp*alpha,mu)/mu/mu
+
+       case ('nformi')
+          deriv_second_matter_potential(1,1) = nfi_norm_deriv_second_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

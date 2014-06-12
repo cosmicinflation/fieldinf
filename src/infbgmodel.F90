@@ -843,7 +843,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
-          stop 'sneutrino susy inflation: improper params'
+          stop 'spontaneous symmetry breaking inflation: improper params'
        endif
 
 
@@ -1046,18 +1046,22 @@ contains
     case ('nformi','nform1','nform2','nform3','nform4')
 !U = c1^4 exp[c2 F^c3]
 
-!fieldstop requires for (c2<0, c3>1), (c2>0,0<c3<1), (c2<0,c3<0)
+!fieldstop required for nform2 and nform4
 
        badParams = (infParam%consts(1).le.0._kp)
 
        badParams = badParams.or. ( (infparam%name.eq.'nform1').and.(.not.( &
-            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).gt.0._kp))))
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).gt.1._kp))))
        badParams = badParams.or. ( (infparam%name.eq.'nform2').and.(.not.( &
-            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).lt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'nform3').and.(.not.( &
-            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
-       badParams = badParams.or. ( (infparam%name.eq.'nform4').and.(.not.( &
-            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp))))
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).gt.1._kp))))
+       badParams = badParams.or. ( (infparam%name.eq.'nform3').and.(.not.(( &
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).lt.1._kp).and.&
+            (infParam%consts(3).gt.0._kp)) .or. (&
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.0._kp)))))
+       badParams = badParams.or. ( (infparam%name.eq.'nform4').and.(.not.(( &
+            (infParam%consts(2).gt.0._kp).and.(infParam%consts(3).lt.1._kp).and.&
+            (infParam%consts(3).gt.0._kp) ) .or. (&
+            (infParam%consts(2).lt.0._kp).and.(infParam%consts(3).lt.0._kp)))))
        
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
@@ -1065,7 +1069,19 @@ contains
           stop 'N-formalism inflation: improper params!'
        endif
 
-    end select
+
+       matterParam(1:4) = 0._kp
+       matterParam(2) = 2._kp
+       matterParam(5) = 2._kp
+       matterParam(6:11) = 0._kp
+       matterParam(12) = 2._kp
+       matterParam(13) = 0._kp
+       matterParam(14) = 2._kp
+
+       matterParam(15)= infParam%consts(1)
+       matterParam(16) = 0._kp
+       matterParam(17) = infParam%consts(2)
+       matterParam(18) = infParam%consts(3)
 
 #endif
 #endif

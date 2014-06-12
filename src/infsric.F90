@@ -237,6 +237,18 @@ contains
     case ('kklmmt')
        slowroll_initial_matter = kklti_initial_field(infParam,efold)
 
+    case ('nform1')
+       slowroll_initial_matter = nfi1_initial_field(infParam,efold)
+
+    case ('nform2')
+       slowroll_initial_matter = nfi2_initial_field(infParam,efold)
+
+    case ('nform3')
+       slowroll_initial_matter = nfi3_initial_field(infParam,efold)
+
+    case ('nform4')
+       slowroll_initial_matter = nfi4_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -963,6 +975,7 @@ contains
   end function rgi_initial_field
 
 
+
   function mssmi_initial_field(infParam, efold)
     use mssmisr, only : mssmi_x_trajectory, mssmi_x_endinf
     implicit none
@@ -1459,6 +1472,7 @@ contains
     oi_initial_field(:) = xIni * mu
 
   end function oi_initial_field
+
 
 
   function sbi_initial_field(infParam,efold)
@@ -2159,6 +2173,187 @@ contains
   end function kklti_initial_field
 
   
+
+  function nfi1_initial_field(infParam, efold)
+    use nfi1sr, only : nfi1_x_trajectory, nfi1_x_endinf
+    use nfi1sr, only : nfi1_check_params, nfi1_numacc_amin
+    use nfi1sr, only : nfi1_amax
+    implicit none
+    real(kp), dimension(matterNum) :: nfi1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: a,b, amin,amax
+
+    bfold = -efold
+    a = infParam%consts(2)
+    b = infParam%consts(3)
+
+    if (.not.nfi1_check_params(a,b)) then
+       stop 'nfi1_initial_field: nfi1 requires a>0, b>1'
+    endif
+
+    amin = nfi1_numacc_amin(b)
+    amax = nfi1_amax(efold,b)
+
+    if (a.lt.amin) then
+       write(*,*)'nfi1_initial_field: a<amin= ',amin
+       write(*,*)'potential values larger than huge'
+    endif
+
+    if (a.gt.amax) then
+       write(*,*)'nfi1_initial_field: a>amax= ',amax
+       write(*,*)'not enough efolds for efoldWanted= ',efold
+    endif
+
+    xEnd = nfi1_x_endinf(a,b)
+
+    if (display) write(*,*)'nfi1_initial_field: xend= ',xEnd
+
+    xIni = nfi1_x_trajectory(bfold,xEnd,a,b)
+
+    nfi1_initial_field(:) = xIni
+
+  end function nfi1_initial_field
+
+
+
+  function nfi2_initial_field(infParam, efold)
+    use nfi2sr, only : nfi2_x_trajectory
+    use nfi2sr, only : nfi2_check_params, nfi2_xendmax
+    use nfi2sr, only : nfi2_numacc_xendmax
+    implicit none
+    real(kp), dimension(matterNum) :: nfi2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+    
+    real(kp), dimension(2) :: fieldStop
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xEndMax
+    real(kp) :: a,b
+
+    bfold = -efold
+    a = infParam%consts(2)
+    b = infParam%consts(3)
+
+    if (.not.nfi2_check_params(a,b)) then
+       stop 'nfi2_initial_field: nfi2 requires a<0, b>1' 
+    endif
+
+    fieldStop = field_stopinf(infParam)
+
+    xEnd = fieldStop(1)
+
+    if (display) write(*,*)'nfi2_initial_field: xend= ',xEnd
+
+    xEndMax = nfi2_xendmax(efold,a,b)
+
+    if (xEnd.gt.xEndMax) then
+       write(*,*)'xend= xendmax= efold= ',xEnd,xEndMax,efold
+       stop 'nfi2_initial_field: xend too large'
+    endif
+
+    if (xEnd.gt.nfi2_numacc_xendmax(efold,a,b)) then
+       write(*,*)'nfi2_initial_field: potential values larger than huge'
+    endif
+
+    xIni = nfi2_x_trajectory(bfold,xEnd,a,b)
+
+    nfi2_initial_field(:) = xIni
+
+  end function nfi2_initial_field
+
+
+
+  function nfi3_initial_field(infParam, efold)
+    use nfi3sr, only : nfi3_x_trajectory, nfi3_x_endinf
+    use nfi3sr, only : nfi3_check_params, nfi3_numacc_absamax
+    implicit none
+    real(kp), dimension(matterNum) :: nfi3_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: a,b, absamax
+
+    bfold = -efold
+    a = infParam%consts(2)
+    b = infParam%consts(3)
+
+    if (.not.nfi3_check_params(a,b)) then
+       stop 'nfi3_initial_field: nfi3 requires a<0, 0<b<1 or a>0, b<0'
+    endif
+
+    absamax = nfi3_numacc_absamax(b)
+
+   
+    if (abs(a).gt.absamax) then
+       write(*,*)'nfi3_initial_field: |a|>amax= ',absamax
+       write(*,*)'potential values larger than huge'
+    endif
+
+    xEnd = nfi3_x_endinf(a,b)
+
+    if (display) write(*,*)'nfi3_initial_field: xend= ',xEnd
+
+    xIni = nfi3_x_trajectory(bfold,xEnd,a,b)
+
+    nfi3_initial_field(:) = xIni
+
+  end function nfi3_initial_field
+
+
+  
+  function nfi4_initial_field(infParam, efold)
+    use nfi4sr, only : nfi4_x_trajectory
+    use nfi4sr, only : nfi4_check_params, nfi4_xendmin
+    use nfi4sr, only : nfi4_numacc_xendmax
+    implicit none
+    real(kp), dimension(matterNum) :: nfi4_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp), dimension(2) :: fieldStop
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni, xEndMin
+    real(kp) :: a,b
+
+    bfold = -efold
+    a = infParam%consts(2)
+    b = infParam%consts(3)
+
+    if (.not.nfi4_check_params(a,b)) then
+       stop 'nfi4_initial_field: nfi4 requires  a>0, 0<b<1 or a<0, b<0'
+    endif
+
+    fieldStop = field_stopinf(infParam)
+
+    xEnd = fieldStop(1)
+
+    if (display) write(*,*)'nfi4_initial_field: xend= ',xEnd
+
+    xEndMin = nfi4_xendmin(efold,a,b)
+
+    if (xEnd.lt.xEndMin) then
+       write(*,*)'xend= xendmin= efold= ',xEnd,xEndMin,efold
+       stop 'nfi4_initial_field: xend too small'
+    endif
+
+    if (xEnd.gt.nfi4_numacc_xendmax(a,b)) then
+       write(*,*)'nfi4_initial_field: xend too large for numerical accuracy'
+    endif
+
+    xIni = nfi4_x_trajectory(bfold,xEnd,a,b)
+
+    nfi4_initial_field(:) = xIni
+
+  end function nfi4_initial_field
+
+
 
 #endif
 

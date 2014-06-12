@@ -195,3 +195,7 @@
 !kklt brane inflation potential (witout assuming the large x limit)
   use kkltisr, only : kklti_norm_potential, kklti_norm_deriv_potential
   use kkltisr, only : kklti_norm_deriv_second_potential
+
+!N-formalism inflation
+  use nficommon, only : nfi_norm_potential, nfi_norm_deriv_potential
+  use nficommon, only : nfi_norm_deriv_second_potential
