@@ -143,6 +143,15 @@ contains
        field_stopinf(1) = infParam%consts(matterParamNum)
        field_stopinf(2) = +1._kp
 
+    case ('nformi')
+       field_stopinf(1) = infParam%consts(matterParamNum)
+       if (infParam%consts(2)*infParam%consts(3)*(infParam%consts(3)-1._kp) &
+            .gt.0._kp) then
+          field_stopinf(2) = +1._kp
+       else
+          field_stopinf(2) = -1._kp
+       endif
+
     case default
        write(*,*)'model name: ',infParam%name
        stop 'field_stopinf: no such a model'
