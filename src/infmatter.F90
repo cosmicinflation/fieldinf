@@ -9,7 +9,7 @@ module infmatter
   private
 
 
-  logical, parameter :: display = .false.
+  logical, parameter :: display = .true.
 
 !number of matter sector field
 
@@ -298,7 +298,7 @@ contains
 
        case ('nformi','nform1','nform2','nform3','nform4')
           M4 = potParam(15)
-          alpha = potParam(17)
+          alpha = -potParam(17)
           beta = potParam(18)
           potName='nformi'
 
@@ -392,13 +392,11 @@ contains
     matter_potential = (potParam(3) + &
          (potParam(1) + potParam(4)*lnchi)*chi**potParam(2) &
          )**potParam(5)
-    
 #ifndef PP5
 ! From p6 to p12
     matter_potential = matter_potential &
          + ( potParam(6) + potParam(7)*exp(potParam(8)*chi) &
          + potParam(9)*cos(potParam(10)*chi+potParam(11)) ) * chi**(potParam(12))
-
 ! From p13 to p14
 #ifndef PP12
     matter_potential = matter_potential + potParam(13)*chi**potParam(14) &
@@ -636,8 +634,9 @@ contains
     deriv_matter_potential(1) = deriv_matter_potential(1) &
          + potParam(13)*potParam(14)*chi**(potParam(14)-1._kp) &
          + chi**(-1._kp+potParam(16))*expchi2*potParam(15)*potParam(16)&
-         + chi**(-1 + potParam(16) + potParam(18))*expchi2*potParam(15) &
+         + chi**(-1._kp + potParam(16) + potParam(18))*expchi2*potParam(15) &
          *potParam(17)*potParam(18)
+
 #endif
 #endif
 

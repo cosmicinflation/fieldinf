@@ -1044,7 +1044,7 @@ contains
        
 
     case ('nformi','nform1','nform2','nform3','nform4')
-!U = c1^4 exp[c2 F^c3]
+!U = c1^4 exp[-c2 F^c3]
 
 !fieldstop required for nform2 and nform4
 
@@ -1069,18 +1069,11 @@ contains
           stop 'N-formalism inflation: improper params!'
        endif
 
-
-       matterParam(1:4) = 0._kp
-       matterParam(2) = 2._kp
+       matterParam(1:14) = 0._kp
        matterParam(5) = 2._kp
-       matterParam(6:11) = 0._kp
-       matterParam(12) = 2._kp
-       matterParam(13) = 0._kp
-       matterParam(14) = 2._kp
-
        matterParam(15)= infParam%consts(1)
        matterParam(16) = 0._kp
-       matterParam(17) = infParam%consts(2)
+       matterParam(17) = -infParam%consts(2)
        matterParam(18) = infParam%consts(3)
 
 #endif

@@ -1,4 +1,4 @@
-AC_INIT([fieldinf],[1.1.1],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
+AC_INIT([fieldinf],[1.1.2],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
 
 AC_PROG_FC
 AC_PROG_CPP

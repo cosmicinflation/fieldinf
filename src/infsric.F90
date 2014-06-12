@@ -2196,17 +2196,21 @@ contains
     endif
 
     amin = nfi1_numacc_amin(b)
-    amax = nfi1_amax(efold,b)
-
+   
     if (a.lt.amin) then
        write(*,*)'nfi1_initial_field: a<amin= ',amin
        write(*,*)'potential values larger than huge'
     endif
 
-    if (a.gt.amax) then
-       write(*,*)'nfi1_initial_field: a>amax= ',amax
-       write(*,*)'not enough efolds for efoldWanted= ',efold
+    if (b.lt.2._kp) then
+       amax = nfi1_amax(efold,b)
+    
+       if (a.gt.amax) then
+          write(*,*)'nfi1_initial_field: a>amax= ',amax
+          write(*,*)'not enough efolds for efoldWanted= ',efold
+       endif
     endif
+
 
     xEnd = nfi1_x_endinf(a,b)
 
