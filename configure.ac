@@ -4,7 +4,7 @@ AC_PROG_FC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 
-version_info="1:0:1"
+version_info="2:0:2"
 AC_SUBST(version_info)
 
 

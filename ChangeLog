@@ -1,3 +1,65 @@
+commit f28cfcd0e225576a71b984c467e139bc6e4ec965
+Author: chris <chris@ringeval.com>
+Date:   Thu Jun 12 15:43:47 2014 +0200
+
+    add fieldstop support for nformi
+
+ src/infbounds.f90 | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 85b987fe832b9d25a8e486d727726b12950f2291
+Author: chris <chris@ringeval.com>
+Date:   Thu Jun 12 15:35:13 2014 +0200
+
+    Debugging nfi1234
+
+ configure.ac       |  2 +-
+ src/infbgmodel.F90 | 13 +++----------
+ src/infmatter.F90  |  9 ++++-----
+ src/infsric.F90    | 14 +++++++++-----
+ 4 files changed, 17 insertions(+), 21 deletions(-)
+
+commit 8c9befc32de5ec19131124f2fea30abf1f0ac551
+Author: chris <chris@ringeval.com>
+Date:   Thu Jun 12 11:54:08 2014 +0200
+
+    Adding n-formalism inflation support 1234
+
+ src/infbgmodel.F90 |  34 ++++++++----
+ src/infbounds.f90  |   8 +++
+ src/infmatter.F90  |  16 +++++-
+ src/infsric.F90    | 195 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/libaspic.h     |   4 ++
+ 5 files changed, 246 insertions(+), 11 deletions(-)
+
+commit d5a7869e385088ae8f86ee12a777c4782327266c
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 11 17:15:20 2014 +0200
+
+    Implementing N-formalism inflation
+
+ src/infbgmodel.F90 | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+commit 0686a7dae2a9b3716a51b0ccaa70bfd7fd7c3bf4
+Author: chris <chris@ringeval.com>
+Date:   Mon Sep 16 18:13:20 2013 +0200
+
+    updating constants to match aspic
+
+ src/infunits.F90 | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 3eba0ef35b0e2df38b3b14b8040b931b7da2d515
+Author: chris <chris@ringeval.com>
+Date:   Fri Sep 6 17:41:33 2013 +0200
+
+    updating logs
+
+ ChangeLog | 26 ++++++++++++++++++++++++++
+ NEWS      |  1 +
+ 2 files changed, 27 insertions(+)
+        
 commit b69341c556d43cb8c1ea2f1ccafeea968c8d2a5b
 Author: chris <fieldinf@ringeval.info>
 Date:   Fri Sep 6 17:39:48 2013 +0200
