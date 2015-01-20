@@ -1,3 +1,30 @@
+commit 31f00c1df6496f898621e3400d7f7b04e40782da
+Author: chris <chris@ringeval.com>
+Date:   Tue Jan 20 18:15:37 2015 +0100
+
+    Add support for CCSI and aspic-0.3.1.4
+
+ NEWS               |   6 +++---
+ configure.ac       |   2 +-
+ src/infbgmodel.F90 |  16 ++++++++++++++
+ src/infbounds.f90  |   4 ++++
+ src/infmatter.F90  |  15 +++++++++++++
+ src/infsric.F90    | 116 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/libaspic.h     |   4 ++++
+ 7 files changed, 158 insertions(+), 5 deletions(-)
+
+commit a6d17835b782c8b9a21a306e8a4c6cd7d1079a2a
+Author: chris <chris@ringeval.com>
+Date:   Mon Jun 23 17:04:58 2014 +0200
+
+    Edit logs, bump version num
+
+ ChangeLog    | 62
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ NEWS         |  6 +++---
+ configure.ac |  2 +-
+ 3 files changed, 66 insertions(+), 4 deletions(-)
+
 commit f28cfcd0e225576a71b984c467e139bc6e4ec965
 Author: chris <chris@ringeval.com>
 Date:   Thu Jun 12 15:43:47 2014 +0200
@@ -59,7 +86,7 @@ Date:   Fri Sep 6 17:41:33 2013 +0200
  ChangeLog | 26 ++++++++++++++++++++++++++
  NEWS      |  1 +
  2 files changed, 27 insertions(+)
-        
+
 commit b69341c556d43cb8c1ea2f1ccafeea968c8d2a5b
 Author: chris <fieldinf@ringeval.info>
 Date:   Fri Sep 6 17:39:48 2013 +0200
