@@ -314,6 +314,12 @@ contains
           p = potParam(2)
           q = sqrt(3._kp/2._kp)
 
+       case ('ccorsi','corsi1','corsi2','corsi3')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          q = sqrt(3._kp/2._kp)
+          potName='ccorsi'
+
        case ('tipinf')
           M4 = potParam(1)
           alpha = potParam(2)
@@ -477,6 +483,9 @@ contains
 
        case ('ricci2')
           matter_potential = rpi2_norm_potential(chi/q,p)
+
+       case ('ccorsi')
+          matter_potential = ccsi_norm_potential(chi/q,alpha)
 
        case ('betexp')
           matter_potential = bei_norm_potential(chi,lambda,beta)
@@ -713,6 +722,9 @@ contains
 
        case ('ricci2')
           deriv_matter_potential(1) = rpi2_norm_deriv_potential(chi/q,p)/q
+
+       case ('ccorsi')
+          deriv_matter_potential(1) = ccsi_norm_deriv_potential(chi/q,alpha)/q
 
        case ('betexp')
           deriv_matter_potential(1) = bei_norm_deriv_potential(chi,lambda,beta)
@@ -957,6 +969,9 @@ contains
 
        case ('ricci2')
           deriv_second_matter_potential(1,1) = rpi2_norm_deriv_second_potential(chi/q,p)/q/q
+
+       case ('ccorsi')
+          deriv_second_matter_potential(1,1) = ccsi_norm_deriv_second_potential(chi/q,alpha)/q/q
 
        case ('betexp')
           deriv_second_matter_potential(1,1) = bei_norm_deriv_second_potential(chi,lambda,beta)

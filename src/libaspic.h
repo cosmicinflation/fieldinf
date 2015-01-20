@@ -199,3 +199,7 @@
 !N-formalism inflation
   use nficommon, only : nfi_norm_potential, nfi_norm_deriv_potential
   use nficommon, only : nfi_norm_deriv_second_potential
+
+!Cublicly corrected Starobinksi inflation
+  use ccsicommon, only : ccsi_norm_potential, ccsi_norm_deriv_potential
+  use ccsicommon, only : ccsi_norm_deriv_second_potential

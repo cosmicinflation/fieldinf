@@ -1097,6 +1097,7 @@ contains
 
 
     case ('ricci1', 'ricci2')
+!F -> sqrt(2/3) F
 !U = c1^4 e^(-2 F) [e^F - 1]^[c2/(c2-1/2)]
 
        badParams = ((infParam%consts(1).le.0._kp) &
@@ -1110,6 +1111,21 @@ contains
 
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)
+
+
+    case ('ccorsi','corsi1','corsi2','corsi3')
+!F -> sqrt(2/3) F
+!U = c1^4 e^(-2 F) [e^F - 1]^2
+!       x {1 + 2 Sqrt[1 + 3 c2 (e^F - 1)] + 2 c2 (e^F -1 )}
+!       / {1 + Sqrt[1 + 3 c2 (e^F - 1)]}^3
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(abs(infParam%consts(2)).gt.1._kp))
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)
+
+!fieldstop required for corsi2
 
     case ('tipinf')
 !U = c1^4 [ 1 + cos(F/c3) + c2 sin^2(F/c3) ]

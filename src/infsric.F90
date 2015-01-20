@@ -9,7 +9,7 @@ module infsric
 
   private
 
-  logical, parameter :: display = .false.
+  logical, parameter :: display = .true.
   
   integer, parameter :: efoldBound = 120._kp
 
@@ -119,6 +119,15 @@ contains
 
     case ('ricci2')
        slowroll_initial_matter = rpi2_initial_field(infParam,efold)
+
+    case ('corsi1')
+       slowroll_initial_matter = ccsi1_initial_field(infParam,efold)
+
+    case ('corsi2')
+       slowroll_initial_matter = ccsi2_initial_field(infParam,efold)
+
+    case ('corsi3')
+       slowroll_initial_matter = ccsi3_initial_field(infParam,efold)
 
     case ('betexp')
        slowroll_initial_matter = bei_initial_field(infParam,efold)
@@ -920,7 +929,112 @@ contains
 
   end function rpi2_initial_field
 
+
+
+  function ccsi1_initial_field(infParam,efold)
+    use ccsi1sr, only : ccsi1_x_endinf,ccsi1_x_trajectory, ccsi1_numacc_xinimax
+    implicit none
+    real(kp), dimension(matterNum) :: ccsi1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha
+    real(kp) :: xEnd, xIni, bfold, xIniNumAcc
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    
+    if (alpha.lt.0._kp) stop 'ccsi1_initial_field: alpha<0!'
    
+    xEnd = ccsi1_x_endinf(alpha)
+
+    if (display) write(*,*)'ccsi1_initial_field: xend= ',xEnd
+
+    xIni = ccsi1_x_trajectory(bfold,xEnd,alpha)
+    xIniNumAcc = ccsi1_numacc_xinimax(alpha)
+
+    if (xIni.gt.XiniNumAcc) then
+       write(*,*)'ccsi1_initial_field: numerical accuracy reached for xIni'
+    endif
+
+    ccsi1_initial_field(:) = xIni * sqrt(3._kp/2._kp)
+
+  end function ccsi1_initial_field
+
+
+
+  function ccsi2_initial_field(infParam,efold)
+    use ccsi2sr, only : ccsi2_x_trajectory, ccsi2_numacc_xendmin
+    implicit none
+    real(kp), dimension(matterNum) :: ccsi2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha
+    real(kp) :: xEnd, xEndMinNum, xIni, bfold
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+
+    fieldStop = field_stopinf(infParam)
+    xEnd = fieldStop(1)*sqrt(2._kp/3._kp)
+
+    if (alpha.lt.0._kp) stop 'ccsi2_initial_field: alpha<0!'
+
+    xEndMinNum = ccsi2_numacc_xendmin(efold,alpha)
+
+    if (xEnd.lt.xEndMinNum) then
+       write(*,*)'xEnd= xEndMinNum=  ',xEnd,xEndMinNum
+       write(*,*)'ccsi2_initial_field: xEnd is not reachable at that numerical accuracy!'
+    endif
+           
+    if (display) write(*,*)'ccsi2_initial_field: xend= ',xEnd
+
+    xIni = ccsi2_x_trajectory(bfold,xEnd,alpha)
+
+    ccsi2_initial_field(:) = xIni * sqrt(3._kp/2._kp)
+
+  end function ccsi2_initial_field
+
+
+   
+  function ccsi3_initial_field(infParam,efold)
+    use ccsi3sr, only : ccsi3_x_endinf,ccsi3_x_trajectory
+    use ccsi3sr, only : ccsi3_alphamin
+    implicit none
+    real(kp), dimension(matterNum) :: ccsi3_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, alphaMin
+    real(kp) :: xEnd, xIni, bfold
+
+    bfold = -efold
+    
+    alpha = infParam%consts(2)
+    alphaMin = ccsi3_alphamin(efold)
+ 
+    if (alpha.gt.0._kp) stop 'ccsi3_initial_field: alpha>0!'
+    
+    if (alpha.lt.alphamin) then
+       write(*,*)'efold= alphamin(efold)= alpha= ',efold,alphaMin, alpha
+       stop 'alpha to small to get enough inflation!'
+    endif
+   
+    xEnd = ccsi3_x_endinf(alpha)
+
+    if (display) write(*,*)'ccsi3_initial_field: xend= ',xEnd
+
+    xIni = ccsi3_x_trajectory(bfold,xEnd,alpha)
+
+    ccsi3_initial_field(:) = xIni * sqrt(3._kp/2._kp)
+
+  end function ccsi3_initial_field
+
+
 
   function bei_initial_field(infParam, efold)
     use beisr, only : bei_x_trajectory, bei_x_endinf
