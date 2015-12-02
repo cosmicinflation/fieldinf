@@ -58,6 +58,9 @@ contains
 
     case ('natinf')
        slowroll_initial_matter = ni_initial_field(infParam,efold)
+
+    case ('hybnat')
+       slowroll_initial_matter = hni_initial_field(infParam,efold)
       
     case ('exsusy')
        slowroll_initial_matter = esi_initial_field(infParam,efold)
@@ -449,6 +452,39 @@ contains
 
   end function ni_initial_field
 
+
+
+  function hni_initial_field(infParam,efold)
+    use hnisr, only : hni_x_endinf, hni_x_trajectory, hni_alphamin
+    implicit none
+    real(kp), dimension(matterNum) :: hni_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alphaMin
+    real(kp) :: alpha, mu, xEnd, xIni, bfold
+
+    bfold = -efold
+
+    mu = infParam%consts(2)
+    alpha = infParam%consts(3)
+
+    alphaMin = hni_alphamin(mu)
+         
+    if (alpha.lt.alphamin) then
+       write(*,*)'alphamin= alpha= ',alphaMin, alpha
+       stop 'alpha too small to end inflation!'
+    endif
+   
+    xEnd = hni_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'hni_initial_field: xend= ',xEnd
+
+    xIni = hni_x_trajectory(bfold,xEnd,alpha,mu)
+
+    hni_initial_field(:) = xIni*mu
+
+  end function hni_initial_field
 
   
   function esi_initial_field(infParam,efold)
@@ -1024,7 +1060,7 @@ contains
     
     if (alpha.lt.alphamin) then
        write(*,*)'efold= alphamin(efold)= alpha= ',efold,alphaMin, alpha
-       stop 'alpha to small to get enough inflation!'
+       stop 'alpha too small to get enough inflation!'
     endif
    
     xEnd = ccsi3_x_endinf(alpha)

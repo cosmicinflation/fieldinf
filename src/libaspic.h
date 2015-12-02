@@ -204,6 +204,10 @@
   use ccsicommon, only : ccsi_norm_potential, ccsi_norm_deriv_potential
   use ccsicommon, only : ccsi_norm_deriv_second_potential
 
-!Dual Inflation
+!Dual inflation
   use disr, only : di_norm_potential, di_norm_deriv_potential
   use disr, only : di_norm_deriv_second_potential
+
+!Hybrid Natural inflation
+  use hnisr, only : hni_norm_potential, hni_norm_deriv_potential
+  use hnisr, only : hni_norm_deriv_second_potential

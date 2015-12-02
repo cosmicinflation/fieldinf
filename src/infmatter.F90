@@ -113,7 +113,7 @@ contains
     if (present(cname)) then
        potName(1:lenshort) = cname(1:lenshort)
     else
-       stop 'set_potential_param: PPNAME defined but not name as an input!'
+       stop 'set_potential_param: PPNAME defined but no name as an input!'
     endif
 
     select case (cname)
@@ -223,9 +223,15 @@ contains
        
        case ('natinf')
           M4 = potParam(6)
-          alpha = potParam(9)/potParam(6)
           mu = 1._kp/potParam(10)
-        
+
+       case ('hybnat')
+          M4 = potParam(6)
+          mu = 1._kp/potParam(10)
+          alpha = potParam(9)/potParam(6)
+
+          print *,'test',alpha,mu
+
        case ('exsusy')
           M4 = potParam(6)
           q = -potParam(8)
@@ -434,6 +440,9 @@ contains
 
        case ('natinf')
           matter_potential = ni_norm_potential(chi,mu)
+
+       case ('hybnat')
+          matter_potential = hni_norm_potential(chi/mu,alpha,mu)
           
        case ('exsusy')
           matter_potential = esi_norm_potential(chi,q)
@@ -677,6 +686,9 @@ contains
        case ('natinf')
           deriv_matter_potential(1) = ni_norm_deriv_potential(chi,mu)
                 
+       case ('hybnat')
+          deriv_matter_potential(1) = hni_norm_deriv_potential(chi/mu,alpha,mu)/mu
+
        case ('exsusy')
           deriv_matter_potential(1) = esi_norm_deriv_potential(chi,q)
 
@@ -927,6 +939,10 @@ contains
        case ('natinf')
           deriv_second_matter_potential(1,1) = ni_norm_deriv_second_potential(chi,mu)
 
+       case ('hybnat')
+          deriv_second_matter_potential(1,1) = hni_norm_deriv_second_potential(chi/mu &
+               ,alpha,mu)/mu/mu
+
        case ('exsusy')
           deriv_second_matter_potential(1,1) = esi_norm_deriv_second_potential(chi,q)
 
@@ -946,7 +962,8 @@ contains
           deriv_second_matter_potential(1,1) = bi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
 
        case ('kklmmt')
-          deriv_second_matter_potential(1,1) = kklti_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = kklti_norm_deriv_second_potential(chi/mu &
+               ,p,mu)/mu/mu
 
        case ('gswli')
           deriv_second_matter_potential(1,1) = li_norm_deriv_second_potential(chi,alpha)
@@ -958,7 +975,8 @@ contains
           deriv_second_matter_potential(1,1) = kmiii_norm_deriv_second_potential(chi,alpha,beta)
 
        case ('colwei')
-          deriv_second_matter_potential(1,1) = cwi_norm_deriv_second_potential(chi/mu,alpha,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = cwi_norm_deriv_second_potential(chi/mu &
+               ,alpha,mu)/mu/mu
 
        case ('higgsi')
           deriv_second_matter_potential(1,1) = hi_norm_deriv_second_potential(chi)
@@ -967,10 +985,12 @@ contains
           deriv_second_matter_potential(1,1) = twi_norm_deriv_second_potential(chi,mu)
 
        case ('tdwell')
-          deriv_second_matter_potential(1,1) = dwi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = dwi_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('mhitop')
-          deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('logmdi')
           deriv_second_matter_potential(1,1) = lmi_norm_deriv_second_potential(chi,gam,beta)
@@ -982,7 +1002,8 @@ contains
           deriv_second_matter_potential(1,1) = rpi2_norm_deriv_second_potential(chi/q,p)/q/q
 
        case ('ccorsi')
-          deriv_second_matter_potential(1,1) = ccsi_norm_deriv_second_potential(chi/q,alpha)/q/q
+          deriv_second_matter_potential(1,1) = ccsi_norm_deriv_second_potential(chi/q &
+               ,alpha)/q/q
 
        case ('betexp')
           deriv_second_matter_potential(1,1) = bei_norm_deriv_second_potential(chi,lambda,beta)
@@ -991,10 +1012,12 @@ contains
           deriv_second_matter_potential(1,1) = rgi_norm_deriv_second_potential(chi,alpha)
 
        case ('nmssmi')
-          deriv_second_matter_potential(1,1) = mssmi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = mssmi_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('orifpt')
-          deriv_second_matter_potential(1,1) = oripi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = oripi_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('gmssmi')
           deriv_second_matter_potential(1,1) = gmssmi_norm_deriv_second_potential(chi/mu &
@@ -1004,7 +1027,8 @@ contains
           deriv_second_matter_potential(1,1) = bsusybi_norm_deriv_second_potential(chi,gam)
 
        case ('tipinf')
-          deriv_second_matter_potential(1,1) = ti_norm_deriv_second_potential(chi/mu,alpha,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = ti_norm_deriv_second_potential(chi/mu &
+               ,alpha,mu)/mu/mu
 
        case ('psenat')
           deriv_second_matter_potential(1,1) = psni_norm_deriv_second_potential(chi/mu &
@@ -1014,13 +1038,16 @@ contains
           deriv_second_matter_potential(1,1) = ncki_norm_deriv_second_potential(chi,alpha,beta)
 
        case ('hybrid')
-          deriv_second_matter_potential(1,1) = vhi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = vhi_norm_deriv_second_potential(chi/mu,p &
+               ,mu)/mu/mu
 
        case ('dysusy')
-          deriv_second_matter_potential(1,1) = dsi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = dsi_norm_deriv_second_potential(chi/mu &
+               ,p,mu)/mu/mu
 
        case ('arctan')
-          deriv_second_matter_potential(1,1) = ai_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = ai_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('fixnsa')
           deriv_second_matter_potential(1,1) = cnai_norm_deriv_second_potential(chi,alpha)
@@ -1052,19 +1079,23 @@ contains
                ,2._kp*nu,mu)/mu/mu
 
        case ('logpot')
-          deriv_second_matter_potential(1,1) = lpi_norm_deriv_second_potential(chi/mu,p,q)/mu/mu
+          deriv_second_matter_potential(1,1) = lpi_norm_deriv_second_potential(chi/mu &
+               ,p,q)/mu/mu
 
        case ('ostach')
-          deriv_second_matter_potential(1,1) = osti_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = osti_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('witorh')
-          deriv_second_matter_potential(1,1) = wri_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = wri_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('invmon')
           deriv_second_matter_potential(1,1) = imi_norm_deriv_second_potential(chi,p)
 
        case ('nrifpt')
-          deriv_second_matter_potential(1,1) = ripi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+          deriv_second_matter_potential(1,1) = ripi_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
 
        case ('grifpt')
           deriv_second_matter_potential(1,1) = gripi_norm_deriv_second_potential(chi/mu &
