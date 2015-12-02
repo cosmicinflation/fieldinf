@@ -1075,8 +1075,8 @@ contains
 
        case ('dualsb')
           deriv_second_matter_potential(1,1) = di_norm_deriv_second_potential(chi/lambda &
-               ,f,lambda)/lambda/lambda
-          
+               ,f,lambda)/lambda/lambda          
+
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
 !          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 
@@ -1092,7 +1092,7 @@ contains
     end select
 
     deriv_second_matter_potential = M4 * deriv_second_matter_potential   
-           
+
 #else
     stop 'deriv_second_matter_potential: FieldInf not built agains libsrmodels!'
 #endif
