@@ -203,3 +203,7 @@
 !Cublicly corrected Starobinksi inflation
   use ccsicommon, only : ccsi_norm_potential, ccsi_norm_deriv_potential
   use ccsicommon, only : ccsi_norm_deriv_second_potential
+
+!Dual Inflation
+  use disr, only : di_norm_potential, di_norm_deriv_potential
+  use disr, only : di_norm_deriv_second_potential

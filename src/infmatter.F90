@@ -66,7 +66,7 @@ module infmatter
   character(len=lenshort), save :: potName = 'x'
  
 !some more easy to use alias for PPNAME
-  real(kp), save :: alpha, beta, gam, lambda ,p, q, mu, nu, M4
+  real(kp), save :: alpha, beta, gam, f, lambda ,p, q, mu, nu, M4
 
 !  real(kp) :: M, kappa, phic
  
@@ -343,6 +343,11 @@ contains
           alpha = potParam(2)
           beta = potParam(3)**0.25_kp
 
+       case ('dualsb')
+          f = potParam(1)**0.25_kp
+          lambda = potParam(2)
+          M4 = potParam(1)*potParam(2)**2/pi**2
+
 !       case ('f-term')
 !          M4 = potParam(1)
 !          kappa = potParam(2)
@@ -570,6 +575,9 @@ contains
 
        case('nformi')
           matter_potential = nfi_norm_potential(chi,alpha,beta)
+
+       case ('dualsb')
+          matter_potential = di_norm_potential(chi,f,lambda)
 
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -809,6 +817,9 @@ contains
 
        case ('nformi')
           deriv_matter_potential(1) = nfi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('dualsb')
+          deriv_matter_potential(1) = di_norm_deriv_potential(chi,f,lambda)
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1062,6 +1073,9 @@ contains
        case ('nformi')
           deriv_second_matter_potential(1,1) = nfi_norm_deriv_second_potential(chi,alpha,beta)
 
+       case ('dualsb')
+          deriv_second_matter_potential(1,1) = di_norm_deriv_second_potential(chi,f,lambda)
+          
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
 !          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 

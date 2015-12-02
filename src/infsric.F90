@@ -258,6 +258,9 @@ contains
     case ('nform4')
        slowroll_initial_matter = nfi4_initial_field(infParam,efold)
 
+    case ('dualsb')
+       slowroll_initial_matter = di_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -2471,6 +2474,30 @@ contains
 
   end function nfi4_initial_field
 
+
+  function di_initial_field(infParam, efold)
+    use disr, only : di_k2_trajectory, di_k2_epsoneunity, di_x
+    implicit none
+    real(kp), dimension(matterNum) :: di_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: k2End, k2Ini, f, lambda
+    real(kp) :: bfold, k2end
+
+    bfold = -efold
+    f = infParam(1)
+    lambda = infParam(2)
+
+    k2end = di_k2_epsoneunity(f,lambda)
+    
+    if (display) write(*,*)'di_initial_field: k2end= ',k2end
+
+    k2ini = di_k2_trajectory(bfold,k2end,f,lambda)
+
+    di_initial_field(:) = di_x(k2ini)
+
+  end function di_initial_field
 
 
 #endif

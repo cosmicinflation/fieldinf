@@ -1217,6 +1217,25 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
+    case ('dualsb')
+!Dual Inflation from Softly Broken N=2 Super-Yang-Mills theories
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(1).gt.1._kp) &
+            .or.(infParam%consts(2).le.0._kp) &
+            .or.(infParam%consts(2).gt.1._kp))
+
+       if (badParams) then
+          write(*,*)'model name: 'infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'Constant ns inflation: improper params'
+       endif
+!f
+       matterParam(1) = infParam%consts(1)
+!lambda
+       matterParam(2) = infParam%consts(2)
+
+
     case ('f-term')
 !2 params kappa and M
        
