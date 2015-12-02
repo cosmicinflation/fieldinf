@@ -2483,19 +2483,22 @@ contains
     real(kp), intent(in) :: efold
 
     real(kp) :: k2End, k2Ini, f, lambda
-    real(kp) :: bfold, k2end
+    real(kp) :: bfold, xend
 
     bfold = -efold
-    f = infParam(1)
-    lambda = infParam(2)
+    f = infParam%consts(1)
+    lambda = infParam%consts(2)
 
     k2end = di_k2_epsoneunity(f,lambda)
     
-    if (display) write(*,*)'di_initial_field: k2end= ',k2end
+    if (display) then
+       xend = di_x(k2end)
+       write(*,*)'di_initial_field: k2end= matterEnd= ',k2end,xend*lambda
+    endif
 
     k2ini = di_k2_trajectory(bfold,k2end,f,lambda)
 
-    di_initial_field(:) = di_x(k2ini)
+    di_initial_field(:) = di_x(k2ini)*lambda
 
   end function di_initial_field
 

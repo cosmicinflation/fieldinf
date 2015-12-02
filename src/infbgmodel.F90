@@ -1226,7 +1226,7 @@ contains
             .or.(infParam%consts(2).gt.1._kp))
 
        if (badParams) then
-          write(*,*)'model name: 'infParam%name
+          write(*,*)'model name: ',infParam%name
           write(*,*)'consts = ',infParam%consts(1:3)
           stop 'Constant ns inflation: improper params'
        endif

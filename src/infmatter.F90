@@ -819,7 +819,7 @@ contains
           deriv_matter_potential(1) = nfi_norm_deriv_potential(chi,alpha,beta)
 
        case ('dualsb')
-          deriv_matter_potential(1) = di_norm_deriv_potential(chi,f,lambda)
+          deriv_matter_potential(1) = di_norm_deriv_potential(chi/lambda,f,lambda)/lambda
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1074,7 +1074,8 @@ contains
           deriv_second_matter_potential(1,1) = nfi_norm_deriv_second_potential(chi,alpha,beta)
 
        case ('dualsb')
-          deriv_second_matter_potential(1,1) = di_norm_deriv_second_potential(chi,f,lambda)
+          deriv_second_matter_potential(1,1) = di_norm_deriv_second_potential(chi/lambda &
+               ,f,lambda)/lambda/lambda
           
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
