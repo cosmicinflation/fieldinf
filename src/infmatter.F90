@@ -230,8 +230,6 @@ contains
           mu = 1._kp/potParam(10)
           alpha = potParam(9)/potParam(6)
 
-          print *,'test',alpha,mu
-
        case ('exsusy')
           M4 = potParam(6)
           q = -potParam(8)
@@ -267,6 +265,13 @@ contains
           alpha = potParam(1)/potParam(3)
           beta = potParam(6)/potParam(3)
           potName='ssbinf'
+
+       case ('nrcoli')
+          M4 = potParam(1)
+          p = 0.5_kp*potParam(12)-2._kp
+          alpha = potParam(4)/potParam(1)
+          mu = (potParam(1)/potParam(6))**(1._kp/potParam(12))
+
 
 #ifndef PP12
        case ('kahmod')
@@ -588,6 +593,9 @@ contains
        case ('dualsb')
           matter_potential = di_norm_potential(chi,f,lambda)
 
+       case ('nrcoli')
+          matter_potential = ncli_norm_potential(chi,alpha,mu,p)
+
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
 !               + 2._kp * phi**2 * psi**2 / M**2 / phic**2 &
@@ -832,6 +840,9 @@ contains
 
        case ('dualsb')
           deriv_matter_potential(1) = di_norm_deriv_potential(chi/lambda,f,lambda)/lambda
+
+       case ('nrcoli')
+          deriv_matter_potential(1) = ncli_norm_deriv_potential(chi,alpha,mu,p)
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1107,6 +1118,9 @@ contains
        case ('dualsb')
           deriv_second_matter_potential(1,1) = di_norm_deriv_second_potential(chi/lambda &
                ,f,lambda)/lambda/lambda          
+
+       case ('nrcoli')
+          deriv_second_matter_potential(1,1) = ncli_norm_deriv_second_potential(chi,alpha,mu,p)
 
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

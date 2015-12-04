@@ -264,6 +264,9 @@ contains
     case ('dualsb')
        slowroll_initial_matter = di_initial_field(infParam,efold)
 
+    case ('nrcoli')
+       slowroll_initial_matter = ncli_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -2537,6 +2540,49 @@ contains
     di_initial_field(:) = di_x(k2ini)*lambda
 
   end function di_initial_field
+
+
+  function ncli_initial_field(infParam, efold)
+    use nclisr, only : ncli_x_trajectory, ncli_x_endinf, ncli_efold_primitive
+    use nclisr, only : ncli_xinimax, ncli_phizeromin, ncli_x_epsoneunity
+    
+    real(kp), dimension(matterNum) :: ncli_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, p, mu, muMin, efoldMax
+    real(kp) :: xEnd, xIni, xIniMax, bfold
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+    p = infParam%consts(4)
+    
+    if (mu.lt.ncli_phizeromin(alpha,p)) then
+       write(*,*)'mu= muMin= ',mu,muMin
+       stop 'ncli_initial_field: mu too small'
+    endif
+
+    xEnd = ncli_x_endinf(alpha,mu,p)
+
+    if (display) write(*,*)'ncli_initial_field: xend= ',xEnd
+   
+    xIniMax = ncli_xinimax(alpha,mu,p)
+
+    efoldMAx = -ncli_efold_primitive(xend,alpha,mu,p) &
+         + ncli_efold_primitive(xiniMax,alpha,mu,p)
+
+    if (efold.gt.efoldMax) then
+       write(*,*)'ncli_initial_field: efold > efoldMax in plateau'
+       write(*,*)'efold= efoldMax= ',efold,efoldMax
+    end if
+       
+    xIni = ncli_x_trajectory(bfold,xEnd,alpha,mu,p)
+
+    ncli_initial_field(:) = xIni
+
+  end function ncli_initial_field
 
 
 #endif

@@ -211,3 +211,7 @@
 !Hybrid Natural inflation
   use hnisr, only : hni_norm_potential, hni_norm_deriv_potential
   use hnisr, only : hni_norm_deriv_second_potential
+
+!Non-renormalizable corrected loop inflation
+  use nclisr, only : ncli_norm_potential, ncli_norm_deriv_potential
+  use nclisr, only : ncli_norm_deriv_second_potential

@@ -334,11 +334,11 @@ contains
 !end inflation when epsilon1=1 in Jordan Frame, or in Einstein Frame
 !Physics says in JF, but both are the same up to 2% when the dilaton coupling are set to 1
 !Today dilaton couplings are 0.01 maxi, and they are constant or null in our model.
-!Integration stops when epsilon1(useJF or not) > epsilon1Stop
-    real(kp), parameter :: epsilon1Stop = 1._kp
-    logical, parameter :: useEpsilon1JF = .false.
+!Integration stops when epsilon1(useJF or not) > epsilonStop
+    real(kp), parameter :: epsilonStop = 1._kp
+    logical, parameter :: useOtherEpsilon = .true.
 
-!zbrent accuracy on efoldEnd for which epsilon=epsilon1Stop
+!zbrent accuracy on efoldEnd for which epsilon=epsilonStop
     real(kp), parameter :: tolEfoldEnd = tolkp
 
 !another test, checked after epsilon1 values to stop integration. May
@@ -445,14 +445,14 @@ contains
     bgVar = bgVarIni
 
 !initialize (all other subtypes may change)
-    stopData%yesno1 = useEpsilon1JF
+    stopData%yesno1 = useOtherEpsilon
     stopData%yesno2 = checkMatterStop
     stopData%yesno3 = stopForMax
     stopData%yesno4 = checkHubbleStop
     stopData%check = .false.    
     stopData%update = .false.
     stopData%xend = efoldHuge
-    stopData%real1 = epsilon1Stop
+    stopData%real1 = epsilonStop
     stopData%real2 = valueStop! - 10._kp*tolEvol
     stopData%int1 = stopIndexMin
     stopData%int2 = stopIndexMax
@@ -494,7 +494,7 @@ contains
 !precise determination of efoldEndInf up to tolEfoldEnd provided
 !inflation is longer than efoldStepDefault efold
 
-!checkMatterMini stands for cases when epsilon1=epsilon1Stop does not
+!checkMatterMini stands for cases when epsilon1=epsilonStop does not
 !define the end of inflation, so who cares about accurate
 !determination
     if ((.not.accurateEndInf).or.(efoldAfterEndInf.eq.efoldMaxiStop)) then
@@ -525,7 +525,7 @@ contains
     
 !use zbrent zero finder in [efoldBeforeEndInf, efoldAfterEndInf]
        findData%yesno1 = useVelocity
-       findData%yesno2 = useEpsilon1JF       
+       findData%yesno2 = useOtherEpsilon       
        findData%yesno3 = stopForMax
        findData%real1 = efold
        allocate(findData%ptrvector1(2*fieldNum))
@@ -763,12 +763,12 @@ contains
     type(transfert), optional, intent(inout) :: findData
     real(kp) :: find_endinf_epsilon
 
-    logical :: useVelocity, useEpsilon1JF
+    logical :: useVelocity, useOtherEpsilon
     real(kp) :: efoldStart
     real(kp), dimension(2*fieldNum) :: bgVar
     real(kp), dimension(fieldNum) :: field, derivField
 
-    useEpsilon1JF = findData%yesno2
+    useOtherEpsilon = findData%yesno2
     useVelocity = findData%yesno1
     efoldStart = findData%real1
 
@@ -799,9 +799,13 @@ contains
 !the one wanted to end inflation (=1). The efoldEnd is the zero of
 !this function. Striclty speaking inflation ends when epsilon1JF=1.
         
-    if (useEpsilon1JF) then
+    if (useOtherEpsilon) then
+!epsilon1 JF
+!       find_endinf_epsilon &
+!            = slowroll_first_parameter_JF(field,derivField,findData%yesno1) - 1._kp
+!epsilon 2 (end of slow-roll)
        find_endinf_epsilon &
-            = slowroll_first_parameter_JF(field,derivField,findData%yesno1) - 1._kp
+            = slowroll_second_parameter(field,derivField,findData%yesno1) - 1._kp
     else
        find_endinf_epsilon &
             = slowroll_first_parameter(field,derivField,findData%yesno1) - 1._kp
@@ -949,7 +953,7 @@ contains
     real(kp), dimension(fieldNum) :: field, christVec
     real(kp), dimension(fieldNum) :: fieldDot, fieldDotDot 
     real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
-    real(kp) :: fieldDotSquare, epsilon1, hubbleSquare
+    real(kp) :: fieldDotSquare, epsilon, hubbleSquare
   
     logical, save :: stopNow=.false.
 
@@ -961,13 +965,16 @@ contains
     fieldDotSquare = dot_product(fieldDot,matmul(metric(field),fieldDot))
 
     if (present(stopData)) then
-!use epsilon1JF or not to stop inflation
+!use other epsilon or not to stop inflation
        if (stopData%check) then
           
           if (stopData%yesno1) then
-             epsilon1 = slowroll_first_parameter_JF(field,fieldDot,.false.)
+!eps1JF
+!             epsilon = slowroll_first_parameter_JF(field,fieldDot,.false.)
+!eps2
+             epsilon = slowroll_second_parameter(field,fieldDot,.false.)
           else
-             epsilon1 = fieldDotSquare/2._kp
+             epsilon = fieldDotSquare/2._kp
           endif
 
           if (stopData%yesno2) then
@@ -985,7 +992,7 @@ contains
              stopNow = (hubbleSquare.lt.(stopData%real2)**2)
           endif
           
-          if (stopNow.or.(epsilon1.gt.stopData%real1)) then
+          if (stopNow.or.(epsilon.gt.stopData%real1)) then
              stopData%update = .true.
              stopData%xend = efold 
              stopData%yesno2 = .false.
@@ -1036,7 +1043,7 @@ contains
     real(kp), dimension(fieldNum) :: field, velocity
     real(kp), dimension(fieldNum) :: fieldDot, velocityDot, christVec
     real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
-    real(kp) :: velocitySquare, epsilon1, hubbleSquare, hubble
+    real(kp) :: velocitySquare, epsilon, hubbleSquare, hubble
     
     logical, save :: stopNow = .false.
 
@@ -1065,12 +1072,15 @@ contains
     endif
     
     if (present(stopData)) then
-!use epsilon1JF or not to stop inflation
+!use other epsilon or not to stop inflation
        if (stopData%check) then
           if (stopData%yesno1) then
-             epsilon1 = slowroll_first_parameter_JF(field,velocity,.true.)
+!eps1JF
+!             epsilon = slowroll_first_parameter_JF(field,velocity,.true.)
+!eps2
+             epsilon = slowroll_second_parameter(field,velocity,.true.)
           else
-             epsilon1 = velocitySquare/2._kp/hubbleSquare
+             epsilon = velocitySquare/2._kp/hubbleSquare
           endif          
           if (stopData%yesno2) then
              if (stopData%yesno3) then
@@ -1085,7 +1095,7 @@ contains
           if (stopData%yesno4) stopNow = hubble.le.stopData%real2
 
 
-          if (stopNow.or.(epsilon1.gt.stopData%real1)) then
+          if (stopNow.or.(epsilon.gt.stopData%real1)) then
              stopData%update = .true.
              stopData%xend = efold 
              stopData%yesno2 = .false.

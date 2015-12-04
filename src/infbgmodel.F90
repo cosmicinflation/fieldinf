@@ -385,8 +385,8 @@ contains
        matterParam(2) = 0._kp
        matterParam(3) = infParam%consts(1)
        matterParam(4) = infParam%consts(1) * infParam%consts(2)**0.25_kp
-       matterParam(5) = 1._kp  
-          
+       matterParam(5) = 1._kp                
+
 
     case ('colwei')
 ! U = c1^4 [1 + c2 ln(F/c3) (F/c3)^c4]
@@ -398,7 +398,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:4)
-          stop 'coleman-weinberg: improper params'
+          stop 'Coleman-Weinberg inflation: improper params'
        endif
 
        matterParam(1) = -infParam%consts(1) &
@@ -654,7 +654,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
-          stop 'natural inflation: improper params'
+          stop 'Natural inflation: improper params'
        endif
        
        matterParam(1:4) = 0._kp
@@ -678,7 +678,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
-          stop 'natural inflation: improper params'
+          stop 'Hybrid natural inflation: improper params'
        endif
        
        matterParam(1:4) = 0._kp
@@ -691,6 +691,33 @@ contains
        matterParam(11) = 0._kp
        matterParam(12) = 0._kp
        
+
+    case ('nrcoli')
+       !U = c1^4 [1 + c2 ln(F) + (F/c3)^(4+2c4)]
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(2).gt.1._kp)
+
+       badParams = badParams &
+            .or. (infParam%consts(3).le.0._kp) &
+            .or. (infParam%consts(4).le.0._kp)
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts= ',infParam%consts
+          stop 'Non-renormalizable corrected loop inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2:3) = 0._kp
+       matterParam(4) = infParam%consts(1)*infParam%consts(2)**0.25_kp
+       matterParam(5) = 1._kp
+       matterParam(6) = infparam%consts(1) &
+            / infParam%consts(3)**(1._kp + 0.5_kp*infParam%consts(4))
+       matterParam(7:11) = 0._kp
+       matterParam(12) = 4._kp + 2._kp*infParam%consts(4)
+       
+
 
     case ('exsusy')
 !U = c1^4 [1 - exp(-c2 F)]
