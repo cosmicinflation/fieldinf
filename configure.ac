@@ -1,5 +1,7 @@
 AC_INIT([fieldinf],[1.1.3],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
 
+AM_INIT_AUTOMAKE
+
 AC_PROG_FC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
@@ -46,8 +48,6 @@ AM_COND_IF([USE_ASPIC],
 ])	
 
 AC_CONFIG_TESTDIR([tests])
-
-AM_INIT_AUTOMAKE
 
 AC_CONFIG_FILES([Makefile
                  tests/Makefile
