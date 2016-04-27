@@ -267,6 +267,9 @@ contains
     case ('nrcoli')
        slowroll_initial_matter = ncli_initial_field(infParam,efold)
 
+    case ('mukhai')
+       slowroll_initial_matter = vfmi_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -2583,6 +2586,33 @@ contains
     ncli_initial_field(:) = xIni
 
   end function ncli_initial_field
+
+
+
+  function vfmi_initial_field(infParam, efold)
+    use vfmisr, only : vfmi_x_trajectory, vfmi_x_endinf, vfmi_efold_primitive
+    use vfmisr, only : vfmi_xinimax, vfmi_phizeromin, vfmi_x_epsoneunity
+    
+    real(kp), dimension(matterNum) :: vfmi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, beta
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    
+    xEnd = vfmi_x_endinf(alpha,beta)
+    if (display) write(*,*)'vfmi_initial_field: xend= ',xEnd
+            
+    xIni = vfmi_x_trajectory(bfold,xEnd,alpha,beta)
+
+    vfmi_initial_field(:) = xIni
+
+  end function vfmi_initial_field
 
 
 #endif

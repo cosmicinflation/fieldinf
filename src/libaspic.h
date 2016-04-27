@@ -215,3 +215,7 @@
 !Non-renormalizable corrected loop inflation
   use nclisr, only : ncli_norm_potential, ncli_norm_deriv_potential
   use nclisr, only : ncli_norm_deriv_second_potential
+
+!Viatcheslav Fyodorovich Mukhanov inflation
+  use vfmi, only : vfmi_norm_potential, vfmi_norm_deriv_potential
+  use vfmi, only : vfmi_norm_deriv_second_potential

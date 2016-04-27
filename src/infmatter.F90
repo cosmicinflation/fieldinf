@@ -359,6 +359,11 @@ contains
           lambda = potParam(2)
           M4 = potParam(1)*potParam(2)**2/pi**2
 
+       case ('mukhai')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          beta = potParam(3)**0.25_kp
+
 !       case ('f-term')
 !          M4 = potParam(1)
 !          kappa = potParam(2)
@@ -595,6 +600,9 @@ contains
 
        case ('nrcoli')
           matter_potential = ncli_norm_potential(chi,alpha,mu,p)
+
+       case ('mukhai')
+          matter_potential = vfmi_norm_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -843,6 +851,9 @@ contains
 
        case ('nrcoli')
           deriv_matter_potential(1) = ncli_norm_deriv_potential(chi,alpha,mu,p)
+
+       case ('mukhai')
+          deriv_matter_potential(1) = vfmi_norm_deriv_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1121,6 +1132,9 @@ contains
 
        case ('nrcoli')
           deriv_second_matter_potential(1,1) = ncli_norm_deriv_second_potential(chi,alpha,mu,p)
+
+       case ('mukhai')
+          deriv_second_matter_potential(1,1) = vfmi_norm_deriv_second_potential(chi,alpha,beta)
 
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
