@@ -2,6 +2,8 @@ AC_INIT([fieldinf],[1.1.3],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.b
 
 AM_INIT_AUTOMAKE
 
+AC_CONFIG_MACRO_DIR([m4])
+
 AC_PROG_FC
 AC_PROG_CPP
 AC_PROG_LIBTOOL

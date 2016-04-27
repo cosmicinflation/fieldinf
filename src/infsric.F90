@@ -2590,14 +2590,14 @@ contains
 
 
   function vfmi_initial_field(infParam, efold)
-    use vfmisr, only : vfmi_x_trajectory, vfmi_x_endinf, vfmi_efold_primitive
-    use vfmisr, only : vfmi_xinimax, vfmi_phizeromin, vfmi_x_epsoneunity
+    use vfmisr, only : vfmi_x_endinf, vfmi_x_trajectory
+
     
     real(kp), dimension(matterNum) :: vfmi_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
-    real(kp) :: alpha, beta
+    real(kp) :: alpha, beta, bfold
     real(kp) :: xEnd, xIni
 
     bfold = -efold

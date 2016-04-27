@@ -336,7 +336,7 @@ contains
 !Today dilaton couplings are 0.01 maxi, and they are constant or null in our model.
 !Integration stops when epsilon1(useJF or not) > epsilonStop
     real(kp), parameter :: epsilonStop = 1._kp
-    logical, parameter :: useOtherEpsilon = .true.
+    logical, parameter :: useOtherEpsilon = .false.
 
 !zbrent accuracy on efoldEnd for which epsilon=epsilonStop
     real(kp), parameter :: tolEfoldEnd = tolkp
