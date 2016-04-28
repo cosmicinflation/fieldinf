@@ -968,7 +968,7 @@ contains
        matterParam(1) = infParam%consts(1) &
             * sign(abs(infParam%consts(2))**0.25_kp,infParam%consts(2))
 
-       
+
 #ifndef PP12
 
     case ('kahmod')
@@ -1198,6 +1198,33 @@ contains
        matterParam(16) = 0._kp
        matterParam(17) = -infParam%consts(2)
        matterParam(18) = infParam%consts(3)
+
+
+    case ('scaaai')
+!superconformal alpha attractor A inflation: SAAI
+
+!U = c1^4 {1 - exp[-sqrt(2/3/c2) F]}^2
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp)
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'superconformal alpha attractor A inflation: improper params'
+       endif
+       
+       matterParam(1:16) = 0._kp
+       matterParam(2) = 2._kp
+       matterParam(5) = 2._kp
+       
+       matterParam(6) = infParam%consts(1)
+       matterParam(7) = -2._kp**(0.25_kp)*infParam%consts(1)
+       matterParam(8) = -sqrt(2._kp/3._kp/infparam%consts(2))
+       matterParam(15) = infParam%consts(1)
+       matterParam(17) = -2._kp*sqrt(2._kp/3._kp/infParam%consts(2))
+       matterParam(18) = 1._kp
+
 
 #endif
 #endif
@@ -1454,7 +1481,7 @@ contains
 
 
     case ('sduali')
-!S-dual inflation
+!S-dual inflation: SDI
 
 !U = c1^4/cosh(F/c2)
 
@@ -1476,7 +1503,7 @@ contains
 
 
     case ('fibrei')
-!fiber inflation
+!fiber inflation: FI
 
 !U = c1^4 {3 - c2/c3 + [1+2/3 c2] exp[-4/sqrt(3) F] - 4(1+c2/6) exp[-F/sqrt(3)] + c2/c3 exp[2 c3/sqrt(3) F]}
 
@@ -1498,6 +1525,53 @@ contains
 
 !n+1
        matterParam(3) = infParam%consts(3)
+
+
+    case ('scaabi')
+!superconformal alpha attractor B inflation: SABI
+
+!U = c1^4 [tanh(F/c3)]^(c2)
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'superconformal alpha attractor B inflation: improper params'
+       endif
+!M4
+       matterParam(1) = infParam%consts(1)
+!2 n
+       matterParam(2) = infParam%consts(2)
+
+!sqrt(6 alpha)
+       matterParam(3) = infParam%consts(3)**0.25_kp
+
+
+    case ('scaaci')
+!superconformal alpha attractor C inflation: SACI
+
+!U = c1^4 {tanh(F/c3)/[1 + tanh(F/c3)]}^c2
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'superconformal alpha attractor C inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!2 n
+       matterParam(2) = infParam%consts(2)
+
+!sqrt(6 alpha)
+       matterParam(3) = infParam%consts(3)**0.25_kp
 
 
     case ('f-term')

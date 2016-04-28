@@ -313,6 +313,10 @@ contains
           beta = potParam(18)
           potName='nformi'
 
+       case ('scaaai')
+          M4 = potParam(6)
+          alpha = 1._kp/(1.5_kp*potParam(8)**2)
+
 #endif
 #endif     
 
@@ -381,6 +385,12 @@ contains
        case ('sduali')
           M4 = potParam(1)
           mu = potParam(2)
+
+       case ('scaabi','scaaci')
+          M4 = potParam(1)
+          p = potParam(2)/2._kp
+          alpha = potParam(3)**2/6._kp
+
 
 !       case ('f-term')
 !          M4 = potParam(1)
@@ -634,6 +644,15 @@ contains
        case ('sduali')
           matter_potential = sdi_norm_potential(chi/mu)
 
+       case ('scaaai')
+          matter_potential = saai_norm_potential(chi,alpha)
+
+       case ('scaabi')
+          matter_potential = sabi_norm_potential(chi,alpha,p)
+
+       case ('scaaci')
+          matter_potential = saci_norm_potential(chi,alpha,p)
+          
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
 !               + 2._kp * phi**2 * psi**2 / M**2 / phic**2 &
@@ -896,6 +915,15 @@ contains
 
        case ('sduali')
           deriv_matter_potential(1) = sdi_norm_deriv_potential(chi/mu)/mu
+
+       case ('scaaai')
+          deriv_matter_potential(1) = saai_norm_deriv_potential(chi,alpha)
+
+       case ('scaabi')
+          deriv_matter_potential(1) = sabi_norm_deriv_potential(chi,alpha,p)
+
+       case ('scaaci')
+          deriv_matter_potential(1) = saci_norm_deriv_potential(chi,alpha,p)
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1190,6 +1218,15 @@ contains
        case ('sduali')
           deriv_second_matter_potential(1,1) = sdi_norm_deriv_second_potential(chi/mu)/mu/mu
           
+       case ('scaaai')
+          deriv_second_matter_potential(1,1) = saai_norm_deriv_second_potential(chi,alpha)
+
+       case ('scaabi')
+          deriv_second_matter_potential(1,1) = sabi_norm_deriv_second_potential(chi,alpha,p)
+
+       case ('scaaci')
+          deriv_second_matter_potential(1,1) = saci_norm_deriv_second_potential(chi,alpha,p)
+
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
 !          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 

@@ -235,3 +235,15 @@
 !s-dual inflation
   use sdisr, only : sdi_norm_potential, sdi_norm_deriv_potential
   use sdisr, only : sdi_norm_deriv_second_potential
+
+!superconformal alpha attractor A inflation
+  use saaisr, only : saai_norm_potential, saai_norm_deriv_potential
+  use saaisr, only : saai_norm_deriv_second_potential
+
+!superconformal alpha attractor B inflation
+  use sabisr, only : sabi_norm_potential, sabi_norm_deriv_potential
+  use sabisr, only : sabi_norm_deriv_second_potential
+
+!superconformal alpha attractor C inflation
+  use sacisr, only : saci_norm_potential, saci_norm_deriv_potential
+  use sacisr, only : saci_norm_deriv_second_potential
