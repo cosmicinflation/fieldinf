@@ -176,7 +176,7 @@
   use wrisr, only : wri_norm_potential, wri_norm_deriv_potential
   use wrisr, only : wri_norm_deriv_second_potential
 
-!Inverse monomial inflation
+!inverse monomial inflation
   use imisr, only : imi_norm_potential, imi_norm_deriv_potential
   use imisr, only : imi_norm_deriv_second_potential
 
@@ -200,22 +200,38 @@
   use nficommon, only : nfi_norm_potential, nfi_norm_deriv_potential
   use nficommon, only : nfi_norm_deriv_second_potential
 
-!Cublicly corrected Starobinksi inflation
+!cublicly corrected Starobinksi inflation
   use ccsicommon, only : ccsi_norm_potential, ccsi_norm_deriv_potential
   use ccsicommon, only : ccsi_norm_deriv_second_potential
 
-!Dual inflation
+!dual inflation
   use disr, only : di_norm_potential, di_norm_deriv_potential
   use disr, only : di_norm_deriv_second_potential
 
-!Hybrid Natural inflation
+!hybrid Natural inflation
   use hnisr, only : hni_norm_potential, hni_norm_deriv_potential
   use hnisr, only : hni_norm_deriv_second_potential
 
-!Non-renormalizable corrected loop inflation
+!non-renormalizable corrected loop inflation
   use nclisr, only : ncli_norm_potential, ncli_norm_deriv_potential
   use nclisr, only : ncli_norm_deriv_second_potential
 
 !Viatcheslav Fyodorovich Mukhanov inflation
   use vfmisr, only : vfmi_norm_potential, vfmi_norm_deriv_potential
   use vfmisr, only : vfmi_norm_deriv_second_potential
+
+!axion Hilltop inflation
+  use ahisr, only : ahi_norm_potential, ahi_norm_deriv_potential
+  use ahisr, only : ahi_norm_deriv_second_potential
+
+!supersymmetry Breaking Kahler inflation
+  use sbkisr, only : sbki_norm_potential, sbki_norm_deriv_potential
+  use sbkisr, only : sbki_norm_deriv_second_potential
+
+!fiber inflation
+  use fisr, only : fi_norm_potential, fi_norm_deriv_potential
+  use fisr, only : fi_norm_deriv_second_potential
+
+!s-dual inflation
+  use sdisr, only : sdi_norm_potential, sdi_norm_deriv_potential
+  use sdisr, only : sdi_norm_deriv_second_potential

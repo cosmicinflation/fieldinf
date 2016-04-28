@@ -1364,7 +1364,7 @@ contains
 
 
     case ('dualsb')
-!Dual Inflation from Softly Broken N=2 Super-Yang-Mills theories: DI
+!dual inflation from foftly broken N=2 super Yang-Mills theories: DI
 
 !U(k2) = M^4 { 1 + Vo(c1) - 2(K-E)/(k2 K) - pi/(k2 K K') [nu(k2)]^2 Heaviside[nu(k2)]}
 !nu(k2) = 1 - 8 sqrt(2)/(pi^2 c1) K/sqrt(k2)(E'-K')^2
@@ -1408,6 +1408,95 @@ contains
 !alpha
        matterParam(2) = infParam%consts(2)
 !beta
+       matterParam(3) = infParam%consts(3)
+
+
+
+    case ('axhtop')
+!axion hilltop inflation: AHI
+
+!U = c1^4[uplift - 2 cos(F/c2) + (pi - F/c2) sin(F/c2)]
+!uplift = 4.820572476962922009964861354665487247290442049596
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'axion hilltop inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!phi0
+       matterParam(2) = infParam%consts(2)
+
+
+    case ('sbkahi')
+!symmetry breaking Kahler inflation: SBKI
+
+!U = c1^4 F^2 exp[c2 F^2 + c2^2/6 F^4]
+
+       badParams = ((infParam%consts(1).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'symmetry breaking Kahler inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!alpha
+       matterParam(2) = infParam%consts(2)
+
+
+
+    case ('sduali')
+!S-dual inflation
+
+!U = c1^4/cosh(F/c2)
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'S-dual inflation: improper params'
+       endif
+       
+!M4
+       matterParam(1) = infParam%consts(1)
+!phi0
+       matterParam(2) = infParam%consts(2)
+
+!fieldstop required for sduali
+
+
+    case ('fibrei')
+!fiber inflation
+
+!U = c1^4 {3 - c2/c3 + [1+2/3 c2] exp[-4/sqrt(3) F] - 4(1+c2/6) exp[-F/sqrt(3)] + c2/c3 exp[2 c3/sqrt(3) F]}
+
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or.(infParam%consts(2).gt.1._kp) &
+            .or.(infParam%consts(3).le.0._kp))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'fiber inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+
+!delta
+       matterParam(2) = infParam%consts(2)
+
+!n+1
        matterParam(3) = infParam%consts(3)
 
 

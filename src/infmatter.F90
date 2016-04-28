@@ -364,6 +364,24 @@ contains
           alpha = potParam(2)
           beta = potParam(3)**0.25_kp
 
+       case ('axhtop')
+          M4 = potParam(1)
+          mu = potParam(2)
+
+       case ('sbkahi')
+          M4 = potParam(1)
+          alpha = potParam(2)
+
+
+       case ('fibrei')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          p = potParam(3)**0.25_kp - 1._kp
+
+       case ('sduali')
+          M4 = potParam(1)
+          mu = potParam(2)
+
 !       case ('f-term')
 !          M4 = potParam(1)
 !          kappa = potParam(2)
@@ -603,6 +621,18 @@ contains
 
        case ('mukhai')
           matter_potential = vfmi_norm_potential(chi,alpha,beta)
+
+       case ('axhtop')
+          matter_potential = ahi_norm_potential(chi/mu,mu)
+
+       case ('sbkahi')
+          matter_potential = sbki_norm_potential(chi,alpha)
+
+       case ('fibrei')
+          matter_potential = fi_norm_potential(chi,alpha,p)
+
+       case ('sduali')
+          matter_potential = sdi_norm_potential(chi/mu)
 
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -854,6 +884,18 @@ contains
 
        case ('mukhai')
           deriv_matter_potential(1) = vfmi_norm_deriv_potential(chi,alpha,beta)
+
+       case ('axhtop')
+          deriv_matter_potential(1) = ahi_norm_deriv_potential(chi/mu,mu)/mu
+
+       case ('sbkahi')
+          deriv_matter_potential(1) = sbki_norm_deriv_potential(chi,alpha)
+
+       case ('fibrei')
+          deriv_matter_potential(1) = fi_norm_deriv_potential(chi,alpha,p)
+
+       case ('sduali')
+          deriv_matter_potential(1) = sdi_norm_deriv_potential(chi/mu)/mu
 
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1136,6 +1178,18 @@ contains
        case ('mukhai')
           deriv_second_matter_potential(1,1) = vfmi_norm_deriv_second_potential(chi,alpha,beta)
 
+       case ('axhtop')
+          deriv_second_matter_potential(1,1) = ahi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
+
+       case ('sbkahi')
+          deriv_second_matter_potential(1,1) = sbki_norm_deriv_second_potential(chi,alpha)
+
+       case ('fibrei')
+          deriv_second_matter_potential(1,1) = fi_norm_deriv_second_potential(chi,alpha,p)
+
+       case ('sduali')
+          deriv_second_matter_potential(1,1) = sdi_norm_deriv_second_potential(chi/mu)/mu/mu
+          
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
 !          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 

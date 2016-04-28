@@ -270,6 +270,18 @@ contains
     case ('mukhai')
        slowroll_initial_matter = vfmi_initial_field(infParam,efold)
 
+    case ('axhtop')
+       slowroll_initial_matter = ahi_initial_field(infParam,efold)
+
+    case ('sbkahi')
+       slowroll_initial_matter = sbki_initial_field(infParam,efold)
+
+    case ('fibrei')
+       slowroll_initial_matter = fi_initial_field(infParam,efold)
+
+    case ('sduali')
+       slowroll_initial_matter = sdi_initial_field(infParam,efold)
+
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -2613,6 +2625,144 @@ contains
     vfmi_initial_field(:) = xIni
 
   end function vfmi_initial_field
+
+
+
+  function ahi_initial_field(infParam, efold)
+    use ahisr, only : ahi_x_endinf, ahi_x_trajectory
+   
+    real(kp), dimension(matterNum) :: ahi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    mu = infParam%consts(2)
+    
+    xEnd = ahi_x_endinf(mu)
+    if (display) write(*,*)'ahi_initial_field: xend= ', xEnd
+            
+    xIni = ahi_x_trajectory(bfold,xEnd,mu)
+
+    ahi_initial_field(:) = xIni*mu
+
+  end function ahi_initial_field
+
+
+
+  function sbki_initial_field(infParam, efold)
+    use sbkisr, only : sbki_x_trajectory, sbki_x_endinf, sbki_efold_primitive
+    use sbkisr, only : sbki_xinimax, sbki_alphamin, sbki_alphamax
+    
+    real(kp), dimension(matterNum) :: sbki_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, alphamin, alphamax, efoldMax
+    real(kp) :: xEnd, xIni, xIniMax, bfold
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    alphamin = sbki_alphamin()
+    alphamax = sbki_alphamax()
+
+    if ((alpha.lt.alphamin).or.(alpha.gt.alphamax)) then
+       write(*,*)'alpha= ',alpha
+       write(*,*)'alpha should be in the range: ',alphamin, alphamax
+       stop 'sbki_initial_field: alpha out of range'
+    endif
+
+    xEnd = sbki_x_endinf(alpha)
+
+    if (display) write(*,*)'sbki_initial_field: xend= ',xEnd
+   
+    xIniMax = sbki_xinimax(alpha)
+
+    efoldMAx = -sbki_efold_primitive(xend,alpha) &
+         + sbki_efold_primitive(xiniMax,alpha)
+
+    if (efold.gt.efoldMax) then
+       write(*,*)'sbki_initial_field: efold > efoldMax'
+       write(*,*)'efold= efoldMax= ',efold,efoldMax
+    end if
+       
+    xIni = sbki_x_trajectory(bfold,xEnd,alpha)
+
+    sbki_initial_field(:) = xIni
+
+  end function sbki_initial_field
+
+
+
+  function fi_initial_field(infParam, efold)
+    use fisr, only : fi_x_trajectory, fi_x_endinf, fi_efold_primitive
+    use fisr, only : fi_efoldmax
+    real(kp), dimension(matterNum) :: fi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: delta, n
+    real(kp) :: xEnd, xIni, bfold, efoldMax
+
+    bfold = -efold
+
+    delta = infParam%consts(2)
+    n = infParam%consts(3) - 1._kp
+    
+    xEnd = fi_x_endinf(delta,n)
+
+    if (display) write(*,*)'fi_initial_field: xend= ',xEnd
+      
+    efoldMax = fi_efoldmax(delta,n)
+
+    if (efold.gt.efoldMax) then
+       write(*,*)'fi_initial_field: efold > efoldMax'
+       write(*,*)'efold= efoldMax= ',efold,efoldMax
+    end if
+       
+    xIni = fi_x_trajectory(bfold,xEnd,delta,n)
+
+    fi_initial_field(:) = xIni
+
+  end function fi_initial_field
+
+
+  function sdi_initial_field(infParam, efold)
+    use sdisr, only : sdi_x_trajectory
+    use sdisr, only : sdi_phizeromin
+
+    real(kp), dimension(matterNum) :: sdi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, bfold, mumin
+    real(kp) :: xEnd, xIni
+    real(kp), dimension(2) :: fieldStop
+
+    bfold = -efold
+
+    mumin = sdi_phizeromin()
+    mu = infParam%consts(2)
+
+    if (mu.lt.mumin) then
+       write(*,*)'mu= mumin= ',mu, mumin
+       stop 'sbki_initial_field: mu too small!'
+    endif
+
+    fieldstop = field_stopinf(infParam)
+
+    xEnd = fieldStop(1)/mu
+    if (display) write(*,*)'sdi_initial_field: xend= ', xEnd
+
+    xIni = sdi_x_trajectory(bfold,xEnd,mu)
+
+    sdi_initial_field(:) = xIni*mu
+
+  end function sdi_initial_field
 
 
 #endif
