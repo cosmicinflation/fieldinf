@@ -395,7 +395,7 @@ contains
           M4 = potParam(1)
           p = potParam(2)
           mu = potParam(3)**0.25_kp
-          potName = 'hyberb'
+          potName = 'hyperb'
 
        case ('smearh','shi')
           M4 = potParam(1)
@@ -672,7 +672,7 @@ contains
           matter_potential = saci_norm_potential(chi,alpha,p)
 
        case ('hyperb')
-          matter_potential = sbi_norm_potential(chi/mu,p,mu)
+          matter_potential = hbi_norm_potential(chi/mu,p,mu)
 
        case ('smearh')
           matter_potential = shi_norm_potential(chi/mu,alpha,mu)

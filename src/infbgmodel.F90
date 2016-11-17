@@ -1579,7 +1579,7 @@ contains
 
        badParams = (infParam%consts(1).le.0._kp) &
             .or. (infParam%consts(2).le.0._kp) &
-            .or. (infParam%consts(3).le.0._kp)
+            .or. (infParam%consts(3).le.infParam%consts(2)/sqrt(2._kp))
 
        if (badParams) then
           write(*,*)'model name: ',infParam%name
