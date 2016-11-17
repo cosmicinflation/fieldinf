@@ -247,3 +247,15 @@
 !superconformal alpha attractor C inflation
   use sacisr, only : saci_norm_potential, saci_norm_deriv_potential
   use sacisr, only : saci_norm_deriv_second_potential
+
+!hyperbolic inflation  
+  use hbisr, only : hbi_norm_potential, hbi_norm_deriv_potential
+  use hbisr, only : hbi_norm_deriv_second_potential
+
+!smeared higgs inflation
+  use shisr, only : shi_norm_potential, shi_norm_deriv_potential
+  use shisr, only : shi_norm_deriv_second_potential
+
+!radiatively corrected plateau inflation
+  use rcpisr, only : rcpi_norm_potential, rcpi_norm_deriv_potential
+  use rcpisr, only : rcpi_norm_deriv_second_potential

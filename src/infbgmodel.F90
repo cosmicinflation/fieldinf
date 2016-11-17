@@ -157,13 +157,14 @@ contains
   select case (infParam%name)
 
 
-    case ('largef')
+    case ('largef','lfi')
 ! large field inflation: LFI
 
 ! U = c1^4 F^c2       
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
 
+       
        if (badParams) then
           write(*,*)'consts = ',infParam%consts(1:2)
           stop 'large field: improper params'
@@ -178,13 +179,14 @@ contains
 
 
 
-    case ('smallf')
+    case ('smallf','sfi')
 ! small field inflation: SFI
 
 ! U = c1^4 [1 - (F/c3)^c2]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp))
+
 
        if (badParams) then
           write(*,*)'model name: ',infParam%name
@@ -208,14 +210,14 @@ contains
        endif
 
 
-    case ('branei')
+    case ('branei','bi')
 ! brane inflation: BI
 
 ! U = c1^4 [1 - (F/c3)^-c2]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp))
-
+       
        if (badParams) then
           write(*,*)'model name: ',infParam%name
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -232,7 +234,7 @@ contains
       
        
 
-    case ('hybrid')
+    case ('hybrid','vhi')
 ! valley hybrid inflation: VHI
 
 ! U = c1^4 [1 + (F/c3)^c2]
@@ -241,8 +243,6 @@ contains
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp))            
-
-       
 
         if  (badParams) then
           write(*,*)'model name: ',infParam%name
@@ -258,7 +258,7 @@ contains
        matterParam(5) = 1._kp
 
 
-    case ('dysusy')
+    case ('dysusy','dsi')
 ! dynamical susy inflation: DSI
 
 ! U = c1^4 [1 + (F/c3)^(-c2)]
@@ -267,8 +267,6 @@ contains
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp))            
-
-       
 
         if  (badParams) then
           write(*,*)'model name: ',infParam%name
@@ -325,7 +323,7 @@ contains
        matterParam(5) = 1._kp
        
 
-    case('kklmmt')
+    case('kklmmt','kklti')
 ! KKLT inflation: KKTLI
 ! U = c1^4 / [1 + (F/c3)^(-c2)] with c2 > 0 for c5=-1
 !
@@ -334,7 +332,6 @@ contains
 ! + PhiUv related to the brane tension and the string coupling
 
 !the case c5=+1 is branei
-      
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp) &            
@@ -360,13 +357,13 @@ contains
        
             
 
-    case ('rcquad')
+    case ('rcquad','rcqi')
 ! radiatively corrected quartic inflation: RCQI
 
 ! U = c1^4 F^4 [1 - c2 ln(F)]
           
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -381,13 +378,13 @@ contains
        matterParam(5) = 1._kp
 
 
-    case ('gswli')
+    case ('gswli','li')
 ! global susy loop inflation: LI
 
 ! U = c1^4 [1 + c2 ln(F)]
           
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -401,7 +398,7 @@ contains
        matterParam(5) = 1._kp                
 
 
-    case ('colwei')
+    case ('colwei','cwi')
 !Coleman-Weinberg inflation: CWI
 
 ! U = c1^4 [1 + c2 ln(F/c3) (F/c3)^c4]
@@ -426,13 +423,13 @@ contains
             * (infParam%consts(2)/infParam%consts(3)**infParam%consts(4))**0.25_kp
        matterParam(5) = 1._kp
 
-    case ('tdwell')
+    case ('tdwell','dwi')
 !topological double well inflation: DWI
 
 ! U = c1^4 [(F/c2)^2 - 1]^2
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).lt.sqrt(8._kp)))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -446,14 +443,14 @@ contains
        matterParam(5) = 2._kp
 
 
-    case ('betexp')
+    case ('betexp','bei')
 ! beta exponential inflation: BEI
 
 ! U =c1^4 (1 - c2 F)^c3
 
        badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
        badParams = badParams.or.(infParam%consts(3).le.0._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -468,13 +465,13 @@ contains
        matterParam(1) = - infParam%consts(2)**0.25_kp * matterParam(3)
 
 
-    case ('radiag')
+    case ('radiag','rgi')
 !radion assisted gauge inflation: RGI
 
 !U = c1^4 / [1 + c2 F^-2]
 
        badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -488,7 +485,7 @@ contains
        matterParam(1) = infParam%consts(2)**0.25_kp * matterParam(3)
 
 
-    case ('nszero')
+    case ('nszero','csi')
 !constant spectrum inflation: CSI
 
 !U = c1^4 / [1 - c2 F]^2
@@ -508,14 +505,14 @@ contains
        matterParam(1) = - infParam%consts(2)**0.25_kp * matterParam(3)
 
 
-    case ('sugrab')
+    case ('sugrab','sbi')
 !supergravity brane inflation: SBI
 
 !U = c1^4 [ 1 + F^4 (c3 ln F - c2) ]
 
        badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp)
        badParams = badParams.or.(infParam%consts(3).le.0._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -560,14 +557,14 @@ contains
             **(1._kp/infParam%consts(4))
 
 
-    case ('ostach')
+    case ('ostach','osti')
 !open string tachyonic inflation: OSTI
 
 !U = -c1^4 (F/c3)^2 ln[(F/c3)^2]
 
        badParams = (infParam%consts(3).le.0._kp).or.(infParam%consts(1).le.0._kp)
        badParams = badParams.or.(infParam%consts(2).ne.2._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -584,13 +581,13 @@ contains
             * (infParam%consts(1)/infParam%consts(3)**(infParam%consts(2)*0.25_kp))
 
 
-     case ('invmon')
+     case ('invmon','imi')
 !inverse monomial inflation: IMI
 
 ! U = c1^4 F^(-c2)       
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then
           write(*,*)'consts = ',infParam%consts(1:2)
           stop 'inverse monomial inflation: improper params'
@@ -605,14 +602,14 @@ contains
 #ifndef PP5
 
 
-    case ('gmixlf')
+    case ('gmixlf','gmlfi')
 !generalized mixed large field inflation: GMLFI
 
 ! U = c1^4 F^c2 [1 + c3 F^c4]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or.(infParam%consts(3).le.0._kp).or.(infParam%consts(4).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:infParamNum)
@@ -632,7 +629,7 @@ contains
 
 
 
-    case ('lfcorr')
+    case ('lfcorr','rclfi')
 !radiatively corrected large field inflation: RCLFI
 
 !U = c1^4 F^c2 [1 - c3 F^c4 ln(F)]       
@@ -640,7 +637,7 @@ contains
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp).or. &
             (infParam%consts(3).le.0._kp).or.(infParam%consts(4).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:4)
@@ -658,7 +655,7 @@ contains
        matterParam(12) = infParam%consts(2)
 
 
-    case ('rcmass')
+    case ('rcmass','rcmi')
 !radiatively corrected massive inflation: RCMI
 
 !U = c1^4 F^2 [1 - c2 F^2 ln F]
@@ -672,7 +669,7 @@ contains
           write(*,*)'consts = ',infParam%consts(1:2)
           stop 'radiatively corrected massive inflation: improper params'
        endif
-
+       
        matterParam(1) = 0._kp
        matterParam(2) = 4._kp
        matterParam(3) = 0._kp
@@ -684,13 +681,13 @@ contains
        matterParam(12) = 2._kp
 
 
-    case ('natinf')
+    case ('natinf','ni')
 !natural inflation: NI
 
 !U = c1^4 [1 + cos(F/c2)]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -708,7 +705,7 @@ contains
        matterParam(12) = 0._kp
 
 
-    case ('hybnat')
+    case ('hybnat','hni')
 !hybrid natural inflation: HNI
 
 !U = c1^4 [1 + c3 cos(F/c2)]
@@ -716,7 +713,7 @@ contains
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp) &
             .or. (infParam%consts(3).gt.1._kp) &
             .or. (infParam%consts(3).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -734,7 +731,7 @@ contains
        matterParam(12) = 0._kp
        
 
-    case ('nrcoli')
+    case ('nrcoli','ncli')
 !non-renormalisable corrected loop inflation: NCLI
 
 !U = c1^4 [1 + c2 ln(F) + (F/c3)^(4+2c4)]
@@ -746,7 +743,7 @@ contains
        badParams = badParams &
             .or. (infParam%consts(3).le.0._kp) &
             .or. (infParam%consts(4).le.0._kp)
-
+       
        if (badParams) then
           write(*,*)'model name: ',infParam%name
           write(*,*)'consts= ',infParam%consts
@@ -764,14 +761,14 @@ contains
        
 
 
-    case ('exsusy')
+    case ('exsusy','esi')
 !exponential susy inflation: ESI
 
 !U = c1^4 [1 - exp(-c2 F)]
 
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -786,7 +783,7 @@ contains
        matterParam(9:12) = 0._kp
 
 
-    case ('powlaw')
+    case ('powlaw','pli')
 !power law inflation: PLI
 
 !U = c1^4 exp[-c2 F]
@@ -794,7 +791,7 @@ contains
 !fieldstop value required (checkout infbounds.f90)
        
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -811,7 +808,7 @@ contains
 
      
 
-    case ('hfline')
+    case ('hfline','hf1i')
 !U = c1^4 [ (1 + c2 F)^2 - 2/3 c2^2 ]
 
 !c2 is A1
@@ -829,13 +826,13 @@ contains
        matterParam(7:12) = 0._kp
 
 
-    case ('interm')
+    case ('interm','ii')
 !intermediate inflation: II
 
 ! U = c1^4 F^(-c2) [1 - c2^(2/6) F^(-2)]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))           
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:infParamNum)
@@ -853,7 +850,7 @@ contains
        matterParam(12) = -infParam%consts(2) - 2._kp
 
 
-    case ('twisti')
+    case ('twisti','twi')
 !twisted inflation: TWI
 
 !U = c1^4 [1 - c2 (F/c3)^2 exp(-F/c3)]
@@ -864,7 +861,7 @@ contains
        badParams = (infParam%consts(1).le.0._kp).or.(infParam%consts(3).le.0._kp)
 !       badParams = badParams.or.(infParam%consts(3).gt.0.04228)
        badParams = badParams.or.(abs(infParam%consts(2)-0.33183220).gt.epsilon(1.))       
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -880,14 +877,14 @@ contains
        matterParam(12) = 2._kp
 
 
-    case ('nckahi')
+    case ('nckahi','ncki')
 !non-canonical Kahler inflation: NCKI
 
 !U = c1^4 [ 1 + c2 ln F + c3 F^2 ]
 
        badParams = ((infParam%consts(1).le.0._kp) &
             .or.(infParam%consts(2).le.0._kp))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -904,14 +901,14 @@ contains
        matterParam(12) = 2._kp
 
 
-    case ('oifold')
+    case ('oifold','oi')
 !orientifold inflation: OI
 
 !U = c1^4 (F/c3)^4 [ c2 ln^2(F/c3) - 1 ]
 
        badParams = ((infParam%consts(1).le.0._kp).or.infParam%consts(2).le.0._kp)
        badParams = badParams.or.(infParam%consts(3).le.0._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:3)
@@ -971,7 +968,7 @@ contains
 
 #ifndef PP12
 
-    case ('kahmod')
+    case ('kahmod','kmi')
 !Kahler moduli inflation: KMI
 
 !U = c1^4 [1 - c2 F^c3 exp(-c4 F^c5)]
@@ -985,8 +982,7 @@ contains
             
        badParams = ( badParams .or. &
             ((infParam%consts(3).eq.1._kp).and.(infParam%consts(4).ne.1._kp)) )
-
-
+       
         if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:5)
@@ -1006,7 +1002,7 @@ contains
        matterParam(18) = infParam%consts(5)
 
 
-    case ('higgsi')
+    case ('higgsi','hi','si')
 !Higgs/Starobinski inflation: HI/SI
 
 !U = c1^4 [1 - exp(-c2 F)]^2 with c2 = -sqrt(2/3)
@@ -1014,7 +1010,7 @@ contains
 
        badParams = ((infParam%consts(1).le.0._kp) &
             .or.(infParam%consts(2).ne.sqrt(2._kp/3._kp)))
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -1029,7 +1025,7 @@ contains
        matterParam(17) = -2._kp*infParam%consts(2)
        matterParam(18) = 1._kp
 
-    case ('logmdi','logmd1','logmd2')
+    case ('logmdi','logmd1','logmd2','lmi')
 !logamediate inflation: LMI
 
 !U = c1^4 F^c2 exp(-c3 F^c4) with c2 = 4*(1-c4)
@@ -1039,7 +1035,7 @@ contains
 
        badParams = ( badParams .or. &
             .not. ( (infParam%consts(2).eq.4._kp*(1._kp-infParam%consts(4)) ) ) )                  
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:4)
@@ -1130,7 +1126,7 @@ contains
        matterParam(15:18) = 0._kp
 
 
-    case ('bsusyb')
+    case ('bsusyb','bsusybi')
 !brane susy breaking inflation: BSUSYBI
 
 !U = c1^4 [ exp(c2 F) + c3 exp(c4 F) ]
@@ -1141,6 +1137,7 @@ contains
             .or.(infParam%consts(2).ne.sqrt(6._kp)) &
             .or.(infParam%consts(3).ne.1._kp))
 
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:4)
@@ -1200,14 +1197,14 @@ contains
        matterParam(18) = infParam%consts(3)
 
 
-    case ('scaaai')
+    case ('scaaai','saai')
 !superconformal alpha attractor A inflation: SAAI
 
 !U = c1^4 {1 - exp[-sqrt(2/3/c2) F]}^2
 
        badParams = (infParam%consts(1).le.0._kp) &
             .or. (infParam%consts(2).le.0._kp)
-
+       
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
@@ -1231,14 +1228,14 @@ contains
 
 !potentials not encompassed in the generic formula
 #ifdef PPNAME
-    case ('mhitop')
+    case ('mhitop','mhi')
 !Mutated hilltop inflation: MHI
 
 !U = c1^4 [1 - 1/cosh(F/c2)]
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp))
-
-        if (badParams) then          
+       
+       if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
           stop 'mutated hilltop inflation: improper params'
@@ -1267,7 +1264,7 @@ contains
        matterParam(2) = infParam%consts(2)
 
 
-    case ('ccorsi','corsi1','corsi2','corsi3')
+    case ('ccorsi','corsi1','corsi2','corsi3','ccsi')
 !cubiquely corrected Starobinksi inflation: CCSI
 
 !F -> sqrt(2/3) F
@@ -1290,7 +1287,7 @@ contains
 
 !fieldstop required for corsi2
 
-    case ('tipinf')
+    case ('tipinf','ti')
 !tip inflation: TI
 
 !U = c1^4 [ 1 + cos(F/c3) + c2 sin^2(F/c3) ]
@@ -1309,7 +1306,7 @@ contains
        matterParam(2) = infParam%consts(2)
        matterParam(3) = infParam%consts(3)
 
-    case ('psenat')
+    case ('psenat','psni')
 !pseudo-natural inflation: PSNI
 
 !U = c1^4 { 1 + c2 ln[cos(F/c3)] }
@@ -1329,7 +1326,7 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('arctan')
+    case ('arctan','ai')
 !arctangent inflation: AI
 
 !U = c1^4 [1 - 2/pi arctan(F/c2) ]
@@ -1346,7 +1343,7 @@ contains
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)      
 
-    case ('fixnsa','fixnsb','fixnsc')
+    case ('fixnsa','fixnsb','fixnsc','cnai','cnbi','cnci')
 !fix spectral index inflation: CN(ABC)I
 
 !U = c1^4 {3 - (3 + 3 c2^2) tanh^2[c2 F/sqrt(2)] }
@@ -1369,7 +1366,7 @@ contains
        matterParam(2) = infParam%consts(2)
 
     
-    case ('fixnsd')
+    case ('fixnsd','cndi')
 !fix spectral index inflation: CNDI
 
 !U = c1^4 / [ 1 + c3 cos(c2 F) ]^2
@@ -1390,7 +1387,7 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('dualsb')
+    case ('dualsb','di')
 !dual inflation from foftly broken N=2 super Yang-Mills theories: DI
 
 !U(k2) = M^4 { 1 + Vo(c1) - 2(K-E)/(k2 K) - pi/(k2 K K') [nu(k2)]^2 Heaviside[nu(k2)]}
@@ -1414,7 +1411,7 @@ contains
        matterParam(2) = infParam%consts(2)
 
 
-    case ('mukhai')
+    case ('mukhai','vfmi')
 !Mukhanov inflation: VFMI
 
 !U = M^4 {1 - c2/2/[1 + (2-c1)/[2 sqrt(3 c1)] F]^(2c1/(2-c1))} *
@@ -1439,7 +1436,7 @@ contains
 
 
 
-    case ('axhtop')
+    case ('axhtop','ahi')
 !axion hilltop inflation: AHI
 
 !U = c1^4[uplift - 2 cos(F/c2) + (pi - F/c2) sin(F/c2)]
@@ -1460,7 +1457,7 @@ contains
        matterParam(2) = infParam%consts(2)
 
 
-    case ('sbkahi')
+    case ('sbkahi','sbki')
 !symmetry breaking Kahler inflation: SBKI
 
 !U = c1^4 F^2 exp[c2 F^2 + c2^2/6 F^4]
@@ -1480,7 +1477,7 @@ contains
 
 
 
-    case ('sduali')
+    case ('sduali','sdi')
 !S-dual inflation: SDI
 
 !U = c1^4/cosh(F/c2)
@@ -1502,7 +1499,7 @@ contains
 !fieldstop required for sduali
 
 
-    case ('fibrei')
+    case ('fibrei','fi')
 !fiber inflation: FI
 
 !U = c1^4 {3 - c2/c3 + [1+2/3 c2] exp[-4/sqrt(3) F] - 4(1+c2/6) exp[-F/sqrt(3)] + c2/c3 exp[2 c3/sqrt(3) F]}
@@ -1527,7 +1524,7 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('scaabi')
+    case ('scaabi','sabi')
 !superconformal alpha attractor B inflation: SABI
 
 !U = c1^4 [tanh(F/c3)]^(c2)
@@ -1550,7 +1547,7 @@ contains
        matterParam(3) = infParam%consts(3)**0.25_kp
 
 
-    case ('scaaci')
+    case ('scaaci','saci')
 !superconformal alpha attractor C inflation: SACI
 
 !U = c1^4 {tanh(F/c3)/[1 + tanh(F/c3)]}^c2
@@ -1573,6 +1570,79 @@ contains
 !sqrt(6 alpha)
        matterParam(3) = infParam%consts(3)**0.25_kp
 
+
+
+    case ('hyperb','hbi')
+!hyperbolic inflation: HBI
+       
+!U = c1^4 sinh(F/c3)^c2
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'hyperbolic inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!n       
+       matterParam(2) = infParam%consts(2)
+!mu
+       matterParam(3) = infParam%consts(3)
+       
+
+
+    case ('smearh','shi')
+!smeared higgs inflation: SHI
+
+!U = c1^4 { [1-(F/c3)^2]^2 + c2 (F/c3)^4 [ln(F/c3)-1/4] + alpha/4 }
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+       
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'smeared higgs inflation: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!alpha       
+       matterParam(2) = infParam%consts(2)
+!mu
+       matterParam(3) = infParam%consts(3)
+       
+
+    case ('rcplat','rcpi')
+!radiatively corrected plateau inflation
+
+!U = c1^4 F^c2 [ 1 + c3 ln(F) + c4 ln(F)^2 ]
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(4).le.0._kp) &
+            .or. (infParam%consts(3)**2.gt.4._kp*infParam%consts(4))
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'radiatively corrected plateau inflation: improper params'
+       endif
+       
+!M4
+       matterParam(1) = infParam%consts(1)
+!p
+       matterParam(2) = infParam%consts(2)
+!alpha^1/4
+       matterParam(3) = sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
+!beta^1/4
+       matterParam(4) = infParam%consts(4)**0.25_kp
 
     case ('f-term')
 !F-term inflation

@@ -324,7 +324,7 @@ contains
           M4 = potParam(1)
           mu = potParam(2)
 
-       case ('ricci1','ricci2')
+       case ('ricci','ricci2')
           M4 = potParam(1)
           p = potParam(2)
           q = sqrt(3._kp/2._kp)
@@ -391,6 +391,24 @@ contains
           p = potParam(2)/2._kp
           alpha = potParam(3)**2/6._kp
 
+       case ('hyperb','hbi')
+          M4 = potParam(1)
+          p = potParam(2)
+          mu = potParam(3)**0.25_kp
+          potName = 'hyberb'
+
+       case ('smearh','shi')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          mu = potParam(3)**0.25_kp
+          potName = 'smearh'
+
+       case ('rcplat','rcpi')
+          M4 = potParam(1)
+          p = potParam(2)
+          alpha = potParam(3)
+          beta = potParam(4)
+          potName = 'rcplat'
 
 !       case ('f-term')
 !          M4 = potParam(1)
@@ -652,6 +670,15 @@ contains
 
        case ('scaaci')
           matter_potential = saci_norm_potential(chi,alpha,p)
+
+       case ('hyperb')
+          matter_potential = sbi_norm_potential(chi/mu,p,mu)
+
+       case ('smearh')
+          matter_potential = shi_norm_potential(chi/mu,alpha,mu)
+
+       case ('rcplat')
+          matter_potential = rcpi_norm_potential(chi,p,alpha,beta)
           
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -925,6 +952,15 @@ contains
        case ('scaaci')
           deriv_matter_potential(1) = saci_norm_deriv_potential(chi,alpha,p)
 
+       case ('hyperb')
+          deriv_matter_potential(1) = hbi_norm_deriv_potential(chi/mu,p,mu)/mu
+
+       case ('smearh')
+          deriv_matter_potential(1) = shi_norm_deriv_potential(chi/mu,alpha,mu)/mu
+
+       case ('rcplat')
+          deriv_matter_potential(1) = rcpi_norm_deriv_potential(chi,p,alpha,beta)
+          
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
 !               / (4._kp * Pi**2 * phic)+ 4._kp * phi *psi**2 / M**2 / phic**2 )
@@ -1227,6 +1263,15 @@ contains
        case ('scaaci')
           deriv_second_matter_potential(1,1) = saci_norm_deriv_second_potential(chi,alpha,p)
 
+       case ('hyperb')
+          deriv_second_matter_potential(1,1) = hbi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu
+
+       case ('smearh')
+          deriv_second_matter_potential(1,1) = shi_norm_deriv_second_potential(chi/mu,alpha,mu)/mu/mu
+
+       case ('rcplat')
+          deriv_second_matter_potential(1,1) = rcpi_norm_deriv_second_potential(chi,p,alpha,beta)
+          
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 
 !          deriv_second_matter_potential(1,2) = lambda * 8. * phi * psi / M**2 / phic**2 

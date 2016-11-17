@@ -44,31 +44,31 @@ contains
     
     select case (infParam%name)
 
-    case ('largef')
+    case ('largef','lfi')
        slowroll_initial_matter = lfi_initial_field(infParam,efold)    
 
-    case ('gmixlf')
+    case ('gmixlf','gmlfi')
        slowroll_initial_matter = gmlfi_initial_field(infParam,efold)
 
-    case ('rcmass')
+    case ('rcmass','rcmi')
        slowroll_initial_matter = rcmi_initial_field(infParam,efold)
        
-    case ('rcquad')
+    case ('rcquad','rcqi')
        slowroll_initial_matter = rcqi_initial_field(infParam,efold)
 
-    case ('natinf')
+    case ('natinf','ni')
        slowroll_initial_matter = ni_initial_field(infParam,efold)
 
-    case ('hybnat')
+    case ('hybnat','hni')
        slowroll_initial_matter = hni_initial_field(infParam,efold)
       
-    case ('exsusy')
+    case ('exsusy','esi')
        slowroll_initial_matter = esi_initial_field(infParam,efold)
 
-    case ('powlaw')
+    case ('powlaw','pli')
        slowroll_initial_matter = pli_initial_field(infParam,efold)
 
-    case ('kahmod')
+    case ('kahmod','kmi')
        if (infParam%consts(3).eq.1._kp) then
           slowroll_initial_matter = kmii_initial_field(infParam,efold)
        elseif ((infParam%consts(3).eq.4._kp/3._kp) &
@@ -78,31 +78,31 @@ contains
           stop 'slowroll_initial_matter: kahler moduli not found!'
        endif
 
-    case ('hfline')
+    case ('hfline','hf1i')
        slowroll_initial_matter = hf1i_initial_field(infParam,efold)
 
-    case ('smallf')
+    case ('smallf','sfi')
        slowroll_initial_matter = sfi_initial_field(infParam,efold)
 
-    case ('gswli')
+    case ('gswli','li')
        slowroll_initial_matter = li_initial_field(infParam,efold)
 
-    case ('interm')
+    case ('interm','ii')
        slowroll_initial_matter = ii_initial_field(infParam,efold)
 
-    case ('colwei')
+    case ('colwei','cwi')
        slowroll_initial_matter = cwi_initial_field(infParam,efold)
 
-    case ('higgsi')
+    case ('higgsi','hi','si')
        slowroll_initial_matter = hi_initial_field(infParam,efold)
 
-    case ('twisti')
+    case ('twisti','twi')
        slowroll_initial_matter = twi_initial_field(infParam,efold)
 
-    case ('tdwell')
+    case ('tdwell','dwi')
        slowroll_initial_matter = dwi_initial_field(infParam,efold)
 
-    case ('mhitop')
+    case ('mhitop','mhi')
        slowroll_initial_matter = mhi_initial_field(infParam,efold)
 
 !    case ('kksf')
@@ -111,185 +111,194 @@ contains
 !    case ('kklt')
 !       slowroll_initial_matter = bi_initial_field(infParam,efold)
 
-    case ('logmd1')
+    case ('logmd1','lmi1')
        slowroll_initial_matter = lmi1_initial_field(infParam,efold)
 
-    case ('logmd2')
+    case ('logmd2','lmi2')
        slowroll_initial_matter = lmi2_initial_field(infParam,efold)
 
-    case ('ricci1')
+    case ('ricci1','rpi1')
        slowroll_initial_matter = rpi1_initial_field(infParam,efold)
 
-    case ('ricci2')
+    case ('ricci2','rpi2')
        slowroll_initial_matter = rpi2_initial_field(infParam,efold)
 
-    case ('corsi1')
+    case ('corsi1','ccsi1')
        slowroll_initial_matter = ccsi1_initial_field(infParam,efold)
 
-    case ('corsi2')
+    case ('corsi2','ccsi2')
        slowroll_initial_matter = ccsi2_initial_field(infParam,efold)
 
-    case ('corsi3')
+    case ('corsi3','ccsi3')
        slowroll_initial_matter = ccsi3_initial_field(infParam,efold)
 
-    case ('betexp')
+    case ('betexp','bei')
        slowroll_initial_matter = bei_initial_field(infParam,efold)
 
-    case ('radiag')
+    case ('radiag','rgi')
        slowroll_initial_matter = rgi_initial_field(infParam,efold)
 
-    case ('nmssmi')
+    case ('nmssmi','mssmi')
        slowroll_initial_matter = mssmi_initial_field(infParam,efold)
 
-    case ('orifpt')
+    case ('orifpt','oripi')
        slowroll_initial_matter = oripi_initial_field(infParam,efold)
 
     case ('gmssmi')
        slowroll_initial_matter = gmssmi_initial_field(infParam,efold)
 
-    case ('bsusyb')
+    case ('bsusyb','bsusybi')
        slowroll_initial_matter = bsusybi_initial_field(infParam,efold)
 
-    case ('tipinf')
+    case ('tipinf','ti')
        slowroll_initial_matter = ti_initial_field(infParam,efold)
 
-    case ('psenat')
+    case ('psenat','psni')
        slowroll_initial_matter = psni_initial_field(infParam,efold)
 
-    case ('nckahi')
+    case ('nckahi','ncki')
        slowroll_initial_matter = ncki_initial_field(infParam,efold)
 
-    case ('hybrid')
+    case ('hybrid','vhi')
        slowroll_initial_matter = vhi_initial_field(infParam,efold)
 
-    case ('dysusy')
+    case ('dysusy','dsi')
        slowroll_initial_matter = dsi_initial_field(infParam,efold)
 
-    case ('arctan')
+    case ('arctan','ai')
        slowroll_initial_matter = ai_initial_field(infParam,efold)
 
-    case ('fixnsa')
+    case ('fixnsa','cnai')
        slowroll_initial_matter = cnai_initial_field(infParam,efold)
 
-    case ('fixnsb')
+    case ('fixnsb','cnbi')
        slowroll_initial_matter = cnbi_initial_field(infParam,efold)
 
-    case ('fixnsc')
+    case ('fixnsc','cnci')
        slowroll_initial_matter = cnci_initial_field(infParam,efold)
 
-    case ('fixnsd')
+    case ('fixnsd','cndi')
        slowroll_initial_matter = cndi_initial_field(infParam,efold)
 
-    case ('nszero')
+    case ('nszero','csi')
        slowroll_initial_matter = csi_initial_field(infParam,efold)
 
-    case('oifold')
+    case('oifold','oi')
        slowroll_initial_matter = oi_initial_field(infParam,efold)
 
-    case ('sugrab')
+    case ('sugrab','sbi')
        slowroll_initial_matter = sbi_initial_field(infParam,efold)
 
-    case ('spsyb1')
+    case ('spsyb1','ssbi1')
        slowroll_initial_matter = ssbi1_initial_field(infParam,efold)
 
-    case ('spsyb2')
+    case ('spsyb2','ssbi2')
        slowroll_initial_matter = ssbi2_initial_field(infParam,efold)
 
-    case ('spsyb3')
+    case ('spsyb3','ssbi3')
        slowroll_initial_matter = ssbi3_initial_field(infParam,efold)
 
-    case ('spsyb4')
+    case ('spsyb4','ssbi4')
        slowroll_initial_matter = ssbi4_initial_field(infParam,efold)
 
-    case ('spsyb5')
+    case ('spsyb5','ssbi5')
        slowroll_initial_matter = ssbi5_initial_field(infParam,efold)
 
-    case ('spsyb6')
+    case ('spsyb6','ssbi6')
        slowroll_initial_matter = ssbi6_initial_field(infParam,efold)
 
-    case ('runma1')
+    case ('runma1','rmi1')
        slowroll_initial_matter = rmi1_initial_field(infParam,efold)
 
-    case ('runma2')
+    case ('runma2','rmi2')
        slowroll_initial_matter = rmi2_initial_field(infParam,efold)
 
-    case ('runma3')
+    case ('runma3','rmi3')
        slowroll_initial_matter = rmi3_initial_field(infParam,efold)
 
-    case ('runma4')
+    case ('runma4','rmi4')
        slowroll_initial_matter = rmi4_initial_field(infParam,efold)
 
-    case ('logpo1')
+    case ('logpo1','lpi1')
        slowroll_initial_matter = lpi1_initial_field(infParam,efold)
 
-    case ('logpo2')
+    case ('logpo2','lpi2')
        slowroll_initial_matter = lpi2_initial_field(infParam,efold)
 
-    case ('logpo3')
+    case ('logpo3','lpi3')
        slowroll_initial_matter = lpi3_initial_field(infParam,efold)
 
-    case ('ostach')
+    case ('ostach','osti')
        slowroll_initial_matter = osti_initial_field(infParam,efold)
 
-    case ('witorh')
+    case ('witorh','wri')
        slowroll_initial_matter = wri_initial_field(infParam,efold)
 
-    case ('invmon')
+    case ('invmon','imi')
        slowroll_initial_matter = imi_initial_field(infParam,efold)
 
-    case ('nrifpt')
+    case ('nrifpt','ripi')
        slowroll_initial_matter = ripi_initial_field(infParam,efold)
 
-    case ('grifpt')
+    case ('grifpt','gripi')
        slowroll_initial_matter = gripi_initial_field(infParam,efold)
 
-    case ('branei')
+    case ('branei','bi')
        slowroll_initial_matter = bi_initial_field(infParam,efold)
 
-    case ('kklmmt')
+    case ('kklmmt','kklti')
        slowroll_initial_matter = kklti_initial_field(infParam,efold)
 
-    case ('nform1')
+    case ('nform1','nfi1')
        slowroll_initial_matter = nfi1_initial_field(infParam,efold)
 
-    case ('nform2')
+    case ('nform2','nfi2')
        slowroll_initial_matter = nfi2_initial_field(infParam,efold)
 
-    case ('nform3')
+    case ('nform3','nfi3')
        slowroll_initial_matter = nfi3_initial_field(infParam,efold)
 
-    case ('nform4')
+    case ('nform4','nfi4')
        slowroll_initial_matter = nfi4_initial_field(infParam,efold)
 
-    case ('dualsb')
+    case ('dualsb','di')
        slowroll_initial_matter = di_initial_field(infParam,efold)
 
-    case ('nrcoli')
+    case ('nrcoli','ncli')
        slowroll_initial_matter = ncli_initial_field(infParam,efold)
 
-    case ('mukhai')
+    case ('mukhai','vfmi')
        slowroll_initial_matter = vfmi_initial_field(infParam,efold)
 
-    case ('axhtop')
+    case ('axhtop','ahi')
        slowroll_initial_matter = ahi_initial_field(infParam,efold)
 
-    case ('sbkahi')
+    case ('sbkahi','sbki')
        slowroll_initial_matter = sbki_initial_field(infParam,efold)
 
-    case ('fibrei')
+    case ('fibrei','fi')
        slowroll_initial_matter = fi_initial_field(infParam,efold)
 
-    case ('sduali')
+    case ('sduali','sdi')
        slowroll_initial_matter = sdi_initial_field(infParam,efold)
 
-    case ('scaaai')
+    case ('scaaai','saai')
        slowroll_initial_matter = saai_initial_field(infParam,efold)
 
-    case ('scaabi')
+    case ('scaabi','sabi')
        slowroll_initial_matter = sabi_initial_field(infParam,efold)
 
-    case ('scaaci')
+    case ('scaaci','saci')
        slowroll_initial_matter = saci_initial_field(infParam,efold)
+
+    case ('hyperb','hbi')
+       slowroll_initial_matter = hbi_initial_field(infParam,efold)
+
+    case ('smearh','shi')
+       slowroll_initial_matter = shi_initial_field(infParam,efold)
+
+    case ('rcplat','rcpi')
+       slowroll_initial_matter = rcpi_initial_field(infParam,efold)
 
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
@@ -2849,6 +2858,95 @@ contains
     saci_initial_field(:) = xIni
 
   end function saci_initial_field
+
+
+
+  function hbi_initial_field(infParam, efold)
+    use hbisr, only : hbi_x_endinf, hbi_x_trajectory
+
+    real(kp), dimension(matterNum) :: hbi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, p, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = hbi_x_endinf(p,mu)
+
+    if (display) write(*,*)'hbi_initial_field: xend= ', xEnd
+
+    xIni = hbi_x_trajectory(bfold,xend,p,mu)
+
+    hbi_initial_field(:) = xIni*mu
+
+  end function hbi_initial_field
+
+
+  function shi_initial_field(infParam, efold)
+    use shisr, only : shi_x_endinf, shi_x_trajectory
+
+    real(kp), dimension(matterNum) :: shi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, alpha, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    xEnd = shi_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'shi_initial_field: xend= ', xEnd
+
+    xIni = shi_x_trajectory(bfold,xend,alpha,mu)
+
+    shi_initial_field(:) = xIni*mu
+
+  end function shi_initial_field
+
+
+
+  function rcpi_initial_field(infParam, efold)
+    use rcpisr, only : rcpi_x_endinf, rcpi_x_trajectory
+    use rcpisr, only : rcpi_efoldmax
+
+    real(kp), dimension(matterNum) :: rcpi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: alpha, beta, p, bfold
+    real(kp) :: xEnd, xIni, efoldMax
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    alpha = infParam%consts(3)
+    beta = infParam%consts(4)
+
+    xEnd = rcpi_x_endinf(p,alpha,beta)
+
+    if (display) write(*,*)'rcpi_initial_field: xend= ', xEnd
+
+    efoldMax = rcpi_efoldmax(p,alpha,beta)
+
+    if (efold.gt.efoldMax) then
+       write(*,*)'rcpi_initial_field: efold > efoldMax!'
+       write(*,*)'efold= efoldMax= ',efold,efoldMax
+    end if
+
+    xIni = rcpi_x_trajectory(bfold,xend,p,alpha,beta)
+
+    rcpi_initial_field(:) = xIni
+
+  end function rcpi_initial_field
 
 
 
