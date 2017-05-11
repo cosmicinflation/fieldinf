@@ -16,7 +16,13 @@ module infbg
 !for debugging
   logical, parameter :: display = .false.
   logical, parameter :: dump_file = .false.
- 
+
+!advanced integration settings  
+  logical, save :: BgEvolCheckForHubbleStop = .false.
+  logical, save :: BgEvolUseOtherEpsilon = .false.
+  real(kp), save :: BgEvolEpsilonStopValue = 1._kp
+
+  
 
 !to store snapshot (ini or end, or more)
   type infbgphys    
@@ -54,7 +60,9 @@ module infbg
   public rescale_potential
   public bg_field_evol, bg_field_dot_coupled
          
-
+  public set_bgfieldevol_hubblestop, set_bgfieldevol_epsilonstop
+  public set_bgfieldevol_useotherepsilon
+  
 
 contains
 
@@ -261,6 +269,39 @@ contains
 
 
 
+
+  subroutine set_bgfieldevol_hubblestop(switch)
+    implicit none
+    logical, intent(in) :: switch
+
+    BgEvolCheckForHubbleStop = switch
+
+    write(*,*)'infbg: checkHubbleStop sets to: ',switch
+    
+  end subroutine set_bgfieldevol_hubblestop
+    
+
+  subroutine set_bgfieldevol_useotherepsilon(switch)
+    implicit none
+    logical, intent(in) :: switch
+
+    BgEvolUseOtherEpsilon = switch
+
+    write(*,*)'infbg: useOtherEpsilon sets to: ',switch
+    
+  end subroutine set_bgfieldevol_useotherepsilon
+
+
+  subroutine set_bgfieldevol_epsilonstop(eps)
+    implicit none
+    real(kp), intent(in) :: eps
+
+    BgEvolEpsilonStopValue = eps
+
+    write(*,*)'infbg: setting EpsilonStop= ',eps
+
+  end subroutine set_bgfieldevol_epsilonstop
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !inflationary evolution: find end of inflation + store relevant quantities
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -338,8 +379,8 @@ contains
 !Physics says in JF, but both are the same up to 2% when the dilaton coupling are set to 1
 !Today dilaton couplings are 0.01 maxi, and they are constant or null in our model.
 !Integration stops when epsilon1(useJF or not) > epsilonStop
-    real(kp), parameter :: epsilonStop = 1._kp
-    logical, parameter :: useOtherEpsilon = .false.
+    real(kp) :: epsilonStop
+    logical :: useOtherEpsilon
 
 !zbrent accuracy on efoldEnd for which epsilon=epsilonStop
     real(kp), parameter :: tolEfoldEnd = tolkp
@@ -381,8 +422,12 @@ contains
     efoldExploreOsc = 0._kp
 
 !enabled by true
-   
-    checkHubbleStop = .false.
+
+    epsilonStop = BgEvolEpsilonStopValue
+
+    useOtherEpsilon = BgEvolUseOtherEpsilon
+    
+    checkHubbleStop = BgEvolCheckForHubbleStop
 
     checkMatterStop = .false.
 
