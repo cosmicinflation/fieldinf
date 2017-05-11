@@ -150,7 +150,7 @@ contains
 
 
 
-  function set_infbg_ini(infParam)
+  function set_infbg_ini(infParam,fieldDot)
 !to start on the attractor. This is epsilon2 = 0 for epsilon1<<1
 !initialy.
     use infbgmodel, only : infbgparam
@@ -160,6 +160,7 @@ contains
 
     implicit none
     type(infbgparam), intent(in) :: infParam
+    real(kp), dimension(fieldNum), intent(in), optional :: fieldDot
     type(infbgphys) :: set_infbg_ini
     
     real(kp) :: hubbleSquareIni
@@ -175,12 +176,14 @@ contains
        infIni%field(1:matterNum) = slowroll_initial_matter(infParam)
     endif
 
+    if (present(fieldDot)) then
+       infIni%fieldDot = fieldDot
+    else
 !this starts on the attractor
-    infIni%fieldDot &
-         = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
+       infIni%fieldDot &
+            = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
+    endif
 
-!    infIni%fieldDot = 0._kp
-    
 !overides for test
 !    print *,'initial condition fieldDot=',infIni%fieldDot
 

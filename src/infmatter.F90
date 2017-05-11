@@ -9,7 +9,7 @@ module infmatter
   private
 
 
-  logical, parameter :: display = .true.
+  logical, parameter :: display = .false.
 
 !number of matter sector field
 

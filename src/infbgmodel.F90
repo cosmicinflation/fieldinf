@@ -64,7 +64,9 @@ contains
 
     infparam_equal = ((infparamA%name == infparamB%name) &
          .and. all(infparamA%conforms == infParamB%conforms) &
+!         .and. all(infparamA%conformsDot == infParamB%conformsDot) &
          .and. all(infparamA%matters == infparamA%matters) &
+!         .and. all(infparamA%mattersDot == infparamA%mattersDot) &
          .and. all(infparamA%consts == infparamB%consts))
 
   end function infparam_equal
@@ -79,7 +81,9 @@ contains
 
     infparam_unequal = ((infparamA%name /= infparamB%name) &
          .or. any(infparamA%conforms /= infParamB%conforms) &
+!         .or. any(infparamA%conformsDot /= infParamB%conformsDot) &
          .or. any(infparamA%matters /= infparamA%matters) &
+!         .or. any(infparamA%mattersDot /= infparamA%mattersDot) &
          .or. any(infparamA%consts /= infparamB%consts))
 
   end function infparam_unequal
@@ -1005,7 +1009,7 @@ contains
     case ('higgsi','hi','si')
 !Higgs/Starobinski inflation: HI/SI
 
-!U = c1^4 [1 - exp(-c2 F)]^2 with c2 = -sqrt(2/3)
+!U = c1^4 [1 - exp(-c2 F)]^2 with c2 = sqrt(2/3)
 
 
        badParams = ((infParam%consts(1).le.0._kp) &
