@@ -17,7 +17,7 @@ module infbg
   logical, parameter :: display = .false.
   logical, parameter :: dump_file = .false.
 
-!advanced integration settings  
+!default integration settings  
   logical, save :: BgEvolCheckForHubbleStop = .false.
   logical, save :: BgEvolUseOtherEpsilon = .false.
   real(kp), save :: BgEvolEpsilonStopValue = 1._kp
@@ -184,20 +184,15 @@ contains
        infIni%field(1:matterNum) = slowroll_initial_matter(infParam)
     endif
 
+!if on input "fieldDot" is given then fix the initial velocities
+!accordingly, otherwise, starts with initial velocities on the
+!slow-roll attractor
     if (present(fieldDot)) then
        infIni%fieldDot = fieldDot
     else
-!this starts on the attractor
        infIni%fieldDot &
             = - matmul(metric_inverse(infIni%field),deriv_ln_potential(infIni%field))
     endif
-
-!overides for test
-!    print *,'initial condition fieldDot=',infIni%fieldDot
-
-!    infIni%fieldDot(1)=1.
-!    infIni%fieldDot(2)=-0.5
-!    infIni%fieldDot(3)=0.6
 
     hubbleSquareIni = hubble_parameter_square(infIni%field,infIni%fieldDot,.false.)
 
@@ -269,7 +264,8 @@ contains
 
 
 
-
+!convenience functions to allow user alteration of various integrator
+!criteria
   subroutine set_bgfieldevol_hubblestop(switch)
     implicit none
     logical, intent(in) :: switch
@@ -279,7 +275,9 @@ contains
     write(*,*)'infbg: checkHubbleStop sets to: ',switch
     
   end subroutine set_bgfieldevol_hubblestop
-    
+
+
+  
 
   subroutine set_bgfieldevol_useotherepsilon(switch)
     implicit none
@@ -292,6 +290,8 @@ contains
   end subroutine set_bgfieldevol_useotherepsilon
 
 
+
+  
   subroutine set_bgfieldevol_epsilonstop(eps)
     implicit none
     real(kp), intent(in) :: eps
@@ -302,6 +302,8 @@ contains
 
   end subroutine set_bgfieldevol_epsilonstop
 
+
+  
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !inflationary evolution: find end of inflation + store relevant quantities
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -353,8 +355,6 @@ contains
     real(kp) :: hubbleSquareIni, hubbleIni
     
     real(kp) :: efold,efoldNext,efoldStepObs
-!obsolete
-!    real(kp) :: efoldStepNoObs
 
     real(kp) :: efoldBeforeEndInf,efoldEndInf
     real(kp) :: efoldAfterEndInf
@@ -365,7 +365,6 @@ contains
     real(kp), dimension(2*fieldNum) :: bgVar, bgVarIni
 
 !standard integration accuracy 
-!    real(kp), parameter :: tolEvol = 1e-11
     real(kp), parameter :: tolEvol = tolkp
 
 !backward integration accuracy (sometime instable, mayneed extra precision)
@@ -375,32 +374,35 @@ contains
 !used for the integration. In both cases, only Dfield/Defold is
 !stored
     logical, parameter :: useVelocity = .true.
-!end inflation when epsilon1=1 in Jordan Frame, or in Einstein Frame
-!Physics says in JF, but both are the same up to 2% when the dilaton coupling are set to 1
-!Today dilaton couplings are 0.01 maxi, and they are constant or null in our model.
-!Integration stops when epsilon1(useJF or not) > epsilonStop
+
+!Value of "epsilon1" at which inflation stops. Default to BgEvolEpsilonStopValue=1
     real(kp) :: epsilonStop
+!By default, we use epsilon1 (EF), but for non-minimal coupling, you
+!want epsilon1 (JF). Default to BgEvolUseOtherEpsilon=F
     logical :: useOtherEpsilon
 
 !zbrent accuracy on efoldEnd for which epsilon=epsilonStop
     real(kp), parameter :: tolEfoldEnd = tolkp
 
-!another test, checked after epsilon1 values to stop integration. May
-!be convenient for hybrid-like one field potential: stop integration
-!when the min value of the matter fields is below matterMiniStop, or
-!according to the total number of efolds
-    logical, parameter :: accurateEndInf = .true.
+!another tests, checked *after* epsilon1 values to stop
+!integration. May be convenient for hybrid-like one field potential:
+!stop integration when the min(max) value of the matter fields is
+!below of above a given value, or according to the total number of
+!efolds, or to the value of the hubble parameter
     real(kp) :: efoldMaxiStop
     logical :: checkHubbleStop
     logical :: checkMatterStop
     logical :: stopForMax   
 
+!whether or not to determine accurately the end of inflation
+    logical, parameter :: accurateEndInf = .true.
+    
     real(kp) :: valueStop
     integer, parameter :: stopIndexMin = 1, stopIndexMax = 1
 
     logical :: inflate, longEnoughObs
   
-!to make f77 routines discussing together           
+!to make old f77 routines discussing together           
     type(transfert) :: stopData, findData
 
 !to store the data as chained list    
@@ -542,9 +544,8 @@ contains
 !precise determination of efoldEndInf up to tolEfoldEnd provided
 !inflation is longer than efoldStepDefault efold
 
-!checkMatterMini stands for cases when epsilon1=epsilonStop does not
-!define the end of inflation, so who cares about accurate
-!determination
+
+!in these cases, accurate determination of the end of inflation is not needed
     if ((.not.accurateEndInf).or.(efoldAfterEndInf.eq.efoldMaxiStop)) then
        if (display) write(*,*)'bg_field_evol: endinf not determined accurately'
        efoldEndInf = efoldAfterEndInf
