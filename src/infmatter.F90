@@ -331,7 +331,7 @@ contains
           p = potParam(2)
           q = sqrt(3._kp/2._kp)
 
-       case ('ccorsi','corsi1','corsi2','corsi3')
+       case ('ccorsi','corsi1','corsi2','corsi3','ccsi','ccsi1','ccsi2','ccsi3')
           M4 = potParam(1)
           alpha = potParam(2)
           q = sqrt(3._kp/2._kp)

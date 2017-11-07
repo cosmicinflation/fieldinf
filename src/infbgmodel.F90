@@ -1268,7 +1268,7 @@ contains
        matterParam(2) = infParam%consts(2)
 
 
-    case ('ccorsi','corsi1','corsi2','corsi3','ccsi')
+    case ('ccorsi','corsi1','corsi2','corsi3','ccsi','ccsi1','ccsi2','ccsi3')
 !cubiquely corrected Starobinksi inflation: CCSI
 
 !F -> sqrt(2/3) F

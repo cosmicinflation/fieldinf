@@ -1,23 +1,15 @@
 # >>> DESIGNED FOR GMAKE <<<
 
-FC=f95
+FC=f90
 
 ext=$(shell uname | cut -c1-3)
 
-
-ifeq ($(ext),IRI)
-FFLAGS= -O -64 -OPT:Olimit=0 -D$(ext)
-endif
-
-ifeq ($(ext),OSF)
-FFLAGS= -O  -D$(ext)
-endif
 
 ifeq ($(ext),Lin)
 FC=gfortran
 FFLAGS= -O -fopenmp -D$(ext) -DPPNAME
 #-DPPNAME
-#bugbuster -DPPNAME
+#bugbuster
 #FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 
 LDADD = -laspic
 endif
