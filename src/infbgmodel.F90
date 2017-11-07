@@ -157,9 +157,8 @@ contains
 !fieldStop value
     matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
-!name passed to infmatter module    
-    infname = infParam%name
     
+    select case(infParam%name)    
 
     case ('largef','lfi')
 ! large field inflation: LFI
