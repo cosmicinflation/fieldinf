@@ -118,18 +118,20 @@ contains
 
     select case (cname)
 
-       case ('largef')
+       case ('largef','lfi')
           M4 = potParam(1)
           p = potParam(2)
+          potName = 'largef'
 
        case ('rcquad')
           M4 = potParam(1)
           alpha = -potParam(4)/potParam(1)
 
-       case ('smallf')
+       case ('smallf','sfi')
           M4 = potParam(3)
           p = potParam(2)
           mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
+          potName = 'smallf'
 
        case ('branei')
           M4 = potParam(3)

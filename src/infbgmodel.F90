@@ -101,7 +101,7 @@ contains
     real(kp), dimension(matterParamNum) :: matterParam
   
     logical :: badParams = .true.
-
+    
     real(kp) :: kpbuffer
 
     matterParam = 0._kp
@@ -157,9 +157,9 @@ contains
 !fieldStop value
     matterParam(matterParamNum) = infParam%consts(matterParamNum)
 
-
-  select case (infParam%name)
-
+!name passed to infmatter module    
+    infname = infParam%name
+    
 
     case ('largef','lfi')
 ! large field inflation: LFI
