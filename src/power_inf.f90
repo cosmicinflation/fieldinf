@@ -624,8 +624,8 @@ contains
     if (.not.Pin%useSpline) stop 'SetInfPowSpline: useSpline is F'
          
     do i=1,powerD%initP%lnkmpcNum
-       lnkmpcVec(i) = powerD%initP%lnkmpcMin + real(i-1)*(powerD%initP%lnkmpcMax &
-            - powerD%initP%lnkmpcMin)/real(powerD%initP%lnkmpcNum-1)
+       lnkmpcVec(i) = powerD%initP%lnkmpcMin + real(i-1,kp)*(powerD%initP%lnkmpcMax &
+            - powerD%initP%lnkmpcMin)/real(powerD%initP%lnkmpcNum-1,kp)
     enddo
 
 !this test that initial conditions at kphysOverHubbleInit can be set,

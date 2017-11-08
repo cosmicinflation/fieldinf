@@ -7,7 +7,7 @@ module infpert
 !inflation: bfold = efold - efoldEnd running from efoldIni-efoldEnd to
 !0.
 
-  use infprec, only : kp, tolkp
+  use infprec, only : kp, tolkp, pi
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
   use infbg, only : infbgphys
   use inftorad, only : inftoradcosmo
@@ -73,9 +73,6 @@ contains
     
     type(infhubblexit) :: atHkExit
     complex(kp) :: tensEnd
-    real(kp) :: pi
-
-    pi=acos(-1._kp)
 
 !evolution of k^3/2 x h by recomputing the background (faster)
     tensEnd = pert_tens_bgevol(infCosmo,kmpc)
@@ -181,7 +178,7 @@ contains
 
     if (dump_modes) then
        if (bfoldDataNum.le.1) stop 'pert_tens_bgevol: 1 data point?'
-       bfoldStep = (infCosmo%bfoldEnd - bfoldStart)/real(bfoldDataNum-1)
+       bfoldStep = (infCosmo%bfoldEnd - bfoldStart)/real(bfoldDataNum-1,kp)
        call delete_file('tens.dat')
     else
 !turbo settings, let's go to the end of inflation
@@ -361,7 +358,6 @@ contains
     integer :: vacuumNum
     complex(kp) :: powerFrom
   
-    real(kp) :: pi
     complex(kp), dimension(scalNum,fieldNum) :: obsPertFrom
    
     integer :: i,j,k,whichInVac
@@ -373,8 +369,6 @@ contains
 
 !when the dilaton is not coupled
     vacuumNum = matterNum
-
-    pi=acos(-1._kp)
 
     do whichInVac=1,vacuumNum
        obsPertFrom(:,whichInVac) = pert_scal_bgevol(infCosmo,kmpc,whichInVac)
@@ -527,7 +521,7 @@ contains
 
     if (dump_modes) then
        if (bfoldDataNum.le.1) stop 'pert_scal_bgevol: 1 data point?'
-       bfoldStep = (infCosmo%bfoldEnd - bfoldStart)/real(bfoldDataNum-1)       
+       bfoldStep = (infCosmo%bfoldEnd - bfoldStart)/real(bfoldDataNum-1,kp)
        write(strgWhich,*) whichInVacuum       
        call delete_file('zeta2_'//trim(adjustl(strgWhich))//'.dat')
        call delete_file('psi_'//trim(adjustl(strgWhich))//'.dat')
@@ -1210,7 +1204,6 @@ contains
     implicit none
     real(kp), intent(in) :: k
     complex(kp), intent(out) :: modeIni, modePrimeIniOverFreq
-    real(kp), parameter :: pi = 3.141592653589793238
     complex(kp), parameter :: alpha = (1._kp,0._kp)
     complex(kp), parameter :: beta = (0._kp,0._kp)
 
