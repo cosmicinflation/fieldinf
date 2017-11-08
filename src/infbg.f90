@@ -665,12 +665,12 @@ contains
           if (efoldObs - infIni%efold.gt.0._kp) then
              longEnoughObs = .true.
 !             efoldStepNoObs = 2._kp*(efoldObs - infIni%efold)/real(efoldDataNum-1)
-             efoldStepObs = 2._kp*efoldBeforeEndObs/real(efoldDataNum-1)
+             efoldStepObs = 2._kp*efoldBeforeEndObs/real(efoldDataNum-1,kp)
 !             efoldStepNoObs = max(efoldStepNoObs,efoldStepObs)
           else
              longEnoughObs = .false.              
 !             efoldStepNoObs = 0._kp
-             efoldStepObs = (efoldEndInf  - infIni%efold)/real(efoldDataNum/2-1)
+             efoldStepObs = (efoldEndInf  - infIni%efold)/real(efoldDataNum/2-1,kp)
           endif
        else
           longEnoughObs = .false.
