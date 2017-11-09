@@ -21,6 +21,7 @@ module infbg
   logical, save :: BgEvolCheckForHubbleStop = .false.
   logical, save :: BgEvolUseOtherEpsilon = .false.
   real(kp), save :: BgEvolEpsilonStopValue = 1._kp
+  real(kp), save :: BgEvolEfoldMaxiStop = 1000._kp
 
   
 
@@ -61,7 +62,7 @@ module infbg
   public bg_field_evol, bg_field_dot_coupled
          
   public set_bgfieldevol_hubblestop, set_bgfieldevol_epsilonstop
-  public set_bgfieldevol_useotherepsilon
+  public set_bgfieldevol_useotherepsilon, set_bgfieldevol_efoldmaxistop
   
 
 contains
@@ -303,6 +304,19 @@ contains
   end subroutine set_bgfieldevol_epsilonstop
 
 
+
+
+  subroutine set_bgfieldevol_efoldmaxistop(efold)
+    implicit none
+    real(kp), intent(in) :: efold
+
+    BgEvolEfoldMaxiStop = efold
+
+    write(*,*)'infbg: setting EfoldMaxiStop= ',efold
+
+  end subroutine set_bgfieldevol_efoldmaxistop
+
+
   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !inflationary evolution: find end of inflation + store relevant quantities
@@ -433,7 +447,7 @@ contains
 
     checkMatterStop = .false.
 
-    efoldMaxiStop = 1000._kp
+    efoldMaxiStop = BgEvolEfoldMaxiStop
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
