@@ -406,7 +406,9 @@ contains
     real(kp) :: efoldMaxiStop
     logical :: checkHubbleStop
     logical :: checkMatterStop
-    logical :: stopForMax   
+    logical :: stopDirPresent
+    logical :: stopForMax
+
 
 !whether or not to determine accurately the end of inflation
     logical, parameter :: accurateEndInf = .true.
@@ -469,8 +471,10 @@ contains
     endif
 
     if (present(isStopAtMax)) then
+       stopDirPresent = .true.
        stopForMax = isStopAtMax
     else
+       stopDirPresent = .false.
        stopForMax = .false.
     endif
 
@@ -512,7 +516,8 @@ contains
     stopData%yesno1 = useOtherEpsilon
     stopData%yesno2 = checkMatterStop
     stopData%yesno3 = stopForMax
-    stopData%yesno4 = checkHubbleStop
+    stopData%hub = checkHubbleStop
+    stopData%dir = stopDirPresent
     stopData%check = .false.    
     stopData%update = .false.
     stopData%xend = efoldHuge
@@ -1050,16 +1055,23 @@ contains
              endif
           endif
 
-          if (stopData%yesno4) then
+          if (stopData%hub) then
              hubbleSquare = hubble_parameter_square(field,fieldDot,.false.)
              stopNow = (hubbleSquare.lt.(stopData%real2)**2)
+             if (stopData%dir) then
+                if (stopData%yesno3) then
+                   stopNow = stopNow .and. (fieldDot(stopData%int1).ge.0._kp)
+                else
+                   stopNow = stopNow .and. (fieldDot(stopData%int1).le.0._kp)
+                endif
+             end if
           endif
           
           if (stopNow.or.(epsilon.gt.stopData%real1)) then
              stopData%update = .true.
              stopData%xend = efold 
              stopData%yesno2 = .false.
-             stopData%yesno4 = .false.
+             stopData%hub = .false.
           endif
 
        endif
@@ -1155,14 +1167,22 @@ contains
              endif
           endif
              
-          if (stopData%yesno4) stopNow = hubble.le.stopData%real2
-
+          if (stopData%hub) then
+             stopNow = hubble.le.stopData%real2
+             if (stopData%dir) then
+                if (stopData%yesno3) then
+                   stopNow = stopNow .and. (velocity(stopData%int1).ge.0._kp)
+                else
+                   stopNow = stopNow .and. (velocity(stopData%int1).le.0._kp)
+                endif
+             end if
+          endif
 
           if (stopNow.or.(epsilon.gt.stopData%real1)) then
              stopData%update = .true.
              stopData%xend = efold 
              stopData%yesno2 = .false.
-             stopData%yesno4 = .false.
+             stopData%hub = .false.
           endif
           
 !          print *,'efold field',efold,field

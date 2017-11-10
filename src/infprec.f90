@@ -27,7 +27,8 @@ module infprec
 !Allows to stop integration from conditions coming from called
 !functions (find the end of inflation)
   type transfert
-     logical :: yesno1,yesno2, yesno3, yesno4
+     logical :: yesno1,yesno2, yesno3
+     logical :: hub, dir
      integer :: int1, int2, int3
      real(kp) :: real1, real2, real3, real4, real5
      real(kp), dimension(:), pointer :: ptrvector1 => null()
