@@ -704,7 +704,7 @@ contains
        write(*,*)'matterField = ',chi
        write(*,*)'potParam = ',potParam
        write(*,*)'matter_potential = ',matter_potential
-       stop 'infbgmodel: matter_potential < 0!'
+       stop 'infmatter: matter_potential < 0!'
     endif
   end function matter_potential
  

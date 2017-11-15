@@ -3,7 +3,6 @@ module infbg
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
   use infbgfunc, only : hubble_parameter_square, slowroll_first_parameter_JF
   use infbgfunc, only : slowroll_first_parameter, slowroll_second_parameter
-  
 
 !background evolution in the Einstein FLRW Frame for multifields:
 !scalar gravity + matter fields.
@@ -12,19 +11,42 @@ module infbg
 
   private
 
+  abstract interface
+     function sr_param(x,dx,switch)
+       use infprec, only : kp
+       use infbgmodel, only : fieldNum
+       real(kp) :: sr_param
+       real(kp), dimension(fieldNum), intent(in) :: x, dx
+       logical, intent(in) :: switch
+     end function sr_param
+  end interface
+
+  
    
 !for debugging
   logical, parameter :: display = .false.
   logical, parameter :: dump_file = .false.
 
-!default integration settings  
+!default value for integration settings, can be accessed with some
+!dedicated public function below
+  logical, save :: BgEvolCheckForMatterStop = .false.
+  real(kp), save :: BgEvolMatterStopValue = tolkp
+  logical, save :: BgEvolStopAtMax = .false.
+  
   logical, save :: BgEvolCheckForHubbleStop = .false.
+  real(kp), save :: BgEvolHubbleStopValue = 0._kp
+  integer, save :: BgEvolStopVelocitySign = 0
+
+!use other slow-roll parameter than eps1
   logical, save :: BgEvolUseOtherEpsilon = .false.
   real(kp), save :: BgEvolEpsilonStopValue = 1._kp
-  real(kp), save :: BgEvolEfoldMaxiStop = 1000._kp
+  procedure(sr_param), pointer :: ptr_alternate_stop_parameter => slowroll_second_parameter
 
+!default maximum number of efolds  
+  real(kp), save :: BgEvolEfoldMaxiStop = 1000._kp
   
 
+  
 !to store snapshot (ini or end, or more)
   type infbgphys    
      sequence
@@ -60,7 +82,8 @@ module infbg
   public set_infbg_ini
   public rescale_potential
   public bg_field_evol, bg_field_dot_coupled
-         
+
+  public set_bgfieldevol_matterstop
   public set_bgfieldevol_hubblestop, set_bgfieldevol_epsilonstop
   public set_bgfieldevol_useotherepsilon, set_bgfieldevol_efoldmaxistop
   
@@ -264,29 +287,71 @@ contains
   end subroutine rescale_potential
 
 
+ 
+  
 
 !convenience functions to allow user alteration of various integrator
 !criteria
-  subroutine set_bgfieldevol_hubblestop(switch)
+
+  
+  subroutine set_bgfieldevol_matterstop(switch, valuestop, stopatmax)
     implicit none
     logical, intent(in) :: switch
+    real(kp), intent(in) :: valuestop
+    logical, intent(in) :: stopatmax
 
-    BgEvolCheckForHubbleStop = switch
-
-    write(*,*)'infbg: checkHubbleStop sets to: ',switch
+    BgEvolCheckForMatterStop = switch
+    BgEvolMatterStopValue = valuestop
+    BgEvolStopAtMax = stopatmax
     
-  end subroutine set_bgfieldevol_hubblestop
+    write(*,*)'infbg: default checkMatterStop sets to: ',switch
+    write(*,*)'infbg: default stopMatterValue sets to: ',valuestop
+    write(*,*)'infbg: default stopAtMax sets to:       ',stopatmax
+       
+  end subroutine set_bgfieldevol_matterstop
 
 
   
-
-  subroutine set_bgfieldevol_useotherepsilon(switch)
+  subroutine set_bgfieldevol_hubblestop(switch, valuestop, stopsign)
     implicit none
     logical, intent(in) :: switch
+    real(kp), intent(in) :: valuestop
+    integer, intent(in), optional :: stopsign
 
+    BgEvolCheckForHubbleStop = switch
+    BgEvolHubbleStopValue = valuestop
+    if (present(stopsign)) BgEvolStopVelocitySign = stopsign
+    
+    write(*,*)'infbg: checkHubbleStop sets to: ',switch
+    write(*,*)'infbg: HubbleStopValue sets to: ',valuestop
+    if (present(stopsign)) write(*,*)'infbg: stopVelocitySign sets to: ',stopsign
+       
+  end subroutine set_bgfieldevol_hubblestop
+ 
+
+  
+
+  subroutine set_bgfieldevol_useotherepsilon(switch,epsname)
+    implicit none
+    logical, intent(in) :: switch
+    character(len=*), intent(in), optional :: epsname
+    
     BgEvolUseOtherEpsilon = switch
 
     write(*,*)'infbg: useOtherEpsilon sets to: ',switch
+
+    if (present(epsname)) then
+       select case(epsname)
+
+       case('epsilon1JF')
+          ptr_alternate_stop_parameter => slowroll_first_parameter_JF
+       case('epsilon2')
+          ptr_alternate_stop_parameter => slowroll_second_parameter
+       case default
+          stop 'set_bgfieldevol_useotherepsilon: name not found!'
+
+       end select
+    end if
     
   end subroutine set_bgfieldevol_useotherepsilon
 
@@ -324,7 +389,8 @@ contains
 
 
 
-  function bg_field_evol(infIni,efoldDataNum,infObs,ptrStart,stopAtThisValue,isStopAtMax) 
+  function bg_field_evol(infIni,efoldDataNum,infObs,ptrStart,stopAtThisValue,isStopAtMax &
+       ,hubbleStopAtThisValue,whichStopVelocitySign) 
 !integrate the background until epsilon > epsilonStop, and returns some
 !physical values (type infbgphys) for which epsilon = epsilon1EndInf  (=1)
 
@@ -343,8 +409,11 @@ contains
     integer, optional, intent(in) :: efoldDataNum
     type(infbgphys), optional, intent(out) :: infObs
     type(infbgdata), optional, pointer :: ptrStart    
+
     real(kp), optional, intent(in) :: stopAtThisValue
     logical, optional, intent(in) :: isStopAtMax
+    real(kp), optional, intent(in) :: hubbleStopAtThisValue
+    integer, optional, intent(in) :: whichStopVelocitySign
     type(infbgphys) :: bg_field_evol
     
     
@@ -404,16 +473,16 @@ contains
 !below of above a given value, or according to the total number of
 !efolds, or to the value of the hubble parameter
     real(kp) :: efoldMaxiStop
-    logical :: checkHubbleStop
     logical :: checkMatterStop
-    logical :: stopDirPresent
-    logical :: stopForMax
+    logical :: stopAtMax
 
+    logical :: checkHubbleStop
+    integer :: stopVelocitySign
 
 !whether or not to determine accurately the end of inflation
     logical, parameter :: accurateEndInf = .true.
     
-    real(kp) :: valueStop
+    real(kp) :: matterStopValue, hubbleStopValue
     integer, parameter :: stopIndexMin = 1, stopIndexMax = 1
 
     logical :: inflate, longEnoughObs
@@ -439,18 +508,50 @@ contains
 
     efoldExploreOsc = 0._kp
 
-!enabled by true
-
+!initialization of inflation ending check and conditional stops
     epsilonStop = BgEvolEpsilonStopValue
-
     useOtherEpsilon = BgEvolUseOtherEpsilon
-    
-    checkHubbleStop = BgEvolCheckForHubbleStop
-
-    checkMatterStop = .false.
-
     efoldMaxiStop = BgEvolEfoldMaxiStop
+    
+    if (present(stopAtThisValue)) then
+       checkMatterStop = .true.
+       matterStopValue = stopAtThisValue
+       if (display) then
+          write(*,*)'bg_field_evol: check for Matter Stop enabled'
+          write(*,*)'matterStopValue= ',matterStopValue
+       endif
+    else
+       checkMatterStop = BgEvolCheckForMatterStop
+       matterStopValue = BgEvolMatterStopValue
+    endif
 
+    if (present(isStopAtMax)) then
+       stopAtMax = isStopAtMax
+       if (display) write(*,*)'bg_field_evol: stopAtMax is',stopAtMax
+    else
+       stopAtMax = BgEvolStopAtMax
+    endif
+
+    if (present(hubbleStopAtThisValue)) then
+       checkHubbleStop = .true.
+       hubbleStopValue = hubbleStopAtThisValue
+       if (display) then
+          write(*,*)'bg_field_evol: check for Hubble Stop enabled'
+          write(*,*)'hubbleStopValue= ',hubbleStopValue
+       endif
+    else
+       checkHubbleStop = BgEvolCheckForHubbleStop
+       hubbleStopValue = BgEvolHubbleStopValue
+    endif
+
+    if (present(whichStopVelocitySign)) then
+       stopVelocitySign = whichStopVelocitySign
+       if (display) write(*,*)'bg_field_evol: stopVelocitySign is',stopVelocitySign
+    else
+       stopVelocitySign = BgEvolStopVelocitySign
+    endif
+    
+    
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     efoldHuge = min(efoldMaxiStop,efoldHuge)
@@ -470,27 +571,7 @@ contains
        efoldExploreOsc = 0.
     endif
 
-    if (present(isStopAtMax)) then
-       stopDirPresent = .true.
-       stopForMax = isStopAtMax
-    else
-       stopDirPresent = .false.
-       stopForMax = .false.
-    endif
-
-    if (present(stopAtThisValue)) then
-       valueStop = stopAtThisValue
-       if ((.not.checkMatterStop).and.checkHubbleStop) then
-          if (display) write(*,*)'bg_field_evol: check for Hubble stop enabled'          
-       else
-          if (display) write(*,*)'bg_field_evol: check for Matter stop enabled'          
-          if (display) write(*,*)'bg_field_evol: stopForMax is',stopForMax
-          checkHubbleStop = .false.
-          checkMatterStop = .true.
-       endif
-    else
-       valueStop = tolEvol
-    endif   
+    
     
 !set initial conditions   
 
@@ -514,18 +595,23 @@ contains
 
 !initialize (all other subtypes may change)
     stopData%yesno1 = useOtherEpsilon
-    stopData%yesno2 = checkMatterStop
-    stopData%yesno3 = stopForMax
+    stopData%mat = checkMatterStop
+    stopData%ismax = stopAtMax
     stopData%hub = checkHubbleStop
-    stopData%dir = stopDirPresent
-    stopData%check = .false.    
+    stopData%vsign = stopVelocitySign
+    stopData%check = .false.
     stopData%update = .false.
     stopData%xend = efoldHuge
     stopData%real1 = epsilonStop
-    stopData%real2 = valueStop! - 10._kp*tolEvol
+    stopData%real2 = matterStopValue
+    stopData%real3 = hubbleStopValue
     stopData%int1 = stopIndexMin
     stopData%int2 = stopIndexMax
 
+!after completion stopData%mat and stopData%hub are changed, they are
+!true or false according to the outcome of the end of inflation
+    
+    
     if (useVelocity) then
 !derivField=Dfield/Dtphys
        call easydverk(neqs,bg_field_dot_coupled,efold,bgVar,efoldHuge,tolEvol &
@@ -536,6 +622,7 @@ contains
             ,stopData)
     endif
 
+    
 !up to dverk exploration
 !  efoldAfterEndInf = stopData%xend and something like bgVar =
 !  stopData%ptr after allocation
@@ -552,7 +639,7 @@ contains
   
     
     if (efoldBeforeEndInf.le.infIni%efold) then
-       if (display) write(*,*)'bg_field_evol: inflation too short'
+       if (display) write(*,*)'bg_field_evol: inflation is too short!'
        bg_field_evol = infIni       
        return
     endif
@@ -594,13 +681,13 @@ contains
 !use zbrent zero finder in [efoldBeforeEndInf, efoldAfterEndInf]
        findData%yesno1 = useVelocity
        findData%yesno2 = useOtherEpsilon       
-       findData%yesno3 = stopForMax
        findData%real1 = efold
+
        allocate(findData%ptrvector1(2*fieldNum))
        allocate(findData%ptrvector2(2*fieldNum))
+
        findData%ptrvector1 = bgVar
        findData%real2 = tolEvol       
-       findData%real3 = valueStop
 
        findData%int1 = stopIndexMin
        findData%int2 = stopIndexMax
@@ -609,15 +696,25 @@ contains
 !(background integration of inflation is unstable)
 !    print *,'go in zbrent set',efoldBeforeEndInf,efoldAfterEndInf,findData%real1    
 
-       if (checkHubbleStop.and.(.not.stopData%yesno2)) then
+       if (checkHubbleStop.and.stopData%hub) then
+          
+          findData%real3 = hubbleStopValue
+          
           efoldEndInf = zbrent(find_endinf_hubble,efoldBeforeEndInf &
                ,efoldAfterEndInf,tolEfoldEnd,findData)
-       elseif (checkMatterStop.and.(.not.stopData%yesno2)) then
+
+       elseif (checkMatterStop.and.stopData%mat) then
+
+          findData%yesno3 = stopAtMax
+          findData%real3 = matterStopValue
+          
           efoldEndInf = zbrent(find_endinf_matter,efoldBeforeEndInf &
                ,efoldAfterEndInf,tolEfoldEnd,findData)
        else
+          
           efoldEndInf = zbrent(find_endinf_epsilon,efoldBeforeEndInf &
                ,efoldAfterEndInf,tolEfoldEnd,findData)
+
        endif
        
 !read the results in the findData buffer
@@ -868,12 +965,8 @@ contains
 !this function. Striclty speaking inflation ends when epsilon1JF=1.
         
     if (useOtherEpsilon) then
-!epsilon1 JF
-!       find_endinf_epsilon &
-!            = slowroll_first_parameter_JF(field,derivField,findData%yesno1) - 1._kp
-!epsilon 2 (end of slow-roll)
        find_endinf_epsilon &
-            = slowroll_second_parameter(field,derivField,findData%yesno1) - 1._kp
+            = ptr_alternate_stop_parameter(field,derivField,findData%yesno1) - 1._kp
     else
        find_endinf_epsilon &
             = slowroll_first_parameter(field,derivField,findData%yesno1) - 1._kp
@@ -964,7 +1057,6 @@ contains
     
     efoldStart = findData%real1
     hubbleStop = findData%real3
-
   
     if ((.not.associated(findData%ptrvector1)) &
          .or.(.not.associated(findData%ptrvector2))) then
@@ -1023,8 +1115,9 @@ contains
     real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
     real(kp) :: fieldDotSquare, epsilon, hubbleSquare
   
-    logical, save :: stopNow=.false.
+    logical :: stopNow
 
+    stopNow = .false.
 
     field = bgVar(1:fieldNum)
     fieldDot = bgVar(fieldNum+1:2*fieldNum)
@@ -1033,45 +1126,46 @@ contains
     fieldDotSquare = dot_product(fieldDot,matmul(metric(field),fieldDot))
 
     if (present(stopData)) then
-!use other epsilon or not to stop inflation
+!use other method or not to stop inflation
        if (stopData%check) then
           
           if (stopData%yesno1) then
-!eps1JF
-!             epsilon = slowroll_first_parameter_JF(field,fieldDot,.false.)
-!eps2
-             epsilon = slowroll_second_parameter(field,fieldDot,.false.)
+             epsilon = ptr_alternate_stop_parameter(field,fieldDot,.false.)
           else
              epsilon = fieldDotSquare/2._kp
           endif
 
-          if (stopData%yesno2) then
-             if (stopData%yesno3) then
+          if (stopData%mat) then
+             if (stopData%ismax) then
                 stopNow = (maxval(field(stopData%int1:stopData%int2)) &
                      .gt.stopData%real2)
              else
                 stopNow = (minval(field(stopData%int1:stopData%int2)) &
                      .lt.stopData%real2)
              endif
+             if (stopNow) stopData%hub = .false.
           endif
 
           if (stopData%hub) then
              hubbleSquare = hubble_parameter_square(field,fieldDot,.false.)
-             stopNow = (hubbleSquare.lt.(stopData%real2)**2)
-             if (stopData%dir) then
-                if (stopData%yesno3) then
-                   stopNow = stopNow .and. (fieldDot(stopData%int1).ge.0._kp)
-                else
-                   stopNow = stopNow .and. (fieldDot(stopData%int1).le.0._kp)
-                endif
-             end if
+             stopNow = (hubbleSquare.lt.stopData%real3**2)
+             if (stopData%vsign > 0) then
+                stopNow = stopNow .and. (fieldDot(stopData%int1).ge.0._kp)
+             elseif (stopData%vsign < 0) then
+                stopNow = stopNow .and. (fieldDot(stopData%int1).le.0._kp)
+             endif
+             if (stopNow) stopData%mat = .false.
+          endif
+
+          if (epsilon.gt.stopData%real1) then
+             stopNow = .true.
+             stopData%mat = .false.
+             stopData%hub = .false.
           endif
           
-          if (stopNow.or.(epsilon.gt.stopData%real1)) then
+          if (stopNow) then
              stopData%update = .true.
              stopData%xend = efold 
-             stopData%yesno2 = .false.
-             stopData%hub = .false.
           endif
 
        endif
@@ -1120,8 +1214,9 @@ contains
     real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
     real(kp) :: velocitySquare, epsilon, hubbleSquare, hubble
     
-    logical, save :: stopNow = .false.
+    logical :: stopNow
 
+    stopNow = .false.
 
     field = bgVar(1:fieldNum)
     velocity = bgVar(fieldNum+1:2*fieldNum)
@@ -1147,43 +1242,46 @@ contains
     endif
     
     if (present(stopData)) then
-!use other epsilon or not to stop inflation
+!use other method to stop inflation
        if (stopData%check) then
           if (stopData%yesno1) then
-!eps1JF
-!             epsilon = slowroll_first_parameter_JF(field,velocity,.true.)
-!eps2
-             epsilon = slowroll_second_parameter(field,velocity,.true.)
+             epsilon = ptr_alternate_stop_parameter(field,velocity,.true.)
           else
              epsilon = velocitySquare/2._kp/hubbleSquare
           endif          
-          if (stopData%yesno2) then
-             if (stopData%yesno3) then
+
+          if (stopData%mat) then
+             if (stopData%ismax) then
                 stopNow = (maxval(field(stopData%int1:stopData%int2)) &
                      .gt.stopData%real2)
              else
                 stopNow = (minval(field(stopData%int1:stopData%int2)) &
                      .lt.stopData%real2)
              endif
+             if (stopNow) stopData%hub = .false.
           endif
-             
+          
+          
           if (stopData%hub) then
-             stopNow = hubble.le.stopData%real2
-             if (stopData%dir) then
-                if (stopData%yesno3) then
-                   stopNow = stopNow .and. (velocity(stopData%int1).ge.0._kp)
-                else
-                   stopNow = stopNow .and. (velocity(stopData%int1).le.0._kp)
-                endif
-             end if
+             stopNow = (hubble.le.stopData%real3)
+             if (stopData%vsign > 0) then
+                stopNow = stopNow .and. (velocity(stopData%int1).ge.0._kp)
+             elseif (stopData%vsign < 0) then
+                stopNow = stopNow .and. (velocity(stopData%int1).le.0._kp)
+             endif
+             if (stopNow) stopData%mat = .false.
           endif
 
-          if (stopNow.or.(epsilon.gt.stopData%real1)) then
-             stopData%update = .true.
-             stopData%xend = efold 
-             stopData%yesno2 = .false.
+          if (epsilon.gt.stopData%real1) then
+             stopNow = .true.
+             stopData%mat = .false.
              stopData%hub = .false.
           endif
+          
+          if (stopNow) then
+             stopData%update = .true.
+             stopData%xend = efold 
+          endif         
           
 !          print *,'efold field',efold,field
 !          print *,'eps1 eps2',epsilon1,slowroll_second_parameter(field,velocity,.true.)

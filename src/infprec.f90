@@ -28,7 +28,8 @@ module infprec
 !functions (find the end of inflation)
   type transfert
      logical :: yesno1,yesno2, yesno3
-     logical :: hub, dir
+     logical :: mat, hub, ismax
+     integer :: vsign
      integer :: int1, int2, int3
      real(kp) :: real1, real2, real3, real4, real5
      real(kp), dimension(:), pointer :: ptrvector1 => null()
