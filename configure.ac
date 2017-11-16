@@ -1,4 +1,4 @@
-AC_INIT([fieldinf],[1.1.3],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
+AC_INIT([fieldinf],[1.2.0],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
 
 AM_INIT_AUTOMAKE
 
@@ -8,7 +8,7 @@ AC_PROG_FC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 
-version_info="2:0:2"
+version_info="3:0:0"
 AC_SUBST(version_info)
 
 
