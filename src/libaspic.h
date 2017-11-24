@@ -68,6 +68,10 @@
   use dwisr, only : dwi_norm_potential, dwi_norm_deriv_potential
   use dwisr, only : dwi_norm_deriv_second_potential
 
+!generalized double well inflation
+  use gdwisr, only : gdwi_norm_potential, gdwi_norm_deriv_potential
+  use gdwisr, only : gdwi_norm_deriv_second_potential
+  
 !mutated hilltop inflation
   use mhisr, only : mhi_norm_potential, mhi_norm_deriv_potential
   use mhisr, only : mhi_norm_deriv_second_potential

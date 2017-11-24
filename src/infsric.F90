@@ -102,6 +102,9 @@ contains
     case ('tdwell','dwi')
        slowroll_initial_matter = dwi_initial_field(infParam,efold)
 
+    case ('gdwell','gdwi')
+       slowroll_initial_matter = gdwi_initial_field(infParam,efold)       
+
     case ('mhitop','mhi')
        slowroll_initial_matter = mhi_initial_field(infParam,efold)
 
@@ -848,16 +851,46 @@ contains
     mu = infParam%consts(2)
     
     xEnd = dwi_x_endinf(mu)   
-  
-    if (display) write(*,*)'twi_initial_field: xend= ',xEnd
+
+    if (mu.lt.sqrt(8._kp)) then
+       write(*,*)'dwi_initial_field: slow-roll violated at x=0!'
+    endif
+    
+    if (display) write(*,*)'dwi_initial_field: xend= ',xEnd
 
     xIni = dwi_x_trajectory(bfold,xEnd,mu)
-
+    
     dwi_initial_field(:) = xIni*mu          
 
   end function dwi_initial_field
 
 
+
+  function gdwi_initial_field(infParam,efold)
+    use gdwisr, only : gdwi_x_endinf,gdwi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: gdwi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: p, mu, xEnd, xIni, bfold
+
+    bfold = -efold
+
+    p = infParam%consts(3)
+    mu = infParam%consts(2)
+    
+    xEnd = gdwi_x_endinf(p,mu)   
+    
+    if (display) write(*,*)'gdwi_initial_field: xend= ',xEnd
+
+    xIni = gdwi_x_trajectory(bfold,xEnd,p,mu)
+
+    gdwi_initial_field(:) = xIni*mu          
+
+  end function gdwi_initial_field
+
+  
 
   function mhi_initial_field(infParam,efold)
     use mhisr, only : mhi_x_endinf,mhi_x_trajectory

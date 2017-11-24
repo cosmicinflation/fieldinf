@@ -153,10 +153,17 @@ contains
           alpha = potParam(4)/potParam(3)*exp(-potParam(2)*potParam(1)/potParam(4))
           mu = exp(-potParam(1)/potParam(4))
 
-       case ('tdwell')
+       case ('tdwell','dwi')
           M4 = potParam(3)**2
           mu = sqrt(-potParam(3)/potParam(1))
+          potName = 'tdwell'
 
+       case ('gdwell','gdwi')
+          M4 = potParam(3)**2
+          p = 0.5_kp*potParam(2)
+          mu = (-potParam(3)/potParam(1))**(1._kp/(potParam(2)))
+          potName = 'gdwell'
+          
        case ('betexp')
           M4 = potParam(3)**potParam(5)
           beta = 1._kp/potParam(5)
@@ -545,6 +552,9 @@ contains
        case ('tdwell')
           matter_potential = dwi_norm_potential(chi/mu,mu)
 
+       case ('gdwell')
+          matter_potential = gdwi_norm_potential(chi/mu,p,mu)
+
        case ('mhitop')
           matter_potential = mhi_norm_potential(chi/mu,mu)
 
@@ -826,6 +836,9 @@ contains
        case ('tdwell')
           deriv_matter_potential(1) = dwi_norm_deriv_potential(chi/mu,mu)/mu
 
+       case ('gdwell')
+          deriv_matter_potential(1) = gdwi_norm_deriv_potential(chi/mu,p,mu)/mu
+          
        case ('mhitop')
           deriv_matter_potential(1) = mhi_norm_deriv_potential(chi/mu,mu)/mu
 
@@ -1118,6 +1131,10 @@ contains
        case ('tdwell')
           deriv_second_matter_potential(1,1) = dwi_norm_deriv_second_potential(chi/mu &
                ,mu)/mu/mu
+
+       case ('gdwell')
+          deriv_second_matter_potential(1,1) = gdwi_norm_deriv_second_potential(chi/mu &
+               ,p,mu)/mu/mu          
 
        case ('mhitop')
           deriv_second_matter_potential(1,1) = mhi_norm_deriv_second_potential(chi/mu &

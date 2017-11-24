@@ -431,7 +431,7 @@ contains
 
 ! U = c1^4 [(F/c2)^2 - 1]^2
 
-       badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).lt.sqrt(8._kp)))
+       badParams = (infParam%consts(1).le.0._kp)
        
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
@@ -445,6 +445,25 @@ contains
        matterParam(4) = 0._kp
        matterParam(5) = 2._kp
 
+
+    case ('gdwell','gdwi')
+!topological double well inflation: DWI
+
+! U = c1^4 [(F/c2)^(2c3) - 1]^2
+
+       badParams = (infParam%consts(1).le.0._kp)
+       
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'topological double well: improper params'
+       endif
+
+       matterParam(1) = sqrt(infParam%consts(1))/infParam%consts(2)**(0.5*infParam%consts(3))
+       matterParam(2) = 2._kp*infParam%consts(3)
+       matterParam(3) = -sqrt(infParam%consts(1))
+       matterParam(4) = 0._kp
+       matterParam(5) = 2._kp       
 
     case ('betexp','bei')
 ! beta exponential inflation: BEI
