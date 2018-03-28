@@ -44,6 +44,9 @@ module infbg
 
 !default maximum number of efolds  
   real(kp), save :: BgEvolEfoldMaxiStop = 1000._kp
+
+!default number of e-folds to store after stopping criterion
+  real(kp), save :: BgEvolEfoldExploreOsc = 0._kp
   
 
   
@@ -83,7 +86,7 @@ module infbg
   public rescale_potential
   public bg_field_evol, bg_field_dot_coupled
 
-  public set_bgfieldevol_matterstop
+  public set_bgfieldevol_matterstop, set_bgfieldevol_efoldexploreosc
   public set_bgfieldevol_hubblestop, set_bgfieldevol_epsilonstop
   public set_bgfieldevol_useotherepsilon, set_bgfieldevol_efoldmaxistop
   
@@ -382,6 +385,17 @@ contains
   end subroutine set_bgfieldevol_efoldmaxistop
 
 
+
+  subroutine set_bgfieldevol_efoldexploreosc(efold)
+    implicit none
+    real(kp), intent(in) :: efold
+
+    BgEvolEfoldExploreOsc = efold
+
+    write(*,*)'infbg: setting EfoldExploreOsc= ',efold
+
+  end subroutine set_bgfieldevol_efoldexploreosc
+  
   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !inflationary evolution: find end of inflation + store relevant quantities
@@ -506,7 +520,7 @@ contains
        infObs = infIni
     endif
 
-    efoldExploreOsc = 0._kp
+    efoldExploreOsc = BgEvolEfoldExploreOsc
 
 !initialization of inflation ending check and conditional stops
     epsilonStop = BgEvolEpsilonStopValue
@@ -568,7 +582,7 @@ contains
 
     if ((.not.useVelocity).and.efoldExploreOsc.ne.0) then
        write(*,*)'bg_field_evol: oscillation exploration disabled!'
-       efoldExploreOsc = 0.
+       efoldExploreOsc = 0._kp
     endif
 
     
