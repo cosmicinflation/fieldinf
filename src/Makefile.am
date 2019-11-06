@@ -1,4 +1,4 @@
-SRC = infprec.f90 infunits.F90 binfspline.f90 infsolvers.f90 \
+SRC = fieldprec.f90 infunits.F90 binfspline.f90 infsolvers.f90 \
 	infio.f90 infmatter.F90 infdilaton.f90 \
 	infbgmodel.F90 infpotential.f90 infsigma.f90 \
 	infbounds.f90 infsric.F90 infbgfunc.f90 infbg.f90 \
@@ -8,7 +8,7 @@ MOD = bspline.$(FC_MODEXT) infbg.$(FC_MODEXT) infbounds.$(FC_MODEXT) \
 	infmatter.$(FC_MODEXT) infpowspline.$(FC_MODEXT) \
 	infsric.$(FC_MODEXT) numeric.$(FC_MODEXT) infunits.$(FC_MODEXT) \
 	infbgmodel.$(FC_MODEXT) infdilaton.$(FC_MODEXT) \
-        infpert.$(FC_MODEXT) infprec.$(FC_MODEXT) infsolvers.$(FC_MODEXT) \
+        infpert.$(FC_MODEXT) fieldprec.$(FC_MODEXT) infsolvers.$(FC_MODEXT) \
 	infbgfunc.$(FC_MODEXT) infbgspline.$(FC_MODEXT) \
         infio.$(FC_MODEXT) infpotential.$(FC_MODEXT) \
 	infsigma.$(FC_MODEXT) inftorad.$(FC_MODEXT)

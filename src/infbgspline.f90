@@ -3,7 +3,7 @@ module infbgspline
 !test they are only used to determine rapidly the bfold of quantum
 !mode creation
 
-  use infprec, only : kp
+  use fieldprec, only : kp
   implicit none
 
   private

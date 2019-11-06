@@ -1,5 +1,5 @@
 module infbgmodel
-  use infprec, only : kp, lenshort
+  use fieldprec, only : kp, lenshort
   use infmatter, only : potParamNum, matterNum
   use infdilaton, only : confParamNum, dilatonNum
   implicit none

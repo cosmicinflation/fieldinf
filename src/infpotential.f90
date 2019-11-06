@@ -1,5 +1,5 @@
 module infpotential
-  use infprec, only : kp  
+  use fieldprec, only : kp  
   use infmatter, only : matter_potential, deriv_matter_potential
   use infmatter, only : deriv_ln_matter_potential, deriv_second_matter_potential
   use infdilaton, only : conformal_factor_square, conformal_first_gradient

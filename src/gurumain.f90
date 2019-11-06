@@ -6,7 +6,7 @@
 
 program gurumain
 
-  use infprec, only : kp
+  use fieldprec, only : kp
   use infbgmodel
   use infbg 
   use inftorad
@@ -159,7 +159,7 @@ program gurumain
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   lnReheat = 0._kp
-
+  
   infCosmo = set_inftorad_cosmo(infParam,bgIni,bgEnd,lnReheat)
 
 !prepare for the perturbation

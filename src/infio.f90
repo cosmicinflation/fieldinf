@@ -1,6 +1,6 @@
 module infio
 
-use infprec, only : kp
+use fieldprec, only : kp
 
 private
 

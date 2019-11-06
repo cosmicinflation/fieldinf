@@ -1,5 +1,5 @@
 module infbg
-  use infprec, only : kp, tolkp
+  use fieldprec, only : kp, tolkp
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
   use infbgfunc, only : hubble_parameter_square, slowroll_first_parameter_JF
   use infbgfunc, only : slowroll_first_parameter, slowroll_second_parameter
@@ -13,7 +13,7 @@ module infbg
 
   abstract interface
      function sr_param(x,dx,switch)
-       use infprec, only : kp
+       use fieldprec, only : kp
        use infbgmodel, only : fieldNum
        real(kp) :: sr_param
        real(kp), dimension(fieldNum), intent(in) :: x, dx
@@ -408,7 +408,7 @@ contains
 !integrate the background until epsilon > epsilonStop, and returns some
 !physical values (type infbgphys) for which epsilon = epsilon1EndInf  (=1)
 
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infsolvers, only : easydverk, tunedverk, zbrent
     use infdilaton, only : conformal_factor_square
     use infpotential, only : potential
@@ -936,7 +936,7 @@ contains
 
   function find_endinf_epsilon(efold,findData)
     use infsolvers, only : tunedverk
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
     type(transfert), optional, intent(inout) :: findData
@@ -996,7 +996,7 @@ contains
 
   function find_endinf_matter(efold,findData)
     use infsolvers, only : tunedverk
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
     type(transfert), optional, intent(inout) :: findData
@@ -1055,7 +1055,7 @@ contains
 
   function find_endinf_hubble(efold,findData)
     use infsolvers, only : tunedverk
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     implicit none
     real(kp), intent(in) :: efold
     type(transfert), optional, intent(inout) :: findData
@@ -1110,7 +1110,7 @@ contains
 !potential vanishes and the integration fails a that point. Harmless
 !for the inflationary era.
 
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infsigma, only : metric, metric_inverse   
     use infsigma, only : connection_affine
     use infpotential, only : deriv_ln_potential
@@ -1210,7 +1210,7 @@ contains
 !equations and allows to properly sample the oscillations of the field
 !at the end of inflation.
 
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infsigma, only : metric, metric_inverse, connection_affine
     use infpotential, only : deriv_potential
     implicit none

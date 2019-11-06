@@ -7,11 +7,11 @@ module infunits
 #if !defined (NOASPIC)
   use cosmopar
 #else
-  use infprec, only : kp
+  use fieldprec, only : kp
   implicit none
   
   public
-
+ 
   real(kp), parameter :: HubbleSquareRootOf3OmegaRad = 7.5437d-63
   real(kp), parameter :: HubbleSquareRootOf2OmegaRad = sqrt(2._kp/3._kp)*HubbleSquareRootOf3OmegaRad
 

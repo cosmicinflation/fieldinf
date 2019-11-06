@@ -3,7 +3,7 @@
 
 module InitialPower   
   use precision, only : dl
-  use infprec, only : kp 
+  use fieldprec, only : kp 
   use infbgmodel, only : infbgparam
   use infbg, only : infbgphys, infbgdata
   use inftorad, only : inftoradcosmo

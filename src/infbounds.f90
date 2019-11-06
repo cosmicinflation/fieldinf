@@ -1,7 +1,7 @@
 !provides theoretical bounds on the model parameters
 
 module infbounds
-  use infprec, only : kp  
+  use fieldprec, only : kp  
   implicit none
 
   private

@@ -7,7 +7,7 @@ module infpert
 !inflation: bfold = efold - efoldEnd running from efoldIni-efoldEnd to
 !0.
 
-  use infprec, only : kp, tolkp, pi
+  use fieldprec, only : kp, tolkp, pi
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
   use infbg, only : infbgphys
   use inftorad, only : inftoradcosmo
@@ -105,7 +105,7 @@ contains
   function pert_tens_bgevol(infCosmo,kmpc)
 !this evolves the bg and tens = k^3/2 * h simultaneously
     use infsolvers, only : easydverk
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infbg, only : operator(/=)
     use infbg, only : bg_field_dot_coupled
     use infbgfunc, only : hubble_parameter_square
@@ -283,7 +283,7 @@ contains
 
 
   subroutine pert_tens_bgdot(neqs,bfold,allVar,allVarDot,cosmoData)       
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infbg, only : bg_field_dot_coupled
     use infbgfunc, only : slowroll_first_parameter, hubble_parameter_square
     use inftorad, only : lnMpcToKappa
@@ -419,7 +419,7 @@ contains
 !curvature perturbation, Psi Bardeen potential, Q Mukhanov variable.
 
     use infsolvers, only : easydverk
-    use infprec, only : transfert
+    use fieldprec, only : transfert
 !    use infdilaton, only : conformal_factor_square, conformal_first_gradient
     use infsigma, only : metric, deriv_metric    
     use infpotential, only : potential, deriv_potential
@@ -611,7 +611,7 @@ contains
 
 
 !The initial value of the Bardeen potential is fixed by the constraint
-!equuations, i.e. momemtum and energy conservation. It is a bad idea
+!equations, i.e. momemtum and energy conservation. It is a bad idea
 !to use these equations during the evolution since they are singular
 !at Hubble exit and epsilon=1, but are fine initially, for quantum
 !wavelength well below the Hubble radius
@@ -622,7 +622,7 @@ contains
     scalDotStart(scalNum) = bardeensStart(2)
 
     
-!evolve bg + tens pert from mode creation to end of inflation
+!evolve bg + scalar pert from mode creation to end of inflation
 !pert variables and their derivatives
     do i=1,scalNum       
        allVar(2*i-1) = real(scalStart(i))
@@ -758,7 +758,7 @@ contains
 
   
   subroutine pert_scalar_bgdot(neqs,bfold,allVar,allVarDot,cosmoData) 
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infsigma, only : metric, metric_inverse, deriv_metric
     use infsigma, only : connection_affine, deriv_connection_affine
     use infpotential, only : potential, deriv_potential, deriv_second_potential
@@ -927,7 +927,7 @@ contains
   function bardeen_bardeen_dot(bfold,field,velocity,fieldPert,fieldPertDot,cosmoData)
 !return the Bardeen potential and its derivative wrt efold from the
 !constraint equations
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infsigma, only : metric, deriv_metric
     use infpotential, only : deriv_potential
     use infbgfunc, only : slowroll_first_parameter, hubble_parameter_square

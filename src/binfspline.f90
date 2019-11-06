@@ -63,7 +63,7 @@
 !end module numeric
 
 module numeric
-  use infprec
+  use fieldprec
   integer, parameter :: sgl = kind(1.0)
   integer, parameter :: dbl = kp
 end module numeric

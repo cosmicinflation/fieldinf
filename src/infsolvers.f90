@@ -1,5 +1,5 @@
 module infsolvers
-  use infprec, only : kp,transfert  
+  use fieldprec, only : kp,transfert  
   implicit none
 
   private
@@ -974,7 +974,7 @@ contains
       
       interface
          function func(x,otherdata)
-           use infprec, only : kp,transfert         
+           use fieldprec, only : kp,transfert         
            implicit none                     
            real(kp) :: func
            real(kp), intent(in) :: x

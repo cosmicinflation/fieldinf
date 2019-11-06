@@ -1,6 +1,5 @@
 module inftorad
   use infunits
-  use infprec, only : kp
   use infbgmodel, only : fieldNum
   use infbg, only : infbgphys
   implicit none
@@ -421,7 +420,7 @@ contains
   function bfold_plus_ln_hubble(bfold,cosmoData)
 !returns N + ln[H(N)] - cosmoData%real1, required by zeros finder subroutine:
 !zbrent
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     use infbgspline, only : check_infbg_spline
     use infbgspline, only : splineval_hubble_parameter
     implicit none
@@ -453,7 +452,7 @@ contains
   function bfold_hubble_fraction(kmpc,infCosmo,kphysOverHubble,inferror)
 !return the bfold at which k/aH = kphysOverHubble
     use infsolvers, only : zbrent
-    use infprec, only : transfert
+    use fieldprec, only : transfert
     implicit none
     real(kp), intent(in) :: kmpc
     real(kp), intent(inout) :: kphysOverHubble

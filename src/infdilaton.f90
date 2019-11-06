@@ -1,5 +1,5 @@
 module infdilaton
-  use infprec, only : kp
+  use fieldprec, only : kp
 
   implicit none
 

@@ -1,6 +1,6 @@
 module infbgfunc
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
-  use infprec, only : kp
+  use fieldprec, only : kp
   use infpotential, only : potential, deriv_potential
   use infsigma, only : metric, metric_inverse
 

@@ -2,7 +2,7 @@
 !inflation occurs.
 
 module infsric
-  use infprec, only : kp
+  use fieldprec, only : kp
   use infbgmodel, only : matterNum, infbgparam
   use infbounds, only : field_thbound, field_stopinf
   implicit none
@@ -2987,7 +2987,7 @@ contains
 
 #ifdef TWOFIELDS
   function fterm_initial_field(infParam,efold)    
-    use infprec, only : pi
+    use fieldprec, only : pi
     implicit none
     real(kp), dimension(matterNum) :: fterm_initial_field
     type(infbgparam), intent(in) :: infParam

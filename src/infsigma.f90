@@ -1,5 +1,5 @@
 module infsigma
-  use infprec, only : kp
+  use fieldprec, only : kp
   use infdilaton, only : conformal_factor_square, conformal_first_gradient
   use infdilaton, only : conformal_second_gradient
   use infbgmodel, only : fieldNum, matterNum, dilatonNum

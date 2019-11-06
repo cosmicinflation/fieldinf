@@ -3,7 +3,7 @@
 
 program fieldmain
 
-  use infprec, only : kp
+  use fieldprec, only : kp
   use infbgmodel, only : infbgparam, set_infbg_param
   use infbg, only : infbgphys, infbgdata, print_infbgphys
   use infbg, only : set_infbg_ini, bg_field_evol

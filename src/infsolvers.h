@@ -1,6 +1,6 @@
   interface
      subroutine fcn(n, x, y, yprime, otherdata)
-       use infprec, only : kp,transfert         
+       use fieldprec, only : kp,transfert         
        implicit none          
        integer :: n
        real(kp) :: x

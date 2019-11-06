@@ -1,15 +1,14 @@
-module infprec
+module fieldprec
   implicit none
 
   public
-
-
+  
 !quad precision
 !  integer, parameter :: kp = kind(1.0_16)
 
 !double precision
   integer, parameter :: kp = kind(1.0_8)
-
+  
 !home made precision: p number of digit
 ! integer, parameter :: kp = selected_real_kind(p=32)
 
@@ -40,4 +39,4 @@ module infprec
   end type transfert
 
 
-end module infprec
+end module fieldprec

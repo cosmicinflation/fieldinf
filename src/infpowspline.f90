@@ -2,7 +2,7 @@ module infpowspline
 !compute the primordial power spectra for few values of k and set a
 !spline at intermediate k
 
-  use infprec, only : kp
+  use fieldprec, only : kp
 
   implicit none
 
@@ -131,7 +131,7 @@ contains
 !$omp parallel do &
 !$omp default(shared) &
 !$omp private(i,kmpc,powerScal,j,k) &
-!$omp schedule(dynamic) 
+!$omp schedule(dynamic)    
     do i=1,lnkmpcNum       
        kmpc = exp(lnkmpcVec(i))
        powerScal = power_spectrum_scal(infCosmo,kmpc)
@@ -215,7 +215,7 @@ contains
 
 !$omp parallel do &
 !$omp default(shared) &
-!$omp private(i,kmpc,powerTens) &   
+!$omp private(i,kmpc,powerTens) &
 !$omp schedule(dynamic)
     do i=1,lnkmpcNum       
        kmpc = exp(lnkmpcVec(i))
