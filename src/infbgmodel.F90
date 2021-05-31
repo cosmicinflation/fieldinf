@@ -1641,8 +1641,8 @@ contains
        matterParam(3) = infParam%consts(3)
        
 
-    case ('rcplat','rcpi')
-!radiatively corrected plateau inflation
+    case ('rcinfp','rcipi')
+!radiatively corrected inflection point inflation
 
 !U = c1^4 F^c2 [ 1 + c3 ln(F) + c4 ln(F)^2 ]
 

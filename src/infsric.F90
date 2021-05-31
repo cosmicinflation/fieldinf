@@ -300,8 +300,8 @@ contains
     case ('smearh','shi')
        slowroll_initial_matter = shi_initial_field(infParam,efold)
 
-    case ('rcplat','rcpi')
-       slowroll_initial_matter = rcpi_initial_field(infParam,efold)
+    case ('rcinfp','rcipi')
+       slowroll_initial_matter = rcipi_initial_field(infParam,efold)
 
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
@@ -2947,11 +2947,11 @@ contains
 
 
 
-  function rcpi_initial_field(infParam, efold)
-    use rcpisr, only : rcpi_x_endinf, rcpi_x_trajectory
-    use rcpisr, only : rcpi_efoldmax
+  function rcipi_initial_field(infParam, efold)
+    use rcipisr, only : rcipi_x_endinf, rcipi_x_trajectory
+    use rcipisr, only : rcipi_efoldmax
 
-    real(kp), dimension(matterNum) :: rcpi_initial_field
+    real(kp), dimension(matterNum) :: rcipi_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -2964,22 +2964,22 @@ contains
     alpha = infParam%consts(3)
     beta = infParam%consts(4)
 
-    xEnd = rcpi_x_endinf(p,alpha,beta)
+    xEnd = rcipi_x_endinf(p,alpha,beta)
 
-    if (display) write(*,*)'rcpi_initial_field: xend= ', xEnd
+    if (display) write(*,*)'rcipi_initial_field: xend= ', xEnd
 
-    efoldMax = rcpi_efoldmax(p,alpha,beta)
+    efoldMax = rcipi_efoldmax(p,alpha,beta)
 
     if (efold.gt.efoldMax) then
-       write(*,*)'rcpi_initial_field: efold > efoldMax!'
+       write(*,*)'rcipi_initial_field: efold > efoldMax!'
        write(*,*)'efold= efoldMax= ',efold,efoldMax
     end if
 
-    xIni = rcpi_x_trajectory(bfold,xend,p,alpha,beta)
+    xIni = rcipi_x_trajectory(bfold,xend,p,alpha,beta)
 
-    rcpi_initial_field(:) = xIni
+    rcipi_initial_field(:) = xIni
 
-  end function rcpi_initial_field
+  end function rcipi_initial_field
 
 
 

@@ -688,8 +688,8 @@ contains
        case ('smearh')
           matter_potential = shi_norm_potential(chi/mu,alpha,mu)
 
-       case ('rcplat')
-          matter_potential = rcpi_norm_potential(chi,p,alpha,beta)
+       case ('rcinfp')
+          matter_potential = rcipi_norm_potential(chi,p,alpha,beta)
           
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
