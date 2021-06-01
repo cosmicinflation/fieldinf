@@ -326,6 +326,12 @@ contains
           M4 = potParam(6)
           alpha = 1._kp/(1.5_kp*potParam(8)**2)
 
+       case ('dblexp','dei')
+          M4 = potParam(7)
+          beta = sqrt(potParam(8)/potParam(17))
+          mu = sqrt(1._kp/potParam(8)/potParam(17))
+          potName = 'dblexp'
+          
 #endif
 #endif     
 
@@ -722,6 +728,8 @@ contains
        case ('saxtwo')
           matter_potential = saiii_norm_potential(chi/mu,alpha,beta,mu)
 
+       case ('dblexp')
+          matter_potential = dei_norm_potential(chi/mu,beta,mu)
           
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -1015,6 +1023,9 @@ contains
 
        case ('saxtwo')
           deriv_matter_potential(1) = saiii_norm_deriv_potential(chi/mu,alpha,beta,mu)/mu
+
+       case ('dblexp')
+          deriv_matter_potential(1) = dei_norm_deriv_potential(chi/mu,beta,mu)/mu
           
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1342,6 +1353,10 @@ contains
        case ('saxtwo')
           deriv_second_matter_potential(1,1) = saiii_norm_deriv_second_potential(chi/mu,alpha &
                ,beta,mu)/mu/mu
+
+       case ('dblexp')
+          deriv_second_matter_potential(1,1) = dei_norm_deriv_second_potential(chi/mu,beta &
+               ,mu)/mu/mu
           
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

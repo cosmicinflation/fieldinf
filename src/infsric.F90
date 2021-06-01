@@ -321,6 +321,8 @@ contains
     case ('saxtwo','saiii3')
        slowroll_initial_matter = saiii3_initial_field(infParam,efold)
        
+    case ('dblexp','dei')
+       slowroll_initial_matter = dei_initial_field(infParam,efold)
        
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
@@ -3183,6 +3185,31 @@ contains
 
   end function saiii3_initial_field
 
+
+  function  dei_initial_field(infParam, efold)
+    use deisr, only : dei_x_endinf, dei_x_trajectory
+
+    real(kp), dimension(matterNum) :: dei_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu , beta, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    beta = infParam%consts(2)
+    mu = infParam%consts(3)
+    
+    xEnd = dei_x_endinf(beta,mu)
+
+    if (display) write(*,*)'dei_initial_field: xend= ', xEnd
+
+    xIni = dei_x_trajectory(bfold,xend,beta,mu)
+
+    dei_initial_field(:) = xIni*mu
+
+  end function dei_initial_field
   
   
 #endif

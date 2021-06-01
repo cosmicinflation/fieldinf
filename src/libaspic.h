@@ -275,3 +275,6 @@
   use saiiicommon, only : saiii_norm_potential, saiii_norm_deriv_potential
   use saiiicommon, only : saiii_norm_deriv_second_potential
 
+!double exponential inflatioon
+  use deisr, only : dei_norm_potential, dei_norm_deriv_potential
+  use deisr, only : dei_norm_deriv_second_potential
