@@ -82,10 +82,10 @@ contains
     real(kp), dimension(:), intent(in) :: matterParam
     character(len=*), intent(in), optional :: cname
 
-    potParam(1) = sign(matterParam(1)**4,matterParam(1)) !/matterParam(3)**4
+    potParam(1) = sign(matterParam(1)**4,matterParam(1))
     potParam(2) = matterParam(2)
     potParam(3) = sign(matterParam(3)**4,matterParam(3))
-    potParam(4) = sign(matterParam(4)**4,matterParam(4)) !/matterParam(3)**4
+    potParam(4) = sign(matterParam(4)**4,matterParam(4))
     potParam(5) = matterParam(5)
 
 #ifndef PP5
@@ -292,9 +292,10 @@ contains
           if (p.eq.1._kp) potName = 'kahmo1'
           if (p.eq.4._kp/3._kp) potName = 'kahmo2'
 
-       case ('higgsi')
+       case ('staroi','si')
           M4 = potParam(3)
-
+          potName = 'staroi'
+          
        case ('logmdi','logmd1','logmd2')
           M4 = potParam(15)
           alpha = potParam(16)
@@ -376,10 +377,11 @@ contains
           alpha = potParam(2)
           beta = potParam(3)**0.25_kp
 
-       case ('axhtop')
+       case ('axhtop','ahi')
           M4 = potParam(1)
           mu = potParam(2)
-
+          potName = 'axhtop'
+          
        case ('sbkahi')
           M4 = potParam(1)
           alpha = potParam(2)
@@ -411,13 +413,32 @@ contains
           mu = potParam(3)**0.25_kp
           potName = 'smearh'
 
-       case ('rcplat','rcpi')
+       case ('rcinfp','rcipi')
           M4 = potParam(1)
           p = potParam(2)
           alpha = potParam(3)
           beta = potParam(4)
-          potName = 'rcplat'
+          potName = 'rcinfp'
 
+       case ('pureai','pai')
+          M4 = potParam(1)
+          mu = potParam(2)
+          potName = 'pureai'
+
+       case ('saxone','saii1','saii2')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          mu = potParam(3)
+          potName = 'saxone'
+
+       case('saxtwo','saiii1','saiii2','saiii3')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          beta = potParam(5)
+          mu = potParam(3)
+          potName = 'saxtwo'
+          
+          
 !       case ('f-term')
 !          M4 = potParam(1)
 !          kappa = potParam(2)
@@ -429,6 +450,7 @@ contains
 
        case default
 
+          write(*,*)'potName= ',potName
           stop 'set_potential_param: not such a model'
 
        end select
@@ -506,7 +528,7 @@ contains
           matter_potential = ni_norm_potential(chi,mu)
 
        case ('hybnat')
-          matter_potential = hni_norm_potential(chi/mu,alpha,mu)
+          matter_potential = hni1_norm_potential(chi/mu,alpha,mu)
           
        case ('exsusy')
           matter_potential = esi_norm_potential(chi,q)
@@ -541,8 +563,8 @@ contains
        case ('colwei')
           matter_potential = cwi_norm_potential(chi/mu,alpha,mu)
 
-       case ('higgsi')
-          matter_potential = hi_norm_potential(chi)
+       case ('staroi')
+          matter_potential = si_norm_potential(chi)
 
        case ('twisti')
           matter_potential = twi_norm_potential(chi,mu)
@@ -604,6 +626,9 @@ contains
        case ('arctan')
           matter_potential = ai_norm_potential(chi/mu,mu)
 
+       case ('pureai')
+          matter_potential = pai_norm_potential(chi/mu,mu)
+          
        case ('fixnsa')
           matter_potential = cnai_norm_potential(chi,alpha)
 
@@ -671,7 +696,7 @@ contains
           matter_potential = fi_norm_potential(chi,alpha,p)
 
        case ('sduali')
-          matter_potential = sdi_norm_potential(chi/mu)
+          matter_potential = sdi_norm_potential(chi/mu,mu)
 
        case ('scaaai')
           matter_potential = saai_norm_potential(chi,alpha)
@@ -690,6 +715,13 @@ contains
 
        case ('rcinfp')
           matter_potential = rcipi_norm_potential(chi,p,alpha,beta)
+
+       case ('saxone')
+          matter_potential = saii_norm_potential(chi/mu,alpha,mu)
+
+       case ('saxtwo')
+          matter_potential = saiii_norm_potential(chi/mu,alpha,beta,mu)
+
           
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -790,7 +822,7 @@ contains
           deriv_matter_potential(1) = ni_norm_deriv_potential(chi,mu)
                 
        case ('hybnat')
-          deriv_matter_potential(1) = hni_norm_deriv_potential(chi/mu,alpha,mu)/mu
+          deriv_matter_potential(1) = hni1_norm_deriv_potential(chi/mu,alpha,mu)/mu
 
        case ('exsusy')
           deriv_matter_potential(1) = esi_norm_deriv_potential(chi,q)
@@ -825,8 +857,8 @@ contains
        case ('colwei')
           deriv_matter_potential(1) = cwi_norm_deriv_potential(chi/mu,alpha,mu)/mu
 
-       case ('higgsi')
-          deriv_matter_potential(1) = hi_norm_deriv_potential(chi)
+       case ('staroi')
+          deriv_matter_potential(1) = si_norm_deriv_potential(chi)
 
        case ('twisti')
           deriv_matter_potential(1) = twi_norm_deriv_potential(chi,mu)
@@ -887,6 +919,9 @@ contains
 
        case ('arctan')
           deriv_matter_potential(1) = ai_norm_deriv_potential(chi/mu,mu)/mu
+
+       case ('pureai')
+          deriv_matter_potential(1) = pai_norm_deriv_potential(chi/mu,mu)/mu          
 
        case ('fixnsa')
           deriv_matter_potential(1) = cnai_norm_deriv_potential(chi,alpha)
@@ -955,7 +990,7 @@ contains
           deriv_matter_potential(1) = fi_norm_deriv_potential(chi,alpha,p)
 
        case ('sduali')
-          deriv_matter_potential(1) = sdi_norm_deriv_potential(chi/mu)/mu
+          deriv_matter_potential(1) = sdi_norm_deriv_potential(chi/mu,mu)/mu
 
        case ('scaaai')
           deriv_matter_potential(1) = saai_norm_deriv_potential(chi,alpha)
@@ -972,8 +1007,14 @@ contains
        case ('smearh')
           deriv_matter_potential(1) = shi_norm_deriv_potential(chi/mu,alpha,mu)/mu
 
-       case ('rcplat')
-          deriv_matter_potential(1) = rcpi_norm_deriv_potential(chi,p,alpha,beta)
+       case ('rcinfp')
+          deriv_matter_potential(1) = rcipi_norm_deriv_potential(chi,p,alpha,beta)
+
+       case ('saxone')
+          deriv_matter_potential(1) = saii_norm_deriv_potential(chi/mu,alpha,mu)/mu
+
+       case ('saxtwo')
+          deriv_matter_potential(1) = saiii_norm_deriv_potential(chi/mu,alpha,beta,mu)/mu
           
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1082,7 +1123,7 @@ contains
           deriv_second_matter_potential(1,1) = ni_norm_deriv_second_potential(chi,mu)
 
        case ('hybnat')
-          deriv_second_matter_potential(1,1) = hni_norm_deriv_second_potential(chi/mu &
+          deriv_second_matter_potential(1,1) = hni1_norm_deriv_second_potential(chi/mu &
                ,alpha,mu)/mu/mu
 
        case ('exsusy')
@@ -1120,8 +1161,8 @@ contains
           deriv_second_matter_potential(1,1) = cwi_norm_deriv_second_potential(chi/mu &
                ,alpha,mu)/mu/mu
 
-       case ('higgsi')
-          deriv_second_matter_potential(1,1) = hi_norm_deriv_second_potential(chi)
+       case ('staroi')
+          deriv_second_matter_potential(1,1) = si_norm_deriv_second_potential(chi)
 
        case ('twisti')
           deriv_second_matter_potential(1,1) = twi_norm_deriv_second_potential(chi,mu)
@@ -1195,6 +1236,10 @@ contains
           deriv_second_matter_potential(1,1) = ai_norm_deriv_second_potential(chi/mu &
                ,mu)/mu/mu
 
+       case ('pureai')
+          deriv_second_matter_potential(1,1) = pai_norm_deriv_second_potential(chi/mu &
+               ,mu)/mu/mu
+          
        case ('fixnsa')
           deriv_second_matter_potential(1,1) = cnai_norm_deriv_second_potential(chi,alpha)
 
@@ -1270,7 +1315,7 @@ contains
           deriv_second_matter_potential(1,1) = fi_norm_deriv_second_potential(chi,alpha,p)
 
        case ('sduali')
-          deriv_second_matter_potential(1,1) = sdi_norm_deriv_second_potential(chi/mu)/mu/mu
+          deriv_second_matter_potential(1,1) = sdi_norm_deriv_second_potential(chi/mu,mu)/mu/mu
           
        case ('scaaai')
           deriv_second_matter_potential(1,1) = saai_norm_deriv_second_potential(chi,alpha)
@@ -1287,8 +1332,16 @@ contains
        case ('smearh')
           deriv_second_matter_potential(1,1) = shi_norm_deriv_second_potential(chi/mu,alpha,mu)/mu/mu
 
-       case ('rcplat')
-          deriv_second_matter_potential(1,1) = rcpi_norm_deriv_second_potential(chi,p,alpha,beta)
+       case ('rcinfp')
+          deriv_second_matter_potential(1,1) = rcipi_norm_deriv_second_potential(chi,p,alpha,beta)
+
+       case ('saxone')
+          deriv_second_matter_potential(1,1) = saii_norm_deriv_second_potential(chi/mu,alpha &
+               ,mu)/mu/mu
+
+       case ('saxtwo')
+          deriv_second_matter_potential(1,1) = saiii_norm_deriv_second_potential(chi/mu,alpha &
+               ,beta,mu)/mu/mu
           
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

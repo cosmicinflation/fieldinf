@@ -727,7 +727,7 @@ contains
        matterParam(12) = 0._kp
 
 
-    case ('hybnat','hni')
+    case ('hybnat','hni1')
 !hybrid natural inflation: HNI
 
 !U = c1^4 [1 + c3 cos(F/c2)]
@@ -1024,8 +1024,8 @@ contains
        matterParam(18) = infParam%consts(5)
 
 
-    case ('higgsi','hi','si')
-!Higgs/Starobinski inflation: HI/SI
+    case ('staroi','si')
+!Starobinski inflation: SI
 
 !U = c1^4 [1 - exp(-c2 F)]^2 with c2 = sqrt(2/3)
 
@@ -1036,7 +1036,7 @@ contains
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
-          stop 'Higgs/Starobinski inflation: improper params'
+          stop 'Starobinski inflation: improper params'
        endif
 
        matterParam(3) = infParam%consts(1)
@@ -1248,6 +1248,10 @@ contains
 #endif
 #endif
 
+
+
+
+       
 !potentials not encompassed in the generic formula
 #ifdef PPNAME
     case ('mhitop','mhi')
@@ -1365,6 +1369,24 @@ contains
        matterParam(1) = infParam%consts(1)
        matterParam(2) = infParam%consts(2)      
 
+
+    case ('pureai','pai')
+!pure arctangent inflation: PAI
+
+!U = c1^4  arctan(F/c2) 
+       
+       badParams = ((infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp))
+
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:2)
+          stop 'arctan inflation: improper params'
+       endif
+
+       matterParam(1) = infParam%consts(1)
+       matterParam(2) = infParam%consts(2)      
+       
     case ('fixnsa','fixnsb','fixnsc','cnai','cnbi','cnci')
 !fix spectral index inflation: CN(ABC)I
 
@@ -1410,7 +1432,7 @@ contains
 
 
     case ('dualsb','di')
-!dual inflation from foftly broken N=2 super Yang-Mills theories: DI
+!dual inflation from softly broken N=2 super Yang-Mills theories: DI
 
 !U(k2) = M^4 { 1 + Vo(c1) - 2(K-E)/(k2 K) - pi/(k2 K K') [nu(k2)]^2 Heaviside[nu(k2)]}
 !nu(k2) = 1 - 8 sqrt(2)/(pi^2 c1) K/sqrt(k2)(E'-K')^2
@@ -1475,7 +1497,7 @@ contains
 
 !M4
        matterParam(1) = infParam%consts(1)
-!phi0
+!f
        matterParam(2) = infParam%consts(2)
 
 
@@ -1621,7 +1643,7 @@ contains
     case ('smearh','shi')
 !smeared higgs inflation: SHI
 
-!U = c1^4 { [1-(F/c3)^2]^2 + c2 (F/c3)^4 [ln(F/c3)-1/4] + alpha/4 }
+!U = c1^4 { [1-(F/c3)^2]^2 + c2 (F/c3)^4 [ln(F/c3)-1/4] + c2/4 }
 
        badParams = (infParam%consts(1).le.0._kp) &
             .or. (infParam%consts(2).le.0._kp) &
@@ -1654,7 +1676,7 @@ contains
        if (badParams) then
           write(*,*)'model name: ',infParam%name
           write(*,*)'consts = ',infParam%consts(1:4)
-          stop 'radiatively corrected plateau inflation: improper params'
+          stop 'radiatively corrected inflection point inflation: improper params'
        endif
        
 !M4
@@ -1666,6 +1688,55 @@ contains
 !beta^1/4
        matterParam(4) = infParam%consts(4)**0.25_kp
 
+
+    case ('saxone','saii1','saii2')
+!string axion inflation I
+       
+!U = c1^4 [ 1 - cos(F/c3) + c2 (F/c3) sin(F/c3) ]
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+       
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'string axion inflation I: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!alpha
+       matterParam(2) = infParam%consts(2)
+!mu^(1/4)       
+       matterParam(3) = infParam%consts(3)**0.25_kp
+
+    case ('saxtwo','saiii1','saiii2','saiii3')
+       
+!string axion inflation II
+       
+!U = c1^4 [ 1 - cos(F/c4) + c2 (F/c4) sin(F/c4) + (1/2) c2 c3 (F/c4)^2 ]
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(4).le.0._kp) &
+            .or. (infParam%consts(2)*infParam%consts(3).lt.0._kp)
+       
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:4)
+          stop 'string axion inflation II: improper params'
+       endif
+
+!M4
+       matterParam(1) = infParam%consts(1)
+!alpha
+       matterParam(2) = infParam%consts(2)
+!beta
+       matterParam(5) = infParam%consts(3)
+!mu^(1/4)       
+       matterParam(3) = infParam%consts(4)**0.25_kp
+
+       
+       
     case ('f-term')
 !F-term inflation
 

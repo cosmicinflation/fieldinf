@@ -1,3 +1,7 @@
+* version 1.1.7
+- support for new libaspic version 1.0
+- support for PAI, SAII1, SAII2, SAIII1, SAIII2, SAIII3
+
 * version 1.1.6
 - support for new libaspic version 0.3.3.5
-- support for HBI, SHI and RCPI
+- support for HBI, SHI and RCIPI

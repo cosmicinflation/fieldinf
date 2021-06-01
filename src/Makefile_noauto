@@ -10,18 +10,18 @@ FC=gfortran
 FFLAGS= -O -fopenmp -D$(ext) -DPPNAME
 #-DPPNAME
 #bugbuster
-#FFLAGS = -g -debug variable_locations -inline_debug_info -CB -check all 
-LDADD = -laspic
+#FFLAGS= -g -debug variable_locations -inline_debug_info -CB -check all 
+LDADD= -L/usr/local/lib -laspic
 endif
 
-INCLUDE = -I/usr/local/include/aspic
+INCLUDE= -I/usr/local/include/aspic
 
-INFOBJ = fieldprec.o infunits.o binfspline.o infsolvers.o infio.o \
+INFOBJ=  fieldprec.o infunits.o binfspline.o infsolvers.o infio.o \
 	 infmatter.o infdilaton.o infbgmodel.o infpotential.o infsigma.o \
 	 infbounds.o infsric.o infbgfunc.o infbg.o infbgspline.o \
 	 inftorad.o infpert.o infpowspline.o
 
-FFLAGS +=  $(INCLUDE)
+FFLAGS+=  $(INCLUDE)
 
 fieldmain.$(ext): $(INFOBJ) fieldmain.o
 	$(FC) $(FFLAGS) $(INFOBJ) fieldmain.o -o $@ $(LDADD)

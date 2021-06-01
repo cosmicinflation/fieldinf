@@ -56,9 +56,9 @@
   use cwisr, only : cwi_norm_potential, cwi_norm_deriv_potential
   use cwisr, only : cwi_norm_deriv_second_potential
 
-!higgs inflation
-  use hisr, only : hi_norm_potential, hi_norm_deriv_potential
-  use hisr, only : hi_norm_deriv_second_potential
+!starobinsky inflation
+  use sisr, only : si_norm_potential, si_norm_deriv_potential
+  use sisr, only : si_norm_deriv_second_potential
 
 !twisted inflation
   use twisr, only : twi_norm_potential, twi_norm_deriv_potential
@@ -135,6 +135,10 @@
   use aisr, only : ai_norm_potential, ai_norm_deriv_potential
   use aisr, only : ai_norm_deriv_second_potential
 
+!pure arctan inflation
+  use paisr, only : pai_norm_potential, pai_norm_deriv_potential
+  use paisr, only : pai_norm_deriv_second_potential
+  
 !constant ns inflation a, b, c and d
   use cnaisr, only : cnai_norm_potential, cnai_norm_deriv_potential
   use cnaisr, only : cnai_norm_deriv_second_potential
@@ -213,8 +217,8 @@
   use disr, only : di_norm_deriv_second_potential
 
 !hybrid Natural inflation
-  use hnisr, only : hni_norm_potential, hni_norm_deriv_potential
-  use hnisr, only : hni_norm_deriv_second_potential
+  use hni1sr, only : hni1_norm_potential, hni1_norm_deriv_potential
+  use hni1sr, only : hni1_norm_deriv_second_potential
 
 !non-renormalizable corrected loop inflation
   use nclisr, only : ncli_norm_potential, ncli_norm_deriv_potential
@@ -260,6 +264,14 @@
   use shisr, only : shi_norm_potential, shi_norm_deriv_potential
   use shisr, only : shi_norm_deriv_second_potential
 
-!radiatively corrected plateau inflation
-  use rcpisr, only : rcpi_norm_potential, rcpi_norm_deriv_potential
-  use rcpisr, only : rcpi_norm_deriv_second_potential
+!radiatively corrected inflection point inflation
+  use rcipisr, only : rcipi_norm_potential, rcipi_norm_deriv_potential
+  use rcipisr, only : rcipi_norm_deriv_second_potential
+
+!string axion inflation I and II  
+  use saiicommon, only : saii_norm_potential, saii_norm_deriv_potential
+  use saiicommon, only : saii_norm_deriv_second_potential
+
+  use saiiicommon, only : saiii_norm_potential, saiii_norm_deriv_potential
+  use saiiicommon, only : saiii_norm_deriv_second_potential
+

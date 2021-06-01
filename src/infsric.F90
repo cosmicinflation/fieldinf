@@ -59,8 +59,8 @@ contains
     case ('natinf','ni')
        slowroll_initial_matter = ni_initial_field(infParam,efold)
 
-    case ('hybnat','hni')
-       slowroll_initial_matter = hni_initial_field(infParam,efold)
+    case ('hybnat','hni1')
+       slowroll_initial_matter = hni1_initial_field(infParam,efold)
       
     case ('exsusy','esi')
        slowroll_initial_matter = esi_initial_field(infParam,efold)
@@ -93,8 +93,8 @@ contains
     case ('colwei','cwi')
        slowroll_initial_matter = cwi_initial_field(infParam,efold)
 
-    case ('higgsi','hi','si')
-       slowroll_initial_matter = hi_initial_field(infParam,efold)
+    case ('staroi','si')
+       slowroll_initial_matter = si_initial_field(infParam,efold)
 
     case ('twisti','twi')
        slowroll_initial_matter = twi_initial_field(infParam,efold)
@@ -171,6 +171,9 @@ contains
     case ('arctan','ai')
        slowroll_initial_matter = ai_initial_field(infParam,efold)
 
+    case ('pureai','pai')
+       slowroll_initial_matter = pai_initial_field(infParam,efold)
+       
     case ('fixnsa','cnai')
        slowroll_initial_matter = cnai_initial_field(infParam,efold)
 
@@ -303,6 +306,22 @@ contains
     case ('rcinfp','rcipi')
        slowroll_initial_matter = rcipi_initial_field(infParam,efold)
 
+    case ('saii1')
+       slowroll_initial_matter = saii1_initial_field(infParam,efold)
+
+    case ('saxone','saii2')
+       slowroll_initial_matter = saii2_initial_field(infParam,efold)
+
+    case ('saiii1')
+       slowroll_initial_matter = saiii1_initial_field(infParam,efold)
+
+    case ('saiii2')
+       slowroll_initial_matter = saiii2_initial_field(infParam,efold)
+
+    case ('saxtwo','saiii3')
+       slowroll_initial_matter = saiii3_initial_field(infParam,efold)
+       
+       
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
 
@@ -493,10 +512,10 @@ contains
 
 
 
-  function hni_initial_field(infParam,efold)
-    use hnisr, only : hni_x_endinf, hni_x_trajectory, hni_alphamin
+  function hni1_initial_field(infParam,efold)
+    use hni1sr, only : hni1_x_endinf, hni1_x_trajectory, hni1_alphamin
     implicit none
-    real(kp), dimension(matterNum) :: hni_initial_field
+    real(kp), dimension(matterNum) :: hni1_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -508,22 +527,22 @@ contains
     mu = infParam%consts(2)
     alpha = infParam%consts(3)
 
-    alphaMin = hni_alphamin(mu)
+    alphaMin = hni1_alphamin(mu)
          
     if (alpha.lt.alphamin) then
        write(*,*)'alphamin= alpha= ',alphaMin, alpha
        stop 'alpha too small to end inflation!'
     endif
    
-    xEnd = hni_x_endinf(alpha,mu)
+    xEnd = hni1_x_endinf(alpha,mu)
 
-    if (display) write(*,*)'hni_initial_field: xend= ',xEnd
+    if (display) write(*,*)'hni1_initial_field: xend= ',xEnd
 
-    xIni = hni_x_trajectory(bfold,xEnd,alpha,mu)
+    xIni = hni1_x_trajectory(bfold,xEnd,alpha,mu)
 
-    hni_initial_field(:) = xIni*mu
+    hni1_initial_field(:) = xIni*mu
 
-  end function hni_initial_field
+  end function hni1_initial_field
 
   
   function esi_initial_field(infParam,efold)
@@ -780,10 +799,10 @@ contains
   
   
 
-  function hi_initial_field(infParam,efold)
-    use hisr, only : hi_x_endinf,hi_x_trajectory
+  function si_initial_field(infParam,efold)
+    use sisr, only : si_x_endinf,si_x_trajectory
     implicit none
-    real(kp), dimension(matterNum) :: hi_initial_field
+    real(kp), dimension(matterNum) :: si_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -791,15 +810,15 @@ contains
 
     bfold = -efold
    
-    xEnd = hi_x_endinf()
+    xEnd = si_x_endinf()
 
-    if (display) write(*,*)'hi_initial_field: xend= ',xEnd
+    if (display) write(*,*)'si_initial_field: xend= ',xEnd
 
-    xIni = hi_x_trajectory(bfold,xEnd)
+    xIni = si_x_trajectory(bfold,xEnd)
 
-    hi_initial_field(:) = xIni
+    si_initial_field(:) = xIni
     
-  end function hi_initial_field
+  end function si_initial_field
 
 
 
@@ -1508,6 +1527,32 @@ contains
 
   end function ai_initial_field
 
+
+
+  function pai_initial_field(infParam, efold)
+    use paisr, only : pai_x_trajectory, pai_x_endinf
+    implicit none
+    real(kp), dimension(matterNum) :: pai_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: bfold
+    real(kp) :: xEnd, xIni
+    real(kp) :: mu
+
+    bfold = -efold
+    mu = infParam%consts(2)
+   
+    xEnd = pai_x_endinf(mu)
+
+    if (display) write(*,*)'pai_initial_field: xend= ',xEnd
+
+    xIni = pai_x_trajectory(bfold,xEnd,mu)
+
+    pai_initial_field(:) = xIni*mu
+
+  end function pai_initial_field
+  
 
 
   function cnai_initial_field(infParam, efold)
@@ -2982,7 +3027,164 @@ contains
   end function rcipi_initial_field
 
 
+ function saii1_initial_field(infParam, efold)
+    use saii1sr, only : saii1_x_endinf, saii1_x_trajectory
+    use saii1sr, only : saii1_numacc_mumin
+    
+    real(kp), dimension(matterNum) :: saii1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
 
+    real(kp) :: mu, alpha, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    if (mu.lt.saii1_numacc_mumin(efold,alpha)) then
+       write(*,*)'saii1_initial_field:'
+       write(*,*)'mu is numerically too small!'
+    endif
+    
+    xEnd = saii1_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'saii1_initial_field: xend= ', xEnd
+
+    xIni = saii1_x_trajectory(bfold,xend,alpha,mu)
+
+    saii1_initial_field(:) = xIni*mu
+
+  end function saii1_initial_field
+
+  
+  function saii2_initial_field(infParam, efold)
+    use saii2sr, only : saii2_x_endinf, saii2_x_trajectory
+    use saii2sr, only : saii2_numacc_mumin
+    real(kp), dimension(matterNum) :: saii2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, alpha, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    mu = infParam%consts(3)
+
+    if (mu.lt.saii2_numacc_mumin(efold,alpha)) then
+       write(*,*)'saii2_initial_field:'
+       write(*,*)'mu is numerically too small!'
+    endif
+    
+    xEnd = saii2_x_endinf(alpha,mu)
+
+    if (display) write(*,*)'saii2_initial_field: xend= ', xEnd
+
+    xIni = saii2_x_trajectory(bfold,xend,alpha,mu)
+
+    saii2_initial_field(:) = xIni*mu
+
+  end function saii2_initial_field
+
+
+ function saiii1_initial_field(infParam, efold)
+   use saiii1sr, only : saiii1_x_endinf, saiii1_x_trajectory
+   use saiii1sr, only : saiii1_numacc_mumin
+
+    real(kp), dimension(matterNum) :: saiii1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, alpha, beta, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    mu = infParam%consts(4)
+
+    if (mu.lt.saiii1_numacc_mumin(efold,alpha,beta)) then
+       write(*,*)'saiii1_initial_field:'
+       write(*,*)'mu is numerically too small!'
+    endif
+    
+    xEnd = saiii1_x_endinf(alpha,beta,mu)
+
+    if (display) write(*,*)'saiii1_initial_field: xend= ', xEnd
+
+    xIni = saiii1_x_trajectory(bfold,xend,alpha,beta,mu)
+
+    saiii1_initial_field(:) = xIni*mu
+
+  end function saiii1_initial_field
+
+
+
+  function saiii2_initial_field(infParam, efold)
+   use saiii2sr, only : saiii2_x_endinf, saiii2_x_trajectory
+   use saiii2sr, only : saiii2_numacc_mumin
+
+    real(kp), dimension(matterNum) :: saiii2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, alpha, beta, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    mu = infParam%consts(4)
+
+    if (mu.lt.saiii2_numacc_mumin(efold,alpha,beta)) then
+       write(*,*)'saiii2_initial_field:'
+       write(*,*)'mu is numerically too small!'
+    endif
+    
+    xEnd = saiii2_x_endinf(alpha,beta,mu)
+
+    if (display) write(*,*)'saiii2_initial_field: xend= ', xEnd
+
+    xIni = saiii2_x_trajectory(bfold,xend,alpha,beta,mu)
+
+    saiii2_initial_field(:) = xIni*mu
+
+  end function saiii2_initial_field
+
+
+  function saiii3_initial_field(infParam, efold)
+    use saiii3sr, only : saiii3_x_endinf, saiii3_x_trajectory
+
+    real(kp), dimension(matterNum) :: saiii3_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu, alpha, beta, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    alpha = infParam%consts(2)
+    beta = infParam%consts(3)
+    mu = infParam%consts(4)
+    
+    xEnd = saiii3_x_endinf(alpha,beta,mu)
+
+    if (display) write(*,*)'saiii3_initial_field: xend= ', xEnd
+
+    xIni = saiii3_x_trajectory(bfold,xend,alpha,beta,mu)
+
+    saiii3_initial_field(:) = xIni*mu
+
+  end function saiii3_initial_field
+
+  
+  
 #endif
 
 #ifdef TWOFIELDS
