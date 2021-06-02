@@ -114,10 +114,10 @@ contains
 !    case ('kklt')
 !       slowroll_initial_matter = bi_initial_field(infParam,efold)
 
-    case ('logmd1','lmi1')
+    case ('logmdi','lmi1')
        slowroll_initial_matter = lmi1_initial_field(infParam,efold)
 
-    case ('logmd2','lmi2')
+    case ('lmi2')
        slowroll_initial_matter = lmi2_initial_field(infParam,efold)
 
     case ('ricci1','rpi1')
@@ -255,16 +255,16 @@ contains
     case ('kklmmt','kklti')
        slowroll_initial_matter = kklti_initial_field(infParam,efold)
 
-    case ('nform1','nfi1')
+    case ('nfi1')
        slowroll_initial_matter = nfi1_initial_field(infParam,efold)
 
-    case ('nform2','nfi2')
+    case ('nfi2')
        slowroll_initial_matter = nfi2_initial_field(infParam,efold)
 
-    case ('nform3','nfi3')
+    case ('nfi3')
        slowroll_initial_matter = nfi3_initial_field(infParam,efold)
 
-    case ('nform4','nfi4')
+    case ('nfi4')
        slowroll_initial_matter = nfi4_initial_field(infParam,efold)
 
     case ('dualsb','di')

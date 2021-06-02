@@ -303,7 +303,7 @@ contains
           M4 = potParam(3)
           potName = 'staroi'
           
-       case ('logmdi','logmd1','logmd2')
+       case ('logmdi','lmi1','lmi2')
           M4 = potParam(15)
           alpha = potParam(16)
           beta = -potParam(17)
@@ -323,7 +323,7 @@ contains
           M4 = potParam(7)
           gam = potParam(17)/sqrt(6._kp)
 
-       case ('nformi','nform1','nform2','nform3','nform4')
+       case ('nformi','nfi1','nfi2','nfi3','nfi4')
           M4 = potParam(15)
           alpha = -potParam(17)
           beta = potParam(18)

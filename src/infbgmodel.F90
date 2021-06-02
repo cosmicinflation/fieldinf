@@ -1050,7 +1050,7 @@ contains
        matterParam(17) = -2._kp*infParam%consts(2)
        matterParam(18) = 1._kp
 
-    case ('logmdi','logmd1','logmd2','lmi')
+    case ('logmdi','lmi1','lmi2','lmi')
 !logamediate inflation: LMI
 
 !U = c1^4 F^c2 exp(-c3 F^c4) with c2 = 4*(1-c4)
@@ -1186,7 +1186,7 @@ contains
        matterParam(18) = 1._kp
        
 
-    case ('nformi','nform1','nform2','nform3','nform4')
+    case ('nformi','nfi1','nfi2','nfi3','nfi4')
 !N-formalism inflation: NFI
 
 !U = c1^4 exp[-c2 F^c3]
