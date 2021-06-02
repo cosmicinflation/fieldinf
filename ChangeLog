@@ -1,3 +1,419 @@
+commit 5b4ed68395975450231eec5acc52c9d970f245d4
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 2 15:44:01 2021 +0200
+
+    Markify README
+
+ README | 75 +++++++++++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 49 insertions(+), 26 deletions(-)
+
+commit 38c67df9737e2f1f7e2e586ce7a08afb35b84831
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 2 15:36:49 2021 +0200
+
+    Add Higgs inflation exact
+
+ src/infbgmodel.F90 | 70 ++++++++++++++++++++++++++++++++++++------------------
+ src/infmatter.F90  | 16 ++++++++++++-
+ src/infsric.F90    | 27 +++++++++++++++++++++
+ src/libaspic.h     |  5 ++++
+ 4 files changed, 94 insertions(+), 24 deletions(-)
+
+commit 86b6609cde02b32965c034eb07af4322b2d6cc72
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 2 15:14:09 2021 +0200
+
+    Use only aspic name for lmi and nfi
+
+ src/infbgmodel.F90 |  4 ++--
+ src/infmatter.F90  |  4 ++--
+ src/infsric.F90    | 12 ++++++------
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 2068e53a4ec6a9dfe26429c3a0453f7cdac13621
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 2 15:07:00 2021 +0200
+
+    Adding support for rclfi1234
+
+ README.md          |   1 +
+ configure.ac       |   2 +-
+ src/infbg.f90      |   2 +
+ src/infbgmodel.F90 |  19 ++++----
+ src/infmatter.F90  |  17 ++++++++
+ src/infsric.F90    | 126 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/libaspic.h     |   4 ++
+ 7 files changed, 162 insertions(+), 9 deletions(-)
+
+commit 5ac3fd44c22f9fcce3e595e82d05b2aedf35a4c4
+Author: chris <chris@ringeval.com>
+Date:   Tue Jun 1 16:29:22 2021 +0200
+
+    Add support for double exponential inflation
+
+ NEWS               |  6 +++---
+ src/infbgmodel.F90 | 29 ++++++++++++++++++++++++++++-
+ src/infmatter.F90  | 15 +++++++++++++++
+ src/infsric.F90    | 27 +++++++++++++++++++++++++++
+ src/libaspic.h     |  3 +++
+ 5 files changed, 76 insertions(+), 4 deletions(-)
+
+commit 430a08945f6908fc192661e4b783d13a8016fb3a
+Author: chris <chris@ringeval.com>
+Date:   Tue Jun 1 15:10:40 2021 +0200
+
+    Adding string axion inflation models
+
+ NEWS                |   6 +-
+ src/Makefile_noauto |  10 +--
+ src/infbgmodel.F90  |  87 +++++++++++++++++--
+ src/infmatter.F90   | 101 ++++++++++++++++------
+ src/infsric.F90     | 244 +++++++++++++++++++++++++++++++++++++++++++++++-----
+ src/libaspic.h      |  28 ++++--
+ 6 files changed, 409 insertions(+), 67 deletions(-)
+
+commit ffaadd01240de3af2d933b82a24d38b99b46d6d7
+Author: chris <chris@ringeval.com>
+Date:   Mon May 31 14:36:32 2021 +0200
+
+    Propagate change of model name rcpi -> rcipi
+
+ src/infbgmodel.F90 |  4 ++--
+ src/infmatter.F90  |  4 ++--
+ src/infsric.F90    | 26 +++++++++++++-------------
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+commit dbe3b8c538a3272d03a70ecdd83dde72afc4a0ea
+Author: chris <chris@ringeval.com>
+Date:   Wed Nov 6 15:27:50 2019 +0100
+
+    Fix conflicting module name and openmp spline
+
+ src/Makefile.am                    |  4 ++--
+ src/Makefile_noauto                |  2 +-
+ src/binfspline.f90                 |  2 +-
+ src/fieldmain.f90                  |  2 +-
+ src/{infprec.f90 => fieldprec.f90} |  9 ++++-----
+ src/gurumain.f90                   |  4 ++--
+ src/infbg.f90                      | 16 ++++++++--------
+ src/infbgfunc.f90                  |  2 +-
+ src/infbgmodel.F90                 |  2 +-
+ src/infbgspline.f90                |  2 +-
+ src/infbounds.f90                  |  2 +-
+ src/infdilaton.f90                 |  2 +-
+ src/infio.f90                      |  2 +-
+ src/infmatter.F90                  |  4 +---
+ src/infpert.f90                    | 16 ++++++++--------
+ src/infpotential.f90               |  2 +-
+ src/infpowspline.f90               |  6 +++---
+ src/infsigma.f90                   |  2 +-
+ src/infsolvers.f90                 |  4 ++--
+ src/infsolvers.h                   |  2 +-
+ src/infsric.F90                    |  4 ++--
+ src/inftorad.f90                   |  5 ++---
+ src/infunits.F90                   |  4 ++--
+ src/power_inf.f90                  |  2 +-
+ 24 files changed, 49 insertions(+), 53 deletions(-)
+
+commit fe8d5b8b44608a8cbd127f6fb5572d5b62aef444
+Author: chris <chris@ringeval.com>
+Date:   Wed Mar 28 11:37:18 2018 +0200
+
+    Add BgEvolEfoldExploreOsc user setting function
+
+ src/infbg.f90 | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+commit c3469b085c797310f7cae154c81da7a8bf43b504
+Author: chris <chris@ringeval.com>
+Date:   Fri Nov 24 15:14:44 2017 +0100
+
+    Adding new model GDWI
+
+ src/infbgmodel.F90 | 21 ++++++++++++++++++++-
+ src/infmatter.F90  | 19 ++++++++++++++++++-
+ src/infsric.F90    | 39 ++++++++++++++++++++++++++++++++++++---
+ src/libaspic.h     |  4 ++++
+ 4 files changed, 78 insertions(+), 5 deletions(-)
+
+commit e507c16a04268fde5ad17f98e6692d1c0da8666b
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 16 11:57:00 2017 +0100
+
+    New version lib to match interface changes in inbg
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 8b8ecc34e6e6dafb3513b6ea06731aa008192d91
+Author: chris <chris@ringeval.com>
+Date:   Wed Nov 15 17:42:10 2017 +0100
+
+    Rewritting of the alternative stoping conditions
+
+ src/infbg.f90     | 294 ++++++++++++++++++++++++++++++++++++------------------
+ src/infmatter.F90 |   2 +-
+ src/infprec.f90   |   3 +-
+ 3 files changed, 199 insertions(+), 100 deletions(-)
+
+commit 55e250db298947ce41393fd56e63d332c4aa9c25
+Author: chris <chris@ringeval.com>
+Date:   Fri Nov 10 13:40:07 2017 +0100
+
+    Threadprivate + check on velocity direction for hubbleStop condition
+
+ src/infbg.f90     | 34 +++++++++++++++++++++++++++-------
+ src/infmatter.F90 |  7 ++++---
+ src/infprec.f90   |  3 ++-
+ 3 files changed, 33 insertions(+), 11 deletions(-)
+
+commit cf6378a17be91366eebd55757f2c2647c9583e44
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 9 18:13:19 2017 +0100
+
+    Thread safety for setting IC + export efoldMaxiStop setting function
+
+ src/infbg.f90 | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+commit 565f0a7c7d5f9b8d46c95fb1466607100550dd16
+Author: chris <chris@ringeval.com>
+Date:   Wed Nov 8 13:44:39 2017 +0100
+
+    Fix real conversion kind
+
+ src/infpert.f90   | 13 +++----------
+ src/power_inf.f90 |  4 ++--
+ 2 files changed, 5 insertions(+), 12 deletions(-)
+
+commit 10d1c7c5f7dfd68b73ef57f230951a1bae470291
+Author: chris <chris@ringeval.com>
+Date:   Wed Nov 8 11:23:43 2017 +0100
+
+    Ensure int to real(kp) conversion
+
+ src/infbg.f90 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e8ac81eec6a86d1b58258a8d8714a3a7a5abf8a0
+Author: chris <chris@ringeval.com>
+Date:   Tue Nov 7 18:44:51 2017 +0100
+
+    Fix bullshit
+
+ src/infbgmodel.F90 | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 423ecf87aabe79aa7f1a123b0868d24fc7a3ae59
+Author: chris <chris@ringeval.com>
+Date:   Tue Nov 7 18:37:03 2017 +0100
+
+    Add support for aspic ccsi names + clean Makefile_noauto
+
+ src/Makefile_noauto | 12 ++----------
+ src/infbgmodel.F90  |  2 +-
+ src/infmatter.F90   |  2 +-
+ 3 files changed, 4 insertions(+), 12 deletions(-)
+
+commit 63e0b4566a37cb5f0af53aae30195375de5399a2
+Author: chris <chris@ringeval.com>
+Date:   Tue Nov 7 17:55:43 2017 +0100
+
+    Fix lfi and sfi alternate names
+
+ src/infbgmodel.F90 | 8 ++++----
+ src/infmatter.F90  | 6 ++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 9371b3b956ae31c199f5fd56d6c350500ce14c83
+Author: chris <chris@ringeval.com>
+Date:   Tue May 23 16:24:59 2017 +0200
+
+    Fix obsolete comments
+
+ src/infbg.f90 | 55 ++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 28 insertions(+), 27 deletions(-)
+
+commit 9e2d2bf0ccde5cc9a62e85818e6b988332c4e99b
+Author: chris <chris@ringeval.com>
+Date:   Thu May 11 18:13:53 2017 +0200
+
+    Expose some bg_field_evol advance settings through public functions
+
+ src/infbg.f90 | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 51 insertions(+), 6 deletions(-)
+
+commit cdd3ce3440bbf5692c3933542d5febb8e9660088
+Author: chris <chris@ringeval.com>
+Date:   Thu May 11 17:19:36 2017 +0200
+
+    Add optional input to fix initial field velocities
+
+ src/infbg.f90      | 13 ++++++++-----
+ src/infbgmodel.F90 |  6 +++++-
+ src/infmatter.F90  |  2 +-
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+
+commit 4b1dfa96e446b34848a418e67b23f27bb2a6c9ca
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 17 19:00:17 2016 +0100
+
+    Fixing typo bugs
+
+ NEWS               | 6 +++---
+ src/infbgmodel.F90 | 2 +-
+ src/infmatter.F90  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+commit cdf12a772083d9fff199a86baa487f3f90ca595c
+Author: chris <chris@ringeval.com>
+Date:   Thu Nov 17 17:34:29 2016 +0100
+
+    drafting 3 new models: hbi, shi and rcpi
+
+ src/infbgmodel.F90 | 234 ++++++++++++++++++++++++++++++++-----------------
+ src/infmatter.F90  |  47 +++++++++-
+ src/infsric.F90    | 252 +++++++++++++++++++++++++++++++++++++----------------
+ src/libaspic.h     |  12 +++
+ 4 files changed, 385 insertions(+), 160 deletions(-)
+
+commit 941f1edc581568190298bc9f0572c89ca3387c90
+Author: chris <chris@ringeval.com>
+Date:   Thu Apr 28 18:01:05 2016 +0200
+
+    Adding support for SAAI, SABI and SACI
+
+ NEWS               |  4 +--
+ src/infbgmodel.F90 | 80 +++++++++++++++++++++++++++++++++++++++++++++++--
+ src/infmatter.F90  | 37 +++++++++++++++++++++++
+ src/infsric.F90    | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/libaspic.h     | 12 ++++++++
+ 5 files changed, 215 insertions(+), 5 deletions(-)
+
+commit 8a853556fb44ff88681ed29900d6225b065c2503
+Author: chris <chris@ringeval.com>
+Date:   Thu Apr 28 13:49:21 2016 +0200
+
+    Adding support for VFMI, AHI, SBKI, FI, SDI
+
+ NEWS               |   6 +--
+ src/infbgmodel.F90 |  91 +++++++++++++++++++++++++++++++-
+ src/infbounds.f90  |   6 ++-
+ src/infmatter.F90  |  54 +++++++++++++++++++
+ src/infsric.F90    | 150 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/libaspic.h     |  26 ++++++++--
+ 6 files changed, 323 insertions(+), 10 deletions(-)
+
+commit 6e0987c173b41bc8d1ae5c77dcff4a23bfa73f15
+Author: chris <chris@ringeval.com>
+Date:   Wed Apr 27 17:31:52 2016 +0200
+
+    debug vfmi
+
+ Makefile.am     | 2 ++
+ configure.ac    | 2 ++
+ src/infbg.f90   | 2 +-
+ src/infsric.F90 | 6 +++---
+ src/libaspic.h  | 4 ++--
+ 5 files changed, 10 insertions(+), 6 deletions(-)
+
+commit b94caba35548eb5e6419ff4656f85e8621b32306
+Author: chris <chris@ringeval.com>
+Date:   Wed Apr 27 17:04:22 2016 +0200
+
+    added support for vfmi
+
+ src/infbgmodel.F90 | 166 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ src/infmatter.F90  |  14 +++++
+ src/infsric.F90    |  30 ++++++++++
+ src/libaspic.h     |   4 ++
+ 4 files changed, 194 insertions(+), 20 deletions(-)
+
+commit 0563d553462a53b282ca349b81506ad596067b59
+Author: chris <chris@ringeval.com>
+Date:   Tue Feb 2 17:07:20 2016 +0100
+
+    Fix warning with missing script
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 664c08074fc1c47435ce897973d931793e328612
+Author: chris <chris@ringeval.com>
+Date:   Fri Dec 4 17:48:25 2015 +0100
+
+    edit NEWS
+
+ NEWS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit d8fe2a69d19e17c361262c9d4b35afb9877c7d08
+Author: chris <chris@ringeval.com>
+Date:   Fri Dec 4 17:47:23 2015 +0100
+
+    Adding ncli support, allowing to stop integration on epsilon2 as well
+
+ src/infbg.f90      | 54 ++++++++++++++++++++++++++++++++----------------------
+ src/infbgmodel.F90 | 37 ++++++++++++++++++++++++++++++++-----
+ src/infmatter.F90  | 18 ++++++++++++++++--
+ src/infsric.F90    | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/libaspic.h     |  4 ++++
+ 5 files changed, 130 insertions(+), 29 deletions(-)
+
+commit 6e12c4795fa2e2829f9d8e374ea522aa0568383f
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 2 18:38:18 2015 +0100
+
+    Adding support for hybrid natural inflation
+
+ src/infbgmodel.F90 | 24 +++++++++++++++++++
+ src/infmatter.F90  | 67 +++++++++++++++++++++++++++++++++++++++---------------
+ src/infsric.F90    | 38 ++++++++++++++++++++++++++++++-
+ src/libaspic.h     |  6 ++++-
+ 4 files changed, 115 insertions(+), 20 deletions(-)
+
+commit 6b8229a75fc32c0488707ed2f40c958f3d5de0c0
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 2 16:37:59 2015 +0100
+
+    formatting
+
+ src/infmatter.F90 | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 6bdd730e76a90230dfb9230723729380368827ba
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 2 16:18:04 2015 +0100
+
+    Fixing di support
+
+ src/infbgmodel.F90 |  2 +-
+ src/infmatter.F90  |  5 +++--
+ src/infsric.F90    | 13 ++++++++-----
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+commit 37b5fffcb50b251e795a97ba757c700f6f47b623
+Author: chris <chris@ringeval.com>
+Date:   Wed Dec 2 14:31:40 2015 +0100
+
+    adding support for di
+
+ src/infbgmodel.F90 | 19 +++++++++++++++++++
+ src/infmatter.F90  | 16 +++++++++++++++-
+ src/infsric.F90    | 27 +++++++++++++++++++++++++++
+ src/libaspic.h     |  4 ++++
+ 4 files changed, 65 insertions(+), 1 deletion(-)
+
+commit d53cf4e1f1c9fadbb3ba13829180617cf864a9fe
+Author: chris <chris@ringeval.com>
+Date:   Tue Jan 20 18:26:54 2015 +0100
+
+    edit ChangeLog, bump rel num
+
+ ChangeLog | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+
 commit 31f00c1df6496f898621e3400d7f7b04e40782da
 Author: chris <chris@ringeval.com>
 Date:   Tue Jan 20 18:15:37 2015 +0100
