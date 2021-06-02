@@ -323,6 +323,18 @@ contains
        
     case ('dblexp','dei')
        slowroll_initial_matter = dei_initial_field(infParam,efold)
+
+    case ('rclfi1')
+       slowroll_initial_matter = rclfi1_initial_field(infParam,efold)
+
+    case ('rclfi2')
+       slowroll_initial_matter = rclfi2_initial_field(infParam,efold)
+
+    case ('rclfi3')
+       slowroll_initial_matter = rclfi3_initial_field(infParam,efold)
+       
+    case ('radlfi','rclfi4')
+       slowroll_initial_matter = rclfi4_initial_field(infParam,efold)
        
 !    case ('f-term')
 !       slowroll_initial_matter = fterm_initial_field(infParam,efold)
@@ -3210,6 +3222,120 @@ contains
     dei_initial_field(:) = xIni*mu
 
   end function dei_initial_field
+
+
+ function  rclfi1_initial_field(infParam, efold)
+    use rclfi1sr, only : rclfi1_x_endinf, rclfi1_x_trajectory
+    use rclfi1sr, only : rclfi1_x_potmax
+
+    real(kp), dimension(matterNum) :: rclfi1_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu , alpha, p, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+    alpha = infParam%consts(4)
+    
+    xEnd = rclfi1_x_endinf(p,alpha,mu)
+
+    if (display) then
+       write(*,*)'rclfi1_initial_field: xend= ', xEnd
+       write(*,*)'xVmax= ',rclfi1_x_potmax(p,alpha,mu)
+    end if
+    xIni = rclfi1_x_trajectory(bfold,xend,p,alpha,mu)
+
+    rclfi1_initial_field(:) = xIni*mu
+
+  end function rclfi1_initial_field
+
+
+  function  rclfi2_initial_field(infParam, efold)
+    use rclfi2sr, only : rclfi2_x_endinf, rclfi2_x_trajectory
+
+    real(kp), dimension(matterNum) :: rclfi2_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu , alpha, p, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+    alpha = infParam%consts(4)
+    
+    xEnd = rclfi2_x_endinf(p,alpha,mu)
+
+    if (display) write(*,*)'rclfi2_initial_field: xend= ', xEnd
+
+    xIni = rclfi2_x_trajectory(bfold,xend,p,alpha,mu)
+
+    rclfi2_initial_field(:) = xIni*mu
+
+  end function rclfi2_initial_field
+
+
+  
+  function  rclfi3_initial_field(infParam, efold)
+    use rclfi3sr, only : rclfi3_x_endinf, rclfi3_x_trajectory
+
+    real(kp), dimension(matterNum) :: rclfi3_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu , alpha, p, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+    alpha = infParam%consts(4)
+    
+    xEnd = rclfi3_x_endinf(p,alpha,mu)
+
+    if (display) write(*,*)'rclfi3_initial_field: xend= ', xEnd
+
+    xIni = rclfi3_x_trajectory(bfold,xend,p,alpha,mu)
+
+    rclfi3_initial_field(:) = xIni*mu
+
+  end function rclfi3_initial_field
+
+  
+
+  
+  function  rclfi4_initial_field(infParam, efold)
+    use rclfi4sr, only : rclfi4_x_endinf, rclfi4_x_trajectory
+
+    real(kp), dimension(matterNum) :: rclfi4_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: mu , alpha, p, bfold
+    real(kp) :: xEnd, xIni
+
+    bfold = -efold
+
+    p = infParam%consts(2)
+    mu = infParam%consts(3)
+    alpha = infParam%consts(4)
+    
+    xEnd = rclfi4_x_endinf(p,alpha,mu)
+
+    if (display) write(*,*)'rclfi4_initial_field: xend= ', xEnd
+
+    xIni = rclfi4_x_trajectory(bfold,xend,p,alpha,mu)
+
+    rclfi4_initial_field(:) = xIni*mu
+
+  end function rclfi4_initial_field
   
   
 #endif

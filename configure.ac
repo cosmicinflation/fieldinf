@@ -6,7 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_FC
 AC_PROG_CPP
-AC_PROG_LIBTOOL
+LT_INIT
 
 version_info="3:0:0"
 AC_SUBST(version_info)

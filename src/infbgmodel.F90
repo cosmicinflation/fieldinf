@@ -651,14 +651,14 @@ contains
 
 
 
-    case ('lfcorr','rclfi')
+    case ('radlfi','rclfi1','rclfi2','rclfi3','rclfi4')
 !radiatively corrected large field inflation: RCLFI
 
-!U = c1^4 F^c2 [1 - c3 F^c4 ln(F)]       
+!U = c1^4 [(F/c3)^c2 + c4 (F/c3)^4 ln(F/c3)]       
 
 
        badParams = ((infParam%consts(1).le.0._kp).or.(infParam%consts(2).le.0._kp).or. &
-            (infParam%consts(3).le.0._kp).or.(infParam%consts(4).le.0._kp))
+            (infParam%consts(3).le.0._kp).or.(infParam%consts(2).eq.4._kp))
        
        if (badParams) then          
           write(*,*)'model name: ',infParam%name          
@@ -666,13 +666,16 @@ contains
           stop 'radiatively corrected large field inflation: improper params'
        endif
 
-       matterParam(1) = 0._kp
-       matterParam(2) = infParam%consts(2) + infParam%consts(4)
+       matterParam(1) = -  infParam%consts(1)/infParam%consts(3) &
+            * sign(abs(log(infParam%consts(3))*infParam%consts(4))**0.25_kp &
+            ,log(infParam%consts(3))*infParam%consts(4))
+       matterParam(2) = 4._kp
        matterParam(3) = 0._kp
-       matterParam(4) = - infParam%consts(1) &
-            * sign(abs(infParam%consts(3))**0.25_kp,infParam%consts(3))
+       matterParam(4) = infParam%consts(1)/infParam%consts(3) &
+            * sign(abs(infParam%consts(4))**0.25_kp,infParam%consts(4))
+
        matterParam(5) = 1._kp
-       matterParam(6) = infParam%consts(1)
+       matterParam(6) = infParam%consts(1) / infParam%consts(3)**(0.25_kp*infParam%consts(2))
        matterParam(7:11) = 0._kp
        matterParam(12) = infParam%consts(2)
 

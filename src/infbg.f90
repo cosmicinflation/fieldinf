@@ -226,6 +226,8 @@ contains
     if (hubbleSquareIni.ge.0._kp) then
        infIni%hubble = sqrt(hubbleSquareIni)       
     else     
+       write(*,*)'Field= FieldDot= ',infIni%field,infIni%fieldDot
+       write(*,*)'H^2 = ',hubbleSquareIni
        stop 'H^2 < 0, check initial condition'
     endif
 

@@ -280,6 +280,13 @@ contains
           alpha = potParam(4)/potParam(1)
           mu = (potParam(1)/potParam(6))**(1._kp/potParam(12))
 
+       case ('radlfi','rclfi1','rclfi2','rclfi3','rclfi4')
+          p = potParam(12)
+          mu = exp(-potParam(1)/potParam(4))
+          M4 = potParam(6) * mu**p
+          alpha = potParam(4)*mu**4 / M4
+          potName = 'radlfi'
+          
 
 #ifndef PP12
        case ('kahmod')
@@ -730,6 +737,9 @@ contains
 
        case ('dblexp')
           matter_potential = dei_norm_potential(chi/mu,beta,mu)
+
+       case ('radlfi')
+          matter_potential = rclfi_norm_potential(chi/mu,p,alpha,mu)
           
 !       case ('f-term')
 !          matter_potential = lambda * ( ( 1._kp - psi**2 / M**2 )**2   &
@@ -1026,6 +1036,9 @@ contains
 
        case ('dblexp')
           deriv_matter_potential(1) = dei_norm_deriv_potential(chi/mu,beta,mu)/mu
+
+       case ('radlfi')
+          deriv_matter_potential(1) = rclfi_norm_deriv_potential(chi/mu,p,alpha,mu)/mu
           
 !       case ('f-term')
 !          deriv_matter_potential(1) = lambda * (16._kp * lambda / M**4 * log(2._kp) &
@@ -1357,6 +1370,10 @@ contains
        case ('dblexp')
           deriv_second_matter_potential(1,1) = dei_norm_deriv_second_potential(chi/mu,beta &
                ,mu)/mu/mu
+
+       case ('radlfi')
+          deriv_second_matter_potential(1,1) = rclfi_norm_deriv_second_potential(chi/mu,p &
+               ,alpha,mu)/mu/mu
           
 !       case ('f-term')
 !          deriv_second_matter_potential(1,1) = lambda * ( 4.  *psi**2 / M**2 / phic**2 ) 

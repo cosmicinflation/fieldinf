@@ -278,3 +278,7 @@
 !double exponential inflatioon
   use deisr, only : dei_norm_potential, dei_norm_deriv_potential
   use deisr, only : dei_norm_deriv_second_potential
+
+!radiatively corrected large field inflation
+  use rclficommon, only : rclfi_norm_potential, rclfi_norm_deriv_potential
+  use rclficommon, only : rclfi_norm_deriv_second_potential
