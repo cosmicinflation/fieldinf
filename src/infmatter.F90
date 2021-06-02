@@ -66,7 +66,7 @@ module infmatter
   character(len=lenshort), save :: potName = 'x'
 
 !some more easy to use alias for PPNAME
-  real(kp), save :: alpha, beta, gam, f, lambda ,p, q, mu, nu, M4
+  real(kp), save :: alpha, beta, gam, f, lambda ,p, q, mu, nu, xi, M4
   
  
   public potParamNum, matterNum
@@ -342,6 +342,11 @@ contains
 #endif
 #endif     
 
+       case ('higgsi','hi')
+          M4 = HiggsCoupling * potParam(1)
+          xi = 0.5_kp/sqrt(potParam(1))
+          potName = 'higgsi'
+          
        case ('mhitop')
           M4 = potParam(1)
           mu = potParam(2)
@@ -579,6 +584,9 @@ contains
        case ('staroi')
           matter_potential = si_norm_potential(chi)
 
+       case ('higgsi')
+          matter_potential = hi_norm_potential(chi,xi)
+          
        case ('twisti')
           matter_potential = twi_norm_potential(chi,mu)
 
@@ -878,6 +886,9 @@ contains
        case ('staroi')
           deriv_matter_potential(1) = si_norm_deriv_potential(chi)
 
+       case ('higgsi')
+          deriv_matter_potential(1) = hi_norm_deriv_potential(chi,xi)
+          
        case ('twisti')
           deriv_matter_potential(1) = twi_norm_deriv_potential(chi,mu)
 
@@ -1188,6 +1199,9 @@ contains
        case ('staroi')
           deriv_second_matter_potential(1,1) = si_norm_deriv_second_potential(chi)
 
+       case ('higgsi')
+          deriv_second_matter_potential(1,1) = hi_norm_deriv_second_potential(chi,xi)
+          
        case ('twisti')
           deriv_second_matter_potential(1,1) = twi_norm_deriv_second_potential(chi,mu)
 

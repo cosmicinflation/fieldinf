@@ -96,6 +96,9 @@ contains
     case ('staroi','si')
        slowroll_initial_matter = si_initial_field(infParam,efold)
 
+    case ('higgsi','hi')
+       slowroll_initial_matter = hi_initial_field(infParam,efold)
+       
     case ('twisti','twi')
        slowroll_initial_matter = twi_initial_field(infParam,efold)
 
@@ -834,6 +837,30 @@ contains
     
   end function si_initial_field
 
+
+  function hi_initial_field(infParam,efold)
+    use hisr, only : hi_x_endinf,hi_x_trajectory
+    implicit none
+    real(kp), dimension(matterNum) :: hi_initial_field
+    type(infbgparam), intent(in) :: infParam
+    real(kp), intent(in) :: efold
+
+    real(kp) :: xEnd, xIni, bfold,xi
+
+    bfold = -efold
+
+    xi = infParam%consts(1)
+    
+    xEnd = hi_x_endinf(xi)
+
+    if (display) write(*,*)'hi_initial_field: xend= ',xEnd
+
+    xIni = hi_x_trajectory(bfold,xEnd,xi)
+
+    hi_initial_field(:) = xIni
+    
+  end function hi_initial_field
+  
 
 
   function twi_initial_field(infParam,efold)

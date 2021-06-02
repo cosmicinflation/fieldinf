@@ -1037,9 +1037,10 @@ contains
             .or.(infParam%consts(2).ne.sqrt(2._kp/3._kp)))
        
        if (badParams) then          
+          write(*,*)'WARNING:'
           write(*,*)'model name: ',infParam%name          
           write(*,*)'consts = ',infParam%consts(1:2)
-          stop 'Starobinski inflation: improper params'
+          stop 'Starobinski inflation should have c2 = sqrt(2/3)!'
        endif
 
        matterParam(3) = infParam%consts(1)
@@ -1248,32 +1249,32 @@ contains
        matterParam(18) = 1._kp
 
 
- case ('dblexp','dei')
-!double exponential inflation: DEI
+    case ('dblexp','dei')
+       !double exponential inflation: DEI
 
-!U = c1^4 [ exp(c2 F/c3) - c2^2 exp(F/c3/c2) ]
+       !U = c1^4 [ exp(c2 F/c3) - c2^2 exp(F/c3/c2) ]
 
-    badParams = (infParam%consts(1).le.0._kp) &
-         .or. (infParam%consts(3).le.0._kp) &
-         .or. (infParam%consts(2).ge.1._kp) &
-         .or. (infParam%consts(2).lt.0._kp)
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp) &
+            .or. (infParam%consts(2).ge.1._kp) &
+            .or. (infParam%consts(2).lt.0._kp)
 
-    if (badParams) then          
-       write(*,*)'model name: ',infParam%name          
-       write(*,*)'consts = ',infParam%consts(1:3)
-       stop 'double exponential inflation: improper params!'
-    endif
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'double exponential inflation: improper params!'
+       endif
 
-    matterParam(1:16) = 0._kp
-    matterParam(2) = 2._kp
-    matterParam(5) = 2._kp
-    
-    matterParam(7) = infParam%consts(1)
-    matterParam(8) = infParam%consts(2)/infParam%consts(3)
-    matterParam(15) = -infParam%consts(1)*sqrt(infParam%consts(2))
-    matterParam(17) = 1._kp/infParam%consts(2)/infParam%consts(3)
-    matterParam(18) = 1._kp
-    
+       matterParam(1:16) = 0._kp
+       matterParam(2) = 2._kp
+       matterParam(5) = 2._kp
+
+       matterParam(7) = infParam%consts(1)
+       matterParam(8) = infParam%consts(2)/infParam%consts(3)
+       matterParam(15) = -infParam%consts(1)*sqrt(infParam%consts(2))
+       matterParam(17) = 1._kp/infParam%consts(2)/infParam%consts(3)
+       matterParam(18) = 1._kp
+
     
 #endif
 #endif
@@ -1284,6 +1285,29 @@ contains
        
 !potentials not encompassed in the generic formula
 #ifdef PPNAME
+
+    case ('higgsi','hi')
+    
+!Exact Higgs inflation (no large field approximation) HI.
+!The potential in the Jordan Frame is the one of the Higgs boson. It
+!is parametric in the Einstein frame and computed within aspic
+
+!       c1 is "xi" the non-minimal coupling, the only model parameter.
+       
+       badParams = infParam%consts(1).le.0._kp
+       
+       if (badParams) then          
+          write(*,*)'model name: ',infParam%name          
+          write(*,*)'consts = ',infParam%consts(1)
+          stop 'Higgs inflation: improper params'
+       endif
+
+!this is Mg/[Mpl lambda^(1/4)]
+       matterParam(1) = 1._kp / sqrt(2._kp* infParam%consts(1))
+
+
+
+
     case ('mhitop','mhi')
 !Mutated hilltop inflation: MHI
 

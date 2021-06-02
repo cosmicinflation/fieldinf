@@ -60,6 +60,11 @@
   use sisr, only : si_norm_potential, si_norm_deriv_potential
   use sisr, only : si_norm_deriv_second_potential
 
+!higgs inflation
+  use hireheat, only : HiggsCoupling
+  use hisr, only : hi_norm_potential, hi_norm_deriv_potential
+  use hisr, only : hi_norm_deriv_second_potential
+  
 !twisted inflation
   use twisr, only : twi_norm_potential, twi_norm_deriv_potential
   use twisr, only : twi_norm_deriv_second_potential
