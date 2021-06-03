@@ -23,7 +23,7 @@ The code is released as GNU software, you are free and welcome to
 improve this code and distribute the source code along the rules
 specified in COPYING.
 
-Compilation and installation of the **FieldInf** library:
+Compilation and installation of the **FieldInf** library
 
 ```bash
    ./configure
@@ -35,7 +35,9 @@ Support for [**libaspic**](https://curl.irmp.ucl.ac.be/~chris/aspic.html) is
 provided by appending its installation path to the configure script:
 
 ```bash
-   ./configure --with-aspic=/usr/local make make install
+   ./configure --with-aspic=/usr/local
+   make
+   make install
 ```
 See INSTALL for more options.
 
