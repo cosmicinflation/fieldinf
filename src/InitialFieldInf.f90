@@ -1,30 +1,21 @@
-!This module provides the initial power spectra for pre-pythonb CAMB
-!versions, computed from the inflationary module
+!This module provides the initial power spectra for CAMB, computed
+!from the inflationary module
 
-module InitialPower   
+module InitialPower
+  use Precision
+  use MpiUtils, only : MpiStop
+  use classes
   use precision, only : dl
   use fieldprec, only : kp 
   use infbgmodel, only : infbgparam
   use infbg, only : infbgphys, infbgdata
   use inftorad, only : inftoradcosmo
 
-  implicit none   
+  implicit none
 
   private
- 
-  logical, parameter :: display=.false.
-   
-  character(LEN=*), parameter :: Power_Name = 'power_inf'
-  integer, parameter :: nnmax= 1 
-
-!mind that for mcmc
-  logical, parameter :: checkStopDefault = .false.
-  logical, parameter :: checkBoundDefault = .false.
-  logical, parameter :: useSplineDefault = .true.
-
 
   type InitialPowerParams
-     integer :: nn    
      integer :: bgParamNum
      logical :: checkStop     
      logical :: checkBound
@@ -36,7 +27,7 @@ module InitialPower
      type(infbgparam) :: infParam    
   end type InitialPowerParams
 
-
+  
   type InitialPowerData
      type(initialpowerparams) :: initP
      type(infbgphys) :: infIni
@@ -54,42 +45,89 @@ module InitialPower
      real(kp) :: efoldEndToToday
   end type ExportInfProp
 
+  
+  logical, parameter :: display=.false.
 
-  real(dl) :: curv  !Curvature contant, set in InitializePowers     
+  logical, parameter, public :: checkStopDefault = .false.
+  logical, parameter, public :: checkBoundDefault = .false.
+  logical, parameter, public :: useSplineDefault = .true.
 
 
+  
+  Type, extends(TInitialPower) :: TInitialFieldInf
 
+     type(initialpowerparams) :: ipp
+         
+     real(dl), private :: curv = 0._dl !curvature parameter
+     
+
+   contains
+         
+     procedure :: Init => TInitialFieldInf_Init
+     procedure, nopass :: PythonClass => TInitialFieldInf_PythonClass
+     procedure, nopass :: SelfPointer => TInitialFieldInf_SelfPointer
+     procedure :: ScalarPower => TInitialFieldInf_ScalarPower
+     procedure :: TensorPower => TInitialFieldInf_TensorPower
+     procedure :: ReadParams => TInitialFieldInf_ReadParams
+     procedure :: SetDefPowerParams => TInitialFieldInf_SetDefPowerParams
+     procedure :: SetInfBg => TInitialFieldInf_SetInfBg
+     procedure :: SetInfCosmo => TInitialFieldInf_SetInfCosmo
+     procedure :: SetInfBgSpline => TInitialFieldInf_SetInfBgSpline
+     procedure :: FreeInfBgSpline => TInitialFieldInf_FreeInfBgSpline
+     procedure :: FreeInfBgData => TInitialFieldInf_FreeInfBgData
+     procedure :: SetInfScalPow => TInitialFieldInf_SetInfScalPow
+     procedure :: FreePowers => TInitialFieldInf_FreePowers
+
+  end Type TInitialFieldInf
+
+
+!a local static allocated ressource
   type(InitialPowerData), save :: powerD
 
-  
-  
 
+  
   interface operator (==)     
      module procedure inipowerparams_equal
-  end interface
+  end interface operator (==)
 
   interface operator (/=)
      module procedure inipowerparams_unequal
-  end interface
+  end interface operator (/=)
 
   private operator(==),operator(/=)
 
-  public nnmax
-  public SetInfBg, SetInfBgSpline, SetInfCosmo, SetInfScalPow
-  public InitializePowers, FreePowers, ScalarPower, TensorPower
-  public InitialPowerParams,Power_Descript, Power_Name, SetDefPowerParams
+  
+  public TInitialFieldInf, ExportInfProp
 
-  public exportinfprop, UpdateInfProp
 
-  public InitialPower_ReadParams
+  public UpdateInfProp
+  
 
 contains
-       
+ 
+  
+  function TInitialFieldInf_PythonClass()
+    character(LEN=:), allocatable :: TInitialFieldInf_PythonClass
+
+    TInitialFieldInf_PythonClass = 'InitialPower'
+    
+  end function TInitialFieldInf_PythonClass
+
+  
+  subroutine TInitialFieldInf_SelfPointer(cptr,P)
+    use iso_c_binding
+    Type(c_ptr) :: cptr
+    Type (TInitialFieldInf), pointer :: PType
+    class (TPythonInterfacedClass), pointer :: P
+
+    call c_f_pointer(cptr, PType)
+    P => PType
+
+  end subroutine TInitialFieldInf_SelfPointer
 
 
 
-
-  function inipowerparams_equal(PinA, PinB)
+   function inipowerparams_equal(PinA, PinB)
     use infbgmodel, only : operator(==) 
     implicit none
     type(initialpowerparams), intent(in) :: PinA, PinB
@@ -97,7 +135,6 @@ contains
 
     inipowerparams_equal = ((PinA%infParam == PinB%infParam) &
          .and. (PinA%lnReheat == PinB%lnReheat) &
-         .and. (PinA%nn == PinB%nn) &
          .and. (PinA%bgParamNum == PinB%bgParamNum) &
          .and. (PinA%checkStop .eqv. PinB%checkStop) &
          .and. (PinA%checkBound .eqv. PinB%checkBound) &
@@ -110,7 +147,6 @@ contains
 
 
 
-
   function inipowerparams_unequal(PinA, PinB)
     implicit none
     type(initialpowerparams), intent(in) :: PinA, PinB
@@ -120,9 +156,8 @@ contains
     
   end function inipowerparams_unequal
 
-
-
-
+  
+  
   subroutine UpdateInfProp(export)
     implicit none
     type(exportinfprop), intent(out) :: export
@@ -136,8 +171,15 @@ contains
   end subroutine UpdateInfProp
 
   
+  
+  subroutine TInitialFieldInf_SetDefPowerParams(this)
+    implicit none
+    class(TInitialFieldInf) :: this
 
+    call SetDefPowerParams(this%ipp)
 
+  end subroutine TInitialFieldInf_SetDefPowerParams
+    
 
   subroutine SetDefPowerParams(Pin)
     use infbgmodel, only : fieldNum
@@ -145,9 +187,7 @@ contains
     use infbgmodel, only : infParamNum
     implicit none
     type (InitialPowerParams), intent(out) :: Pin
-
-    Pin%nn = 1
-   
+      
     Pin%bgParamNum = infParamNum
 
 !stop inflation according to field values
@@ -170,7 +210,7 @@ contains
     Pin%infParam%consts(1:infParamNum) = 0._kp
 
     if (dilatonNum.ne.0) then
-       stop 'SetDefPowerParams: power_inf.f90 needs edition!'
+       stop 'SetDefPowerParams: InitialFieldInf.f90 needs edition!'
 !       Pin%infParam%conforms(1:dilatonNum) = 1.
     endif
 
@@ -188,50 +228,66 @@ contains
 
 
 
-  subroutine InitializePowers(Pin,acurv,wantScalars,wantTensors)
-    implicit none
+  
+  subroutine TInitialFieldInf_Init(this, Params)
+    use results
+    use constants, only : c
+    class(TInitialFieldInf) :: this
+    class(TCAMBParameters), intent(in) :: Params
 
-    type (initialpowerparams) :: Pin
-         !Called before computing final Cls in cmbmain.f90
-         !Could read spectra from disk here, do other processing, etc.
-    real(dl) :: acurv
-    logical, optional, intent(in) :: wantScalars, wantTensors
     integer :: inferror
     logical, parameter :: usePstar=.false.
-    real(kp), parameter :: Pstar = 1._kp
+    real(kp), parameter :: Pstar = 2e-9
+    
+    
+    select type(Params)
+    class is (CAMBParams)
+       !Curvature parameter if non-flat
+       this%curv = -Params%Omk/((c/1000)/Params%H0)**2
+       
+    class default
+       stop 'TInitialFieldInf_Init: class type not found!'
+       
+    end select
+
 
     inferror = 0
 
-    if (Pin%nn > nnmax) then
-       stop 'can only used one initial power spectrum'
-    end if
-    curv=acurv         
-
-    if (curv.ne.0d0) stop 'flat universe only'
+    if (this%curv.ne.0._dl) stop 'TInitialFieldInf_Init: inflation in flat universe only!'
 
 !one background for all k (that's why nnmax=1)
 !    print *,'we are in initialize power',(Pin%infParam == powerD%initP%infParam) &
 !         ,(Pin%infParam /= powerD%initP%infParam)   
   
-    call SetInfBg(Pin,inferror)
-    if (inferror.ne.0) stop 'InitializePowers: unproper infbg'
+    call this%SetInfBg(inferror)
+    
+    if (inferror.ne.0) stop 'TInitialFieldInf_Init: unproper infbg'
 
     if (usePstar) then
 !this is only for playing with normalised power spectra to Pstar. 
        write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-       write(*,*)'InitializePower: renormalising P(k*) to Pstar=',Pstar
+       write(*,*)'TInitialFieldInf_Init: renormalising P(k*) to Pstar=',Pstar
        write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
        read(*,*)
-       call SetInfScalPow(Pin,Pstar)
+       call this%SetInfScalPow(Pstar)
     endif
 
-    call SetInfBgSpline(Pin)
+    call this%SetInfBgSpline()
 
-    call SetInfCosmo(Pin,inferror)
-    if (inferror.ne.0) stop 'InitializePowers: unproper inftorad'
-      
-  end subroutine InitializePowers
+    call this%SetInfCosmo(inferror)
+    if (inferror.ne.0) stop 'TInitialFieldInf_Init: unproper inftorad'
 
+  end subroutine TInitialFieldInf_Init
+
+
+  subroutine TInitialFieldInf_SetInfBg(this, inferror)
+    implicit none
+    class(TInitialFieldInf) :: this
+    integer, optional :: inferror
+
+    call SetInfBg(this%ipp,inferror)
+
+  end subroutine TInitialFieldInf_SetInfBg
 
 
 
@@ -430,6 +486,15 @@ contains
   
 
 
+  subroutine TInitialFieldInf_SetInfBgSpline(this)
+    implicit none
+    class(TInitialFieldInf) :: this
+
+    call SetInfBgSpline(this%ipp)
+
+  end subroutine TInitialFieldInf_SetInfBgSpline
+
+  
 
   subroutine SetInfBgSpline(Pin)
     use infbgmodel, only : operator(==)
@@ -450,7 +515,13 @@ contains
   end subroutine SetInfBgSpline
 
 
+  subroutine TInitialFieldInf_FreeInfBgSpline(this)
+    implicit none
+    class(TInitialFieldInf) :: this
 
+    call FreeInfBgSpline(this%ipp)
+
+  end subroutine TInitialFieldInf_FreeInfBgSpline
 
 
   subroutine FreeInfBgSpline(Pin)
@@ -472,6 +543,13 @@ contains
   end subroutine FreeInfBgSpline
 
 
+  subroutine TInitialFieldInf_FreeInfBgData(this)
+    implicit none
+    class(TInitialFieldInf) :: this
+
+    call FreeInfBgData(this%ipp)
+
+  end subroutine TInitialFieldInf_FreeInfBgData
 
 
 
@@ -494,7 +572,14 @@ contains
   end subroutine FreeInfBgData
   
 
+  subroutine TInitialFieldInf_SetInfCosmo(this, inferror)
+    implicit none
+    class(TInitialFieldInf) :: this
+    integer, optional :: inferror
 
+    call SetInfCosmo(this%ipp,inferror)
+
+  end subroutine TInitialFieldInf_SetInfCosmo
 
 
   subroutine SetInfCosmo(Pin,inferror)
@@ -661,7 +746,17 @@ contains
   
 
 
+  subroutine TInitialFieldInf_SetInfScalPow(this, Pwanted)
+    implicit none
+    class(TInitialFieldInf) :: this
+    real(kp), intent(in) :: Pwanted
+    
+    call SetInfScalPow(this%ipp,Pwanted)
 
+  end subroutine TInitialFieldInf_SetInfScalPow
+
+
+  
 
   subroutine SetInfScalPow(Pin,Pwanted)
 !to normalise the scalar spectrum to Pwanted at kpivot
@@ -687,11 +782,13 @@ contains
 
     powerD%infCosmo = set_inftorad_cosmo(powerD%initP%infParam, &
          powerD%infObs,powerD%infEnd,powerD%InitP%lnReheat,ierror)
+
     
 !the bg spline should be set to compute the power spectrum (if not
 !already) TODO: not optimal at all
     call SetInfBgSpline(Pin)
 
+    
     Pscal = power_spectrum_scal(powerD%infCosmo,Pin%kstar)
     
     if (Pscal(scalNum,scalNum).ne.0.) then
@@ -731,8 +828,15 @@ contains
   end subroutine SetInfScalPow
 
 
+  subroutine TInitialFieldInf_FreePowers(this)
+    implicit none
+    class(TInitialFieldInf) :: this
 
+    call FreePowers(this%ipp)
 
+  end subroutine TInitialFieldInf_FreePowers
+
+  
 
   subroutine FreePowers(Pin)
     use infbgmodel, only : operator(==)  
@@ -767,196 +871,157 @@ contains
   end subroutine FreePowers
 
 
-       
+
+  
 
 
+  
+  function TInitialFieldInf_ScalarPower(this, k)
+ 
+    !ScalarPower = const for scale invariant spectrum
+    !The normalization is defined so that for adiabatic perturbations the gradient of the 3-Ricci
+    !scalar on co-moving hypersurfaces receives power
+    ! < |D_a R^{(3)}|^2 > = int dk/k 16 k^6/S^6 (1-3K/k^2)^2 ScalarPower(k)
+    !In other words ScalarPower is the power spectrum of the conserved curvature perturbation given by
+    !-chi = \Phi + 2/3*\Omega^{-1} \frac{H^{-1}\Phi' - \Psi}{1+w}
+    !(w=p/\rho), so < |\chi(x)|^2 > = \int dk/k ScalarPower(k).
+    !Near the end of inflation chi is equal to 3/2 Psi.
+    !Here nu^2 = (k^2 + curv)/|curv|
 
-  function ScalarPower(k,in)    
-!"in" gives the index of the power to return for this k
-!ScalarPower = const for scale invariant spectrum
-!The normalization is defined so that for adiabatic perturbations the gradient of the 3-Ricci 
-!scalar on co-moving hypersurfaces receives power
-! < |D_a R^{(3)}|^2 > = int dk/k 16 k^6/S^6 (1-3K/k^2)^2 ScalarPower(k) 
-!In other words ScalarPower is the power spectrum of the conserved curvature perturbation given by
-!-chi = \Phi + 2/3*\Omega^{-1} \frac{H^{-1}\Phi' - \Psi}{1+w}
-!(w=p/\rho), so < |\chi(x)|^2 > = \int dk/k ScalarPower(k).
-!Near the end of inflation chi is equal to 3/2 Psi.
-!Here nu^2 = (k^2 + curv)/|curv| 
-
-!This power spectrum is also used for isocurvature modes where 
-!< |\Delta(x)|^2 > = \int dk/k ScalarPower(k)
-!For the isocurvture velocity mode ScalarPower is the power in the neutrino heat flux.
+    !This power spectrum is also used for isocurvature modes where
+    !< |\Delta(x)|^2 > = \int dk/k ScalarPower(k)
+    !For the isocurvture velocity mode ScalarPower is the power in the neutrino heat flux.
+    
     use infpert, only : power_spectrum_scal
     use infpert, only : scalNum
     use infpowspline, only : splineval_power_scal
     implicit none
 
+    class(TInitialFieldInf) :: this
+    real(dl), intent(in) :: k
+    real(dl) TInitialFieldInf_ScalarPower
+
     real(kp), dimension(scalNum,scalNum) :: powerSpectrumScal
-    real(dl) :: ScalarPower,k
-    integer :: in
-   
-    if (in.ne.1) stop 'ScalarPower: only 1 Ps allowed'
+
 
     if (powerD%initP%useSpline) then
-       powerSpectrumScal = splineval_power_scal(k*1._kp)
+       powerSpectrumScal = splineval_power_scal(real(k,kp))
     else
-       powerSpectrumScal = power_spectrum_scal(powerD%infCosmo,k*1._kp)
+       powerSpectrumScal = power_spectrum_scal(powerD%infCosmo,real(k,kp))
     endif
 
-    ScalarPower = powerSpectrumScal(scalNum,scalNum)
-    
-  end function ScalarPower
+    TInitialFieldInf_ScalarPower = powerSpectrumScal(scalNum,scalNum)
 
+  end function TInitialFieldInf_ScalarPower
 
+  
 
+  
 
-      
-  function TensorPower(k,in)
-!TensorPower= const for scale invariant spectrum
-!The normalization is defined so that
-! < h_{ij}(x) h^{ij}(x) > = \sum_nu nu /(nu^2-1) (nu^2-4)/nu^2 TensorPower(k)
-!for a closed model
-! < h_{ij}(x) h^{ij}(x) > = int d nu /(nu^2+1) (nu^2+4)/nu^2 TensorPower(k)
-!for an open model
-!"in" gives the index of the power spectrum to return 
-!Here nu^2 = (k^2 + 3*curv)/|curv| 
+  function TInitialFieldInf_TensorPower(this,k)
+
+    !TensorPower= const for scale invariant spectrum
+    !The normalization is defined so that
+    ! < h_{ij}(x) h^{ij}(x) > = \sum_nu nu /(nu^2-1) (nu^2-4)/nu^2 TensorPower(k)
+    !for a closed model
+    ! < h_{ij}(x) h^{ij}(x) > = int d nu /(nu^2+1) (nu^2+4)/nu^2 TensorPower(k)
+    !for an open model
+    !Here nu^2 = (k^2 + 3*curv)/|curv|
+
     use infpert, only : power_spectrum_tens
     use infpowspline, only : splineval_power_tens
+    use constants
     implicit none
 
-    real(dl) :: TensorPower,k   
-    real(kp), parameter :: PiByTwo=3.14159265d0/2._kp
-   
-    integer :: in
+    class(TInitialFieldInf) :: this
+    real(dl), intent(in) :: k
+    real(dl) TInitialFieldInf_TensorPower
 
-    if (in.ne.1) stop 'TensorPower: only 1 Pt allowed'
-
-     if (powerD%initP%useSpline) then
-       TensorPower = splineval_power_tens(k*1._kp)
+    
+    if (powerD%initP%useSpline) then
+       TInitialFieldInf_TensorPower = splineval_power_tens(real(k,kp))
     else
-       TensorPower = power_spectrum_tens(powerD%infCosmo,k*1._kp)
+       TInitialFieldInf_TensorPower = power_spectrum_tens(powerD%infCosmo,real(k,kp))
     endif
+
+  end function TInitialFieldInf_TensorPower
+
+
+
+
   
-    if (curv < 0) TensorPower=TensorPower*tanh(PiByTwo*sqrt(-k**2/curv-3)) 
+  function CompatKey(Ini, name)
+    class(TIniFile), intent(in) :: Ini
+    character(LEN=*), intent(in) :: name
+    character(LEN=:), allocatable :: CompatKey
+    !Allow backwards compatibility with old .ini files where initial power parameters were arrays
 
-  end function TensorPower
-
-
-
-
-
-
-  function Power_Descript(in, Scal, Tens, Keys, Vals)
-!Get parameters describing parameterisation (for FITS file)
-    character(LEN=8), intent(out) :: Keys(*)
-    real(kp), intent(out) :: Vals(*)
-    integer, intent(IN) :: in
-    logical, intent(IN) :: Scal, Tens
-    integer num, Power_Descript
-    num=0
-    if ((Scal).or.(Tens)) then       
-       num=num+1    
-       Keys(num) = 'C1'
-       Vals(num) = powerD%initP%infParam%consts(1)
-       num=num+1
-       Keys(num) = 'C2'
-       Vals(num) = powerD%initP%infParam%consts(2)
-       num=num+1
-       Keys(num) = 'C3'
-       Vals(num) = powerD%initP%infParam%consts(3)
-       num=num+1
-       Keys(num) = 'C4'
-       Vals(num) = powerD%initP%infParam%consts(4)
-       num=num+1
-       Keys(num) = 'C5'
-       Vals(num) = powerD%initP%infParam%consts(4)
-       num=num+1
-!       Keys(num) = 'Conf'
-!       Vals(num) = powerD%initP%infParam%conforms(1)
-!       num=num+1             
-       Keys(num) = 'Field'
-       Vals(num) = powerD%initP%infParam%matters(1)    
-       num=num+1
-       Keys(num) = 'lnReheat'
-       Vals(num) = powerD%initP%lnReheat
-       num=num+1       
-       Keys(num) = 'HubbleEnd'
-       Vals(num) = powerD%infCosmo%bgEnd%hubble
-       num=num+1
-       Keys(num) = 'RhoEndInf'
-       Vals(num) = powerD%infCosmo%lnEnergyEnd
-       num=num+1
-       Keys(num) = 'EfoldEndToToday'
-       Vals(num) = powerD%infCosmo%efoldEndToToday
+    if (Ini%HasKey(name//'(1)')) then
+       CompatKey = name//'(1)'
+       if (Ini%HasKey(name)) call MpiStop('Must have one of '//trim(name)//' or '//trim(name)//'(1)')
+    else
+       CompatKey = name
     end if
-    Power_Descript = num
-    
-  end function Power_Descript
+  end function CompatKey
 
 
-  subroutine InitialPower_ReadParams(InitPower, Ini, WantTensors)
-    use IniFile
-!fields
+
+  
+  subroutine TInitialFieldInf_ReadParams(this, Ini)
+    use IniObjects
     use infmatter, only : matterNum
-!    use infdilaton, only : dilatonNum
+
+    class(TInitialFieldInf) :: this
+    class(TIniFile), intent(in) :: Ini
+    logical :: WantTensors
+    
     real :: mu,nu
-!end fields
+    integer :: i
 
-    Type(InitialPowerParams) :: InitPower
-    Type(TIniFile) :: Ini
-    logical, intent(in) :: WantTensors
-    integer i
-              
-!fields
+    WantTensors = Ini%Read_Logical('get_tensor_cls', .true.)
 
-    InitPower%nn = Ini_Read_Int('initial_power_num',1)
-    if (InitPower%nn>nnmax) stop 'Too many initial power spectra - increase nnmax in InitialPower'
-    InitPower%infParam%name = Ini_Read_String('inf_model_name')
-    InitPower%bgParamNum = Ini_Read_Int('inf_param_number',3)
-    
-    do i=1, InitPower%bgParamNum
-       InitPower%infParam%consts(i) &
-            = Ini_Read_Double_Array_File(Ini,'inf_param',i,0._dl)    		  
+    this%ipp%infParam%name = Ini%Read_String('inf_model_name')
+    this%ipp%bgParamNum = Ini%Read_Int('inf_param_number',3)
+
+    do i=1,this%ipp%bgParamNum
+       this%ipp%infParam%consts(i) = Ini%Read_Double_Array('inf_param',i,0._dl)
     end do
-    
-!    do i=1,dilatonNum
-!       InitPower%infParam%conforms(i) &
-!            = Ini_Read_Double_Array_File(Ini,'inf_conform',i,1d0)
-!    enddo
 
+!    do i=1,dilatonNum
+!       this%ipp%infParam%conforms(i) &
+!            = Ini%Read_Double_Array('inf_conform',i,1._dl)
+!    enddo
+    
     do i=1,matterNum
-       InitPower%infParam%matters(i) &
-            = Ini_Read_Double_Array_File(Ini,'inf_matter',i,1d1)
+       this%ipp%infParam%matters(i) &
+            = Ini%Read_Double_Array('inf_matter',i,1d1)
     enddo
+
+
+    this%ipp%checkBound = Ini%Read_Logical('inf_check_bound',.false.)
+    this%ipp%checkStop = Ini%Read_Logical('inf_check_stop',.false.)
     
-    InitPower%checkBound = Ini_Read_Logical('inf_check_bound',.false.)
-    InitPower%checkStop = Ini_Read_Logical('inf_check_stop',.false.)
+    this%ipp%lnReheat = Ini%Read_Double('inf_ln_reheat',0._dl)
     
-    InitPower%lnReheat = Ini_Read_Double('inf_ln_reheat',0d0)
-    
-    InitPower%useSpline = Ini_Read_Logical('power_spectra_spline',.false.)
-    if (InitPower%useSpline) then
-       InitPower%lnkmpcMin = Ini_Read_Double('spline_lnkmpc_min',-14d0)
-       InitPower%lnkmpcMax = Ini_Read_Double('spline_lnkmpc_max',0d0)
-       InitPower%lnkmpcNum = Ini_Read_Int('spline_lnkmpc_num',10)
+    this%ipp%useSpline = Ini%Read_Logical('power_spectra_spline',.false.)
+    if ( this%ipp%useSpline) then
+       this%ipp%lnkmpcMin = Ini%Read_Double('spline_lnkmpc_min',-14._dl)
+       this%ipp%lnkmpcMax = Ini%Read_Double('spline_lnkmpc_max',0._dl)
+       this%ipp%lnkmpcNum = Ini%Read_Int('spline_lnkmpc_num',10)
     endif
-    
 
 !convenient rescalings    
-!    InitPower%infParam%consts(1) = 10.**InitPower%infParam%consts(1)
-!    InitPower%infParam%consts(4) = 10.**InitPower%infParam%consts(4)
-    mu = InitPower%infParam%consts(3)
-    nu = InitPower%infParam%consts(4)
+!    this%ipp%infParam%consts(1) = 10.**this%ipp%infParam%consts(1)
+!    this%ipp%infParam%consts(4) = 10.**this%ipp%infParam%consts(4)
+    mu = this%ipp%infParam%consts(3)
+    nu = this%ipp%infParam%consts(4)
     if ((mu.ne.0.).and.(nu.eq.0.)) then
-       InitPower%infParam%matters = InitPower%infParam%matters &
+       this%ipp%infParam%matters = this%ipp%infParam%matters &
             *abs(mu)
-    endif
-    
-!end fields
+    endif    
 
 
-  end  subroutine InitialPower_ReadParams
-
+  end subroutine TInitialFieldInf_ReadParams
 
 
 end module InitialPower
