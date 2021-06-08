@@ -200,7 +200,7 @@ contains
     Pin%useSpline = useSplineDefault 
     Pin%lnkmpcMin = -14._kp
     Pin%lnkmpcMax = 1._kp
-    Pin%lnkmpcNum = 13._kp
+    Pin%lnkmpcNum = 13
       
     Pin%lnReheat = 0._kp
     Pin%kstar = 0.05_kp
