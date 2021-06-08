@@ -199,8 +199,8 @@ contains
 !range and sampling of the power spectra spline
     Pin%useSpline = useSplineDefault 
     Pin%lnkmpcMin = -14._kp
-    Pin%lnkmpcMax = 0._kp
-    Pin%lnkmpcNum = 12._kp
+    Pin%lnkmpcMax = 1._kp
+    Pin%lnkmpcNum = 13._kp
       
     Pin%lnReheat = 0._kp
     Pin%kstar = 0.05_kp
@@ -246,14 +246,14 @@ contains
        this%curv = -Params%Omk/((c/1000)/Params%H0)**2
        
     class default
-       stop 'TInitialFieldInf_Init: class type not found!'
+       call Mpistop( 'TInitialFieldInf_Init: class type not found!' )
        
     end select
 
 
     inferror = 0
 
-    if (this%curv.ne.0._dl) stop 'TInitialFieldInf_Init: inflation in flat universe only!'
+    if (this%curv.ne.0._dl) call mpistop ('TInitialFieldInf_Init: inflation in flat universe only!')
 
 !one background for all k (that's why nnmax=1)
 !    print *,'we are in initialize power',(Pin%infParam == powerD%initP%infParam) &
@@ -261,7 +261,7 @@ contains
   
     call this%SetInfBg(inferror)
     
-    if (inferror.ne.0) stop 'TInitialFieldInf_Init: unproper infbg'
+    if (inferror.ne.0) call mpistop( 'TInitialFieldInf_Init: unproper infbg')
 
     if (usePstar) then
 !this is only for playing with normalised power spectra to Pstar. 
@@ -275,7 +275,7 @@ contains
     call this%SetInfBgSpline()
 
     call this%SetInfCosmo(inferror)
-    if (inferror.ne.0) stop 'TInitialFieldInf_Init: unproper inftorad'
+    if (inferror.ne.0) call mpistop ('TInitialFieldInf_Init: unproper inftorad')
 
   end subroutine TInitialFieldInf_Init
 
@@ -339,7 +339,7 @@ contains
     areParamsSet = set_infbg_param(Pin%infParam)
     powerD%initP = Pin
     if (.not.(areParamsSet)) then
-       stop 'SetInfBg: params initialisation failed!'
+       call mpistop('SetInfBg: params initialisation failed!')
     endif
 
     powerD%infIni = set_infbg_ini(Pin%infParam)
@@ -509,7 +509,7 @@ contains
     if (Pin%infParam == powerD%initP%infParam) then
        call set_infbg_spline(powerD%infEnd,powerD%ptrBgdata)
     else
-       stop 'SetInfBgSpline: Pin%params >< Data params'
+       call mpistop('SetInfBgSpline: Pin%params >< Data params')
     endif
 
   end subroutine SetInfBgSpline
@@ -537,7 +537,7 @@ contains
     if (Pin%infParam == powerD%initP%infParam) then
        call free_infbg_spline()
     else
-       stop 'FreeInfBgSpline: Pin%params >< Data params'
+       call mpistop('FreeInfBgSpline: Pin%params >< Data params')
     endif
 
   end subroutine FreeInfBgSpline
@@ -560,13 +560,13 @@ contains
 
     type (initialpowerparams), intent(in) :: Pin    
    
-    if (.not.associated(powerD%ptrBgdata)) stop 'FreeInfBgData: no bgdata found!'
+    if (.not.associated(powerD%ptrBgdata)) call mpistop('FreeInfBgData: no bgdata found!')
 
 !sanity checks
     if (Pin%infParam == powerD%initP%infParam) then
        call free_infbg_data(powerD%ptrBgdata)      
     else
-       stop 'FreeInfBgData: Pin%params >< Data params'
+       call mpistop('FreeInfBgData: Pin%params >< Data params')
     endif
 
   end subroutine FreeInfBgData
@@ -594,7 +594,7 @@ contains
 
 !sanity checks
     if (Pin%infParam /= powerD%initP%infParam) then
-       stop 'SetInfCosmo: Pin%params >< Data params'
+       call mpistop('SetInfCosmo: Pin%params >< Data params')
     endif
 
     
@@ -699,11 +699,10 @@ contains
 
  !sanity checks
     if (.not.associated(powerD%ptrBgdata)) then
-       stop 'SetInfPowSpline: no InfBg found, call SetInfBg before!'
+       call mpistop('SetInfPowSpline: no InfBg found, call SetInfBg before!')
     else
        if (Pin /= powerD%initP) then
-          write(*,*)'SetInfPowSpline: Pin >< Data'
-          stop      
+          call mpistop('SetInfPowSpline: Pin >< Data')
        endif
     endif
     if (.not.Pin%useSpline) stop 'SetInfPowSpline: useSpline is F'
@@ -712,7 +711,7 @@ contains
        lnkmpcVec(i) = powerD%initP%lnkmpcMin + real(i-1,kp)*(powerD%initP%lnkmpcMax &
             - powerD%initP%lnkmpcMin)/real(powerD%initP%lnkmpcNum-1,kp)
     enddo
-
+    
 !this test that initial conditions at kphysOverHubbleInit can be set,
 !or in other words that there are enough efold to do it
     if (present(inferror)) then

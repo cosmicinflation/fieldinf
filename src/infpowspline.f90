@@ -16,14 +16,16 @@ module infpowspline
   integer, save :: scalModeNum
   real(kp), dimension(:), allocatable, save :: scalLnkmpcKnot
   real(kp), dimension(:,:,:), allocatable, save :: scalPowerBcoef
-
+!$omp threadprivate(scalOrder,scalBcoefNum,scalModeNum)
+!$omp threadprivate(scalLnkmpcKnot,scalPowerBcoef)
+  
   integer, save :: tensOrder
   integer, save :: tensBcoefNum
   integer, save :: tensModeNum
   real(kp), dimension(:), allocatable, save :: tensLnkmpcKnot
-  real(kp), dimension(:), allocatable, save :: tensPowerBcoef
-  
-
+  real(kp), dimension(:), allocatable, save :: tensPowerBcoef  
+!$omp threadprivate(tensOrder,tensBcoefNum,tensModeNum)
+!$omp threadprivate(tensLnkmpcKnot,tensPowerBcoef)
 
   public check_power_scal_spline, check_power_tens_spline
   public free_power_scal_spline, free_power_tens_spline
@@ -153,20 +155,27 @@ contains
     call dbsnak(lnkmpcNum,lnkmpcVec,scalOrder,scalLnkmpcKnot)
 
 !to avoid race conditions    
-    allocate(scalPowerBcoefTemp(scalBcoefNum))
-    allocate(lnPowerScalTemp(lnkmpcNum))
+!    allocate(scalPowerBcoefTemp(scalBcoefNum))
+!    allocate(lnPowerScalTemp(lnkmpcNum))
+
+!    do j=1,scalNum
+!       do i=1,scalNum
+!          lnPowerScalTemp(:) = lnPowerScal(:,i,j)
+!          call dbsint(lnkmpcNum,lnkmpcVec,lnPowerScalTemp,scalOrder,scalLnkmpcKnot &
+!               ,scalPowerBcoefTemp)
+!          scalPowerBcoef(:,i,j) = scalPowerBcoefTemp(:)
+!       enddo
+!    enddo
 
     do j=1,scalNum
        do i=1,scalNum
-          lnPowerScalTemp(:) = lnPowerScal(:,i,j)
-          call dbsint(lnkmpcNum,lnkmpcVec,lnPowerScalTemp,scalOrder,scalLnkmpcKnot &
-               ,scalPowerBcoefTemp)
-          scalPowerBcoef(:,i,j) = scalPowerBcoefTemp(:)
+          call dbsint(lnkmpcNum,lnkmpcVec,lnPowerScal(:,i,j),scalOrder,scalLnkmpcKnot &
+               ,scalPowerBcoef(:,i,j))
        enddo
     enddo
-
-    deallocate(scalPowerBcoefTemp)
-    deallocate(lnPowerScalTemp)
+    
+!    deallocate(scalPowerBcoefTemp)
+!    deallocate(lnPowerScalTemp)
     deallocate(lnPowerScal)
     
 
@@ -254,19 +263,27 @@ contains
     integer :: i,j
 
     lnkmpc = log(kmpc)  
-
+    
 !avoid race condition
-    allocate(scalPowerBcoefTemp(scalBcoefNum))
+!    allocate(scalPowerBcoefTemp(scalBcoefNum))
+
+!    do j=1,scalModeNum
+!       do i=1,scalModeNum
+!          scalPowerBcoefTemp = scalPowerBcoef(:,i,j)
+!          splineval_power_scal(i,j) = exp(dbsval(lnkmpc,scalOrder,scalLnkmpcKnot &
+!               ,scalBcoefNum,scalPowerBcoefTemp))
+!       enddo
+!    enddo
 
     do j=1,scalModeNum
        do i=1,scalModeNum
-          scalPowerBcoefTemp = scalPowerBcoef(:,i,j)
           splineval_power_scal(i,j) = exp(dbsval(lnkmpc,scalOrder,scalLnkmpcKnot &
-               ,scalBcoefNum,scalPowerBcoefTemp))
+               ,scalBcoefNum,scalPowerBcoef(:,i,j)))
        enddo
     enddo
 
-    deallocate(scalPowerBcoefTemp)
+    
+!    deallocate(scalPowerBcoefTemp)
 
   end function splineval_power_scal
 
