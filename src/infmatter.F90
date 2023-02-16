@@ -744,7 +744,7 @@ contains
           matter_potential = saai_norm_potential(chi,alpha)
 
        case ('scaabi')
-          matter_potential = sabi_norm_potential(chi,alpha,p)
+          matter_potential = sati_norm_potential(chi,alpha,p)
 
        case ('scaaci')
           matter_potential = saci_norm_potential(chi,alpha,p)
@@ -1046,7 +1046,7 @@ contains
           deriv_matter_potential(1) = saai_norm_deriv_potential(chi,alpha)
 
        case ('scaabi')
-          deriv_matter_potential(1) = sabi_norm_deriv_potential(chi,alpha,p)
+          deriv_matter_potential(1) = sati_norm_deriv_potential(chi,alpha,p)
 
        case ('scaaci')
           deriv_matter_potential(1) = saci_norm_deriv_potential(chi,alpha,p)
@@ -1380,7 +1380,7 @@ contains
           deriv_second_matter_potential(1,1) = saai_norm_deriv_second_potential(chi,alpha)
 
        case ('scaabi')
-          deriv_second_matter_potential(1,1) = sabi_norm_deriv_second_potential(chi,alpha,p)
+          deriv_second_matter_potential(1,1) = sati_norm_deriv_second_potential(chi,alpha,p)
 
        case ('scaaci')
           deriv_second_matter_potential(1,1) = saci_norm_deriv_second_potential(chi,alpha,p)

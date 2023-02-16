@@ -315,8 +315,8 @@ contains
     case ('scaaai','saai')
        slowroll_initial_matter = saai_initial_field(infParam,efold)
 
-    case ('scaabi','sabi')
-       slowroll_initial_matter = sabi_initial_field(infParam,efold)
+    case ('scaabi','sati')
+       slowroll_initial_matter = sati_initial_field(infParam,efold)
 
     case ('scaaci','saci')
        slowroll_initial_matter = saci_initial_field(infParam,efold)
@@ -2949,10 +2949,10 @@ contains
 
 
 
-  function sabi_initial_field(infParam, efold)
-    use sabisr, only : sabi_x_endinf, sabi_x_trajectory
+  function sati_initial_field(infParam, efold)
+    use satisr, only : sati_x_endinf, sati_x_trajectory
 
-    real(kp), dimension(matterNum) :: sabi_initial_field
+    real(kp), dimension(matterNum) :: sati_initial_field
     type(infbgparam), intent(in) :: infParam
     real(kp), intent(in) :: efold
 
@@ -2964,14 +2964,14 @@ contains
     p = infParam%consts(2)/2._kp
     alpha = infParam%consts(3)**2/6._kp
 
-    xEnd = sabi_x_endinf(alpha,p)
-    if (display) write(*,*)'sabi_initial_field: xend= ', xEnd
+    xEnd = sati_x_endinf(alpha,p)
+    if (display) write(*,*)'sati_initial_field: xend= ', xEnd
 
-    xIni = sabi_x_trajectory(bfold,xend,alpha,p)
+    xIni = sati_x_trajectory(bfold,xend,alpha,p)
 
-    sabi_initial_field(:) = xIni
+    sati_initial_field(:) = xIni
 
-  end function sabi_initial_field
+  end function sati_initial_field
 
 
 

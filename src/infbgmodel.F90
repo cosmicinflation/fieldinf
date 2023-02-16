@@ -1642,7 +1642,7 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('scaabi','sabi')
+    case ('scaabi','sati')
 !superconformal alpha attractor B inflation: SABI
 
 !U = c1^4 [tanh(F/c3)]^(c2)
