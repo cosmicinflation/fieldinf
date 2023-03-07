@@ -1,4 +1,4 @@
-AC_INIT([fieldinf],[1.2.0],[fieldinf@ringeval.info],[],[http://cp3.irmp.ucl.ac.be/~ringeval/fieldinf.html])
+AC_INIT([fieldinf],[1.2.0],[chris@curl.group],[],[https://github.com/eatdust/fieldinf])
 
 AM_INIT_AUTOMAKE
 

@@ -350,10 +350,11 @@ contains
           beta = potParam(18)
           potName='nformi'
 
-       case ('scaaai')
+       case ('scaaai','saai')
           M4 = potParam(6)
           alpha = 1._kp/(1.5_kp*potParam(8)**2)
-
+          potName = 'scaaai'
+          
        case ('dblexp','dei')
           M4 = potParam(7)
           beta = sqrt(potParam(8)/potParam(17))
@@ -425,7 +426,6 @@ contains
           M4 = potParam(1)
           alpha = potParam(2)
 
-
        case ('fibrei')
           M4 = potParam(1)
           alpha = potParam(2)
@@ -435,11 +435,18 @@ contains
           M4 = potParam(1)
           mu = potParam(2)
 
-       case ('scaabi','scaaci')
+       case ('scaati','sati')
           M4 = potParam(1)
           p = potParam(2)/2._kp
           alpha = potParam(3)**2/6._kp
-
+          potName = 'scaati'
+          
+       case ('scaaci','saci')
+          M4 = potParam(1)
+          p = potParam(2)/2._kp
+          alpha = potParam(3)**2/6._kp
+          potName = 'scaaci'
+          
        case ('hyperb','hbi')
           M4 = potParam(1)
           p = potParam(2)
@@ -521,9 +528,7 @@ contains
 !    phi = matter(1)
 !    psi=  matter(2)
 
-
 #ifndef PPNAME
-
     if (chi.gt.0._kp) then
        lnchi = log(chi)
     else
@@ -545,12 +550,11 @@ contains
          + potParam(15)*chi**potParam(16)*exp(potParam(17)*chi**potParam(18))
 #endif
 #endif
-
     
 #elif !defined(NOASPIC)
 
     select case (potName)
-
+       
        case ('largef')
           matter_potential = lfi_norm_potential(chi,p)
           
@@ -743,7 +747,7 @@ contains
        case ('scaaai')
           matter_potential = saai_norm_potential(chi,alpha)
 
-       case ('scaabi')
+       case ('scaati')
           matter_potential = sati_norm_potential(chi,alpha,p)
 
        case ('scaaci')
@@ -780,7 +784,7 @@ contains
           stop 'matter_potential: model not found!'
 
     end select
-!ensures normalistion x M^4
+!ensures normalisation x M^4
     matter_potential = M4 * matter_potential
 
 #else
@@ -1045,7 +1049,7 @@ contains
        case ('scaaai')
           deriv_matter_potential(1) = saai_norm_deriv_potential(chi,alpha)
 
-       case ('scaabi')
+       case ('scaati')
           deriv_matter_potential(1) = sati_norm_deriv_potential(chi,alpha,p)
 
        case ('scaaci')
@@ -1379,7 +1383,7 @@ contains
        case ('scaaai')
           deriv_second_matter_potential(1,1) = saai_norm_deriv_second_potential(chi,alpha)
 
-       case ('scaabi')
+       case ('scaati')
           deriv_second_matter_potential(1,1) = sati_norm_deriv_second_potential(chi,alpha,p)
 
        case ('scaaci')

@@ -1642,8 +1642,8 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('scaabi','sati')
-!superconformal alpha attractor B inflation: SABI
+    case ('scaati','sati')
+!superconformal alpha attractor T inflation: SATI
 
 !U = c1^4 [tanh(F/c3)]^(c2)
 
@@ -1668,7 +1668,8 @@ contains
     case ('scaaci','saci')
 !superconformal alpha attractor C inflation: SACI
 
-!U = c1^4 {tanh(F/c3)/[1 + tanh(F/c3)]}^c2
+!U = c1^4 [1 - exp(-2 F/c3)]^(c2)
+
 
        badParams = (infParam%consts(1).le.0._kp) &
             .or. (infParam%consts(2).le.0._kp) &
@@ -1684,7 +1685,6 @@ contains
        matterParam(1) = infParam%consts(1)
 !2 n
        matterParam(2) = infParam%consts(2)
-
 !sqrt(6 alpha)
        matterParam(3) = infParam%consts(3)**0.25_kp
 
