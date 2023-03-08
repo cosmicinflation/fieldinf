@@ -315,7 +315,7 @@ contains
     case ('scaaai','saai')
        slowroll_initial_matter = saai_initial_field(infParam,efold)
 
-    case ('scaabi','sati')
+    case ('scaati','sati')
        slowroll_initial_matter = sati_initial_field(infParam,efold)
 
     case ('scaabi','sabi')

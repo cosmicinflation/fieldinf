@@ -1642,31 +1642,8 @@ contains
        matterParam(3) = infParam%consts(3)
 
 
-    case ('scaati','sati')
-!superconformal alpha attractor T inflation: SATI
-
-!U = c1^4 [tanh(F/c3)]^(c2)
-
-       badParams = (infParam%consts(1).le.0._kp) &
-            .or. (infParam%consts(2).le.0._kp) &
-            .or. (infParam%consts(3).le.0._kp)
-
-       if (badParams) then
-          write(*,*)'model name: ',infParam%name
-          write(*,*)'consts = ',infParam%consts(1:3)
-          stop 'superconformal alpha attractor B inflation: improper params'
-       endif
-!M4
-       matterParam(1) = infParam%consts(1)
-!2 n
-       matterParam(2) = infParam%consts(2)
-
-!sqrt(6 alpha)
-       matterParam(3) = infParam%consts(3)**0.25_kp
-
-
     case ('scaabi','sabi')
-!superconformal alpha attractor C inflation: SACI
+!superconformal alpha attractor B inflation: SABI
 
 !U = c1^4 [1 - exp(-2 F/c3)]^(c2)
 
@@ -1688,6 +1665,29 @@ contains
 !sqrt(6 alpha)
        matterParam(3) = infParam%consts(3)**0.25_kp
 
+
+       
+    case ('scaati','sati')
+!superconformal alpha attractor T inflation: SATI
+
+!U = c1^4 [tanh(F/c3)]^(c2)
+
+       badParams = (infParam%consts(1).le.0._kp) &
+            .or. (infParam%consts(2).le.0._kp) &
+            .or. (infParam%consts(3).le.0._kp)
+
+       if (badParams) then
+          write(*,*)'model name: ',infParam%name
+          write(*,*)'consts = ',infParam%consts(1:3)
+          stop 'superconformal alpha attractor B inflation: improper params'
+       endif
+!M4
+       matterParam(1) = infParam%consts(1)
+!2 n
+       matterParam(2) = infParam%consts(2)
+
+!sqrt(6 alpha)
+       matterParam(3) = infParam%consts(3)**0.25_kp
 
 
     case ('hyperb','hbi')
