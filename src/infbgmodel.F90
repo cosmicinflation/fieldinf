@@ -1665,7 +1665,7 @@ contains
        matterParam(3) = infParam%consts(3)**0.25_kp
 
 
-    case ('scaaci','saci')
+    case ('scaabi','sabi')
 !superconformal alpha attractor C inflation: SACI
 
 !U = c1^4 [1 - exp(-2 F/c3)]^(c2)

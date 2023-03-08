@@ -441,11 +441,11 @@ contains
           alpha = potParam(3)**2/6._kp
           potName = 'scaati'
           
-       case ('scaaci','saci')
+       case ('scaabi','sabi')
           M4 = potParam(1)
           p = potParam(2)/2._kp
           alpha = potParam(3)**2/6._kp
-          potName = 'scaaci'
+          potName = 'scaabi'
           
        case ('hyperb','hbi')
           M4 = potParam(1)
@@ -750,8 +750,8 @@ contains
        case ('scaati')
           matter_potential = sati_norm_potential(chi,alpha,p)
 
-       case ('scaaci')
-          matter_potential = saci_norm_potential(chi,alpha,p)
+       case ('scaabi')
+          matter_potential = sabi_norm_potential(chi,alpha,p)
 
        case ('hyperb')
           matter_potential = hbi_norm_potential(chi/mu,p,mu)
@@ -1052,8 +1052,8 @@ contains
        case ('scaati')
           deriv_matter_potential(1) = sati_norm_deriv_potential(chi,alpha,p)
 
-       case ('scaaci')
-          deriv_matter_potential(1) = saci_norm_deriv_potential(chi,alpha,p)
+       case ('scaabi')
+          deriv_matter_potential(1) = sabi_norm_deriv_potential(chi,alpha,p)
 
        case ('hyperb')
           deriv_matter_potential(1) = hbi_norm_deriv_potential(chi/mu,p,mu)/mu
@@ -1386,8 +1386,8 @@ contains
        case ('scaati')
           deriv_second_matter_potential(1,1) = sati_norm_deriv_second_potential(chi,alpha,p)
 
-       case ('scaaci')
-          deriv_second_matter_potential(1,1) = saci_norm_deriv_second_potential(chi,alpha,p)
+       case ('scaabi')
+          deriv_second_matter_potential(1,1) = sabi_norm_deriv_second_potential(chi,alpha,p)
 
        case ('hyperb')
           deriv_second_matter_potential(1,1) = hbi_norm_deriv_second_potential(chi/mu,p,mu)/mu/mu

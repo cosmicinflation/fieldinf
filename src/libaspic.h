@@ -279,8 +279,8 @@
   use satisr, only : sati_norm_deriv_second_potential
 
 !superconformal alpha attractor C inflation
-  use sacisr, only : saci_norm_potential, saci_norm_deriv_potential
-  use sacisr, only : saci_norm_deriv_second_potential
+  use sabisr, only : sabi_norm_potential, sabi_norm_deriv_potential
+  use sabisr, only : sabi_norm_deriv_second_potential
 
 !hyperbolic inflation  
   use hbisr, only : hbi_norm_potential, hbi_norm_deriv_potential
