@@ -1,5 +1,5 @@
 * version 1.2.*
-- support for new libaspic version 1.0
+- support for new libaspic version 1.4.* and its bunch of new models
 - support for PAI, SAII1, SAII2, SAIII1, SAIII2, SAIII3, DEI
 
 * version 1.1.*

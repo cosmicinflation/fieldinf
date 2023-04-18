@@ -1,4 +1,4 @@
-AC_INIT([fieldinf],[1.2.0],[chris@curl.group],[],[https://github.com/eatdust/fieldinf])
+AC_INIT([fieldinf],[1.2.2],[chris@curl.group],[],[https://github.com/eatdust/fieldinf])
 
 AM_INIT_AUTOMAKE
 
@@ -8,7 +8,7 @@ AC_PROG_FC
 AC_PROG_CPP
 LT_INIT
 
-version_info="3:0:0"
+version_info="4:0:0"
 AC_SUBST(version_info)
 
 

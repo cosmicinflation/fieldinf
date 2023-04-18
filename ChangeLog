@@ -1,3 +1,127 @@
+commit b3cec1281c613f0ce886112eb98ec20ab8f7522b
+Author: chris <chris@ringeval.com>
+Date:   Wed Mar 8 15:54:58 2023 +0100
+
+    fix renaming leftover
+
+ src/infbgmodel.F90 | 24 ++++++++++++------------
+ src/infsric.F90    |  2 +-
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+commit cd490cb703d15adb74af21dc1bad1144a6068c3b
+Author: chris <chris@ringeval.com>
+Date:   Wed Mar 8 15:50:33 2023 +0100
+
+    Propagate renaming of saci into sabi
+
+ src/infbgmodel.F90 |  2 +-
+ src/infmatter.F90  | 16 ++++++++--------
+ src/infsric.F90    | 20 ++++++++++----------
+ src/libaspic.h     |  4 ++--
+ 4 files changed, 21 insertions(+), 21 deletions(-)
+
+commit b053e868c55006ec685359b8ecbbeb5db7d2ad1a
+Author: chris <chris@ringeval.com>
+Date:   Tue Mar 7 16:48:23 2023 +0100
+
+    Fix renaming of sati, test new aspic saci potential
+
+ configure.ac       |  2 +-
+ src/infbgmodel.F90 |  8 ++++----
+ src/infmatter.F90  | 30 +++++++++++++++++-------------
+ 3 files changed, 22 insertions(+), 18 deletions(-)
+
+commit 2230338460ea382e8b186bde61e1f6aa0806bab6
+Author: chris <chris@ringeval.com>
+Date:   Thu Feb 16 17:39:04 2023 +0100
+
+    Rename sabi into sati
+
+ src/infbgmodel.F90 |  2 +-
+ src/infmatter.F90  |  6 +++---
+ src/infsric.F90    | 20 ++++++++++----------
+ src/libaspic.h     |  4 ++--
+ 4 files changed, 16 insertions(+), 16 deletions(-)
+
+commit 75fc4d6865a156e740732c7abd5fa312a30cc5b0
+Author: chris <chris@ringeval.com>
+Date:   Fri Dec 10 16:27:57 2021 +0100
+
+    Update headers
+
+ src/InitialFieldInf.f90 | 21 +++++++++++++++++++++
+ src/binfspline.f90      | 25 +++++++++++++++++++++++++
+ src/fieldmain.f90       | 21 +++++++++++++++++++++
+ src/fieldprec.f90       | 21 +++++++++++++++++++++
+ src/gurumain.f90        | 21 +++++++++++++++++++++
+ src/infbg.f90           | 22 ++++++++++++++++++++++
+ src/infbgfunc.f90       | 22 ++++++++++++++++++++++
+ src/infbgmodel.F90      | 20 ++++++++++++++++++++
+ src/infbgspline.f90     | 20 ++++++++++++++++++++
+ src/infbounds.f90       | 22 ++++++++++++++++++++++
+ src/infdilaton.f90      | 22 ++++++++++++++++++++++
+ src/infio.f90           | 21 +++++++++++++++++++++
+ src/infmatter.F90       | 21 +++++++++++++++++++++
+ src/infpert.f90         | 22 ++++++++++++++++++++++
+ src/infpotential.f90    | 21 +++++++++++++++++++++
+ src/infpowspline.f90    | 21 +++++++++++++++++++++
+ src/infsigma.f90        | 21 +++++++++++++++++++++
+ src/infsolvers.f90      | 23 +++++++++++++++++++++++
+ src/infsolvers.h        | 21 +++++++++++++++++++++
+ src/infsric.F90         | 21 +++++++++++++++++++++
+ src/inftorad.f90        | 21 +++++++++++++++++++++
+ src/infunits.F90        | 22 ++++++++++++++++++++++
+ src/libaspic.h          | 21 +++++++++++++++++++++
+ 23 files changed, 493 insertions(+)
+
+commit 47fdab07c79cbc3fb547697217b4d52601bee6af
+Author: chris <chris@ringeval.com>
+Date:   Tue Jun 8 15:32:14 2021 +0200
+
+    Fix init value
+
+ src/InitialFieldInf.f90 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b8448bdad9ea0dcb3d26f0c3ce4df303bedf2560
+Author: chris <chris@ringeval.com>
+Date:   Tue Jun 8 15:29:52 2021 +0200
+
+    Update CAMB interface, nested safety in spline
+
+ src/InitialFieldInf.f90 |  31 +-
+ src/infpowspline.f90    |  53 ++-
+ src/power_inf.f90       | 962 ------------------------------------------------
+ 3 files changed, 50 insertions(+), 996 deletions(-)
+
+commit 40a5649a3448adb89d573b2a76c29921c32ca622
+Author: chris <chris@ringeval.com>
+Date:   Fri Jun 4 18:22:16 2021 +0200
+
+    Update CAMB interface
+
+ src/InitialFieldInf.f90 | 1027 +++++++++++++++++++++++++++++++++++++++++++++++
+ src/power_inf.f90       |    4 +-
+ 2 files changed, 1029 insertions(+), 2 deletions(-)
+
+commit d04c254819a20155c214fb09bc5499ff7937083b
+Author: chris <chris@ringeval.com>
+Date:   Thu Jun 3 10:45:11 2021 +0200
+
+    Fix README
+
+ README | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit e3667ca9b03ee163333a11b197f780309b44f217
+Author: chris <chris@ringeval.com>
+Date:   Wed Jun 2 16:23:47 2021 +0200
+
+    Update Changelog
+
+ ChangeLog | 416 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 416 insertions(+)
+
 commit 5b4ed68395975450231eec5acc52c9d970f245d4
 Author: chris <chris@ringeval.com>
 Date:   Wed Jun 2 15:44:01 2021 +0200
