@@ -1,3 +1,14 @@
+commit bd0df46e9f2735b6d9e86b94ef347ee00b604261 (HEAD -> fieldinf)
+Author: chris <chris@ringeval.com>
+Date:   Tue Apr 18 14:39:30 2023 +0200
+
+    Public release with opiparous aspic
+
+ ChangeLog    | 124 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ NEWS         |   2 +-
+ configure.ac |   4 ++--
+ 3 files changed, 127 insertions(+), 3 deletions(-)
+
 commit b3cec1281c613f0ce886112eb98ec20ab8f7522b
 Author: chris <chris@ringeval.com>
 Date:   Wed Mar 8 15:54:58 2023 +0100
