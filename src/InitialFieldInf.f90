@@ -94,9 +94,9 @@ module InitialPower
      procedure :: FreeInfBgData => TInitialFieldInf_FreeInfBgData
      procedure :: SetInfScalPow => TInitialFieldInf_SetInfScalPow
      procedure :: FreePowers => TInitialFieldInf_FreePowers
-     procedure :: Effective_ns => TInitalPowerLaw_Effective_ns
-     procedure :: Effective_as => TInitalPowerLaw_Effective_as
-     procedure :: Effective_bs => TInitalPowerLaw_Effective_bs
+     procedure :: Effective_ns => TInitialFieldInf_Effective_ns
+     procedure :: Effective_as => TInitialFieldInf_Effective_as
+     procedure :: Effective_bs => TInitialFieldInf_Effective_bs
   end Type TInitialFieldInf
 
 
@@ -1062,49 +1062,64 @@ contains
 
 
 
-  function TInitalFieldInf_Effective_ns(this)
+  function TInitialFieldInf_Effective_ns(this)
     use infpowspline, only : splineval_ns_scal
+    use infpert, only : scalNum
     class(TInitialFieldInf) :: this
-    real(dl) :: TInitalPowerLaw_Effective_ns
+    real(dl) :: TInitialFieldInf_Effective_ns
 
+    real(kp), dimension(scalNum,scalNum) :: spectalIndexScal
+    
 !only possible if spline is on (safest way to compute numerical derivatives)    
     if (.not.(this%ipp%useSpline)) then
        write(*,*)'useSpline= ',this%ipp%useSpline
        call Mpistop( 'TInitalFieldInf_Effective_ns: enable spline to compute ns!' )
     end if
-       
-    TInitialFieldInf_Effective_ns = splineval_ns_scal(real(this%ipp%kstar,kp))   
 
-  end function TInitalPowerLaw_Effective_ns
+    spectalIndexScal = splineval_ns_scal(real(this%ipp%kstar,kp))
+    
+    TInitialFieldInf_Effective_ns = spectalIndexScal(scalNum,scalNum)
+
+  end function TInitialFieldInf_Effective_ns
 
 !same as before for the running and running of the running
-  function TInitalFieldInf_Effective_as(this)
+  function TInitialFieldInf_Effective_as(this)
     use infpowspline, only : splineval_alphas_scal
+    use infpert, only : scalNum
     class(TInitialFieldInf) :: this
-    real(dl) :: TInitalPowerLaw_Effective_as
+    real(dl) :: TInitialFieldInf_Effective_as
 
+    real(kp), dimension(scalNum,scalNum) :: runningScal
+    
     if (.not.(this%ipp%useSpline)) then
        write(*,*)'useSpline= ',this%ipp%useSpline
        call Mpistop( 'TInitalFieldInf_Effective_ns: enable spline to compute as!' )
     end if
-       
-    TInitialFieldInf_Effective_as = splineval_alphas_scal(real(this%ipp%kstar,kp))   
 
-  end function TInitalFieldInf_Effective_as
+    runningScal = splineval_alphas_scal(real(this%ipp%kstar,kp))
+    
+    TInitialFieldInf_Effective_as = runningScal(scalNum,scalNum)
 
-  function TInitalFieldInf_Effective_bs(this)
+  end function TInitialFieldInf_Effective_as
+
+  function TInitialFieldInf_Effective_bs(this)
     use infpowspline, only : splineval_betas_scal
+    use infpert, only : scalNum
     class(TInitialFieldInf) :: this
-    real(dl) :: TInitalPowerLaw_Effective_bs
+    real(dl) :: TInitialFieldInf_Effective_bs
 
+    real(kp), dimension(scalNum,scalNum) :: runningOfRunningScal
+    
     if (.not.(this%ipp%useSpline)) then
        write(*,*)'useSpline= ',this%ipp%useSpline
        call Mpistop( 'TInitalFieldInf_Effective_as: enable spline to compute bs!' )
     end if
-       
-    TInitialFieldInf_Effective_bs = splineval_betas_scal(real(this%ipp%kstar,kp))   
 
-  end function TInitalFieldInf_Effective_bs
+    runningOfRunningScal = splineval_betas_scal(real(this%ipp%kstar,kp))
+    
+    TInitialFieldInf_Effective_bs = runningOfRunningScal(scalNum,scalNum)
+
+  end function TInitialFieldInf_Effective_bs
   
 
   
