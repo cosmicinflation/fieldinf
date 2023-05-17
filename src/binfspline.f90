@@ -129,6 +129,7 @@ module bspline
 
   public dbsnak
   public dbsint, dbsval
+  public dbsder
 
 
 contains
@@ -374,6 +375,137 @@ contains
     dbsval = work(kx)
 
   end function dbsval
+
+
+
+  function dbsder(iderx,x,kx,xknot,nx,bcoef)
+
+!
+!  Evaluates the derivative of a spline, given its B-spline representation.
+!
+!
+!   iderx  - order of the derivative to be evaluated.  (input)
+!            in particular, iderx = 0 returns the value of the
+!            spline.
+!   x      - point at which the spline is to be evaluated.  (input)
+!   kx     - order of the spline.  (input)
+!   xknot  - array of length nx+kx containing the knot
+!            sequence.  (input)
+!            xknot must be nondecreasing.
+!   nx     - number of B-spline coefficients.  (input)
+!   bcoef  - array of length nx containing the B-spline
+!            coefficients.  (input)
+!   dbsder - value of the iderx-th derivative of the spline at x.
+!            (output)
+!
+
+    use numeric
+
+    implicit none
+
+    integer, intent(in)                          :: iderx, kx, nx
+    real(kind=dbl)                               :: dbsder
+    real(kind=dbl), intent(in)                   :: x
+    real(kind=dbl), dimension(nx+kx), intent(in) :: xknot
+    real(kind=dbl), dimension(nx), intent(in)    :: bcoef
+
+    integer                       :: ix, ik, il, leftx
+    real(kind=dbl)                :: save, save1, save2, y, sum, dik
+    real(kind=dbl), dimension(kx) :: work, dl, dr,bsp
+
+!
+!     check if xknot(i) <= xknot(i+1) and calculation of i so that
+!     xknot(i) <= x < xknot(i+1)
+!
+
+    leftx = 0
+    do ix = 1,nx+kx-1
+       if (xknot(ix) .gt. xknot(ix+1)) then
+          write(6,*) "subroutine dbsder:"
+          write(6,*) "xknot(ix) <= xknot(ix+1) required."
+          stop
+       endif
+       if ((xknot(ix) .le. x) .and. (x .lt. xknot(ix+1))) leftx = ix
+    end do
+
+    if (leftx .eq. 0) then
+       write(6,*) "subroutine dbsder:"
+       write(6,*) "ix with xknot(ix) <= x < xknot(ix+1) required."
+       write(6,*) "xknot(1)     = ", xknot(1)
+       write(6,*) "xknot(nx+kx) = ", xknot(nx+kx)
+       write(6,*) "         x   = ", x
+       stop
+    endif
+
+    if (iderx .eq. 0) then
+
+       do ik = 1,kx-1
+          work(ik) = bcoef(leftx+ik-kx)
+          dl(ik)   = x - xknot(leftx+ik-kx)
+          dr(ik)   = xknot(leftx+ik) - x
+       end do
+
+       work(kx)  = bcoef(leftx)
+       dl(kx)    = x - xknot(leftx)
+
+       do ik = 1,kx-1
+          save2 = work(ik)
+          do il = ik+1,kx
+             save1 = work(il)
+             work(il) = (dl(il) * work(il) + dr(il-ik) * save2)               &
+                  &              / (dl(il) + dr(il - ik))
+             save2 = save1
+          end do
+       end do
+
+       dbsder = work(kx)
+
+    elseif ((iderx .ge. 1) .and. (iderx .lt. kx)) then
+
+       bsp(1) = 1.0_dbl
+       do ik = 1,kx-iderx-1
+          dr(ik) = xknot(leftx+ik) - x
+          dl(ik) = x - xknot(leftx+1-ik)
+          save   = bsp(1)
+          bsp(1) = 0.0_dbl
+          do il = 1, ik
+             y         = save / (dr(il) + dl(ik+1-il))
+             bsp(il)   = bsp(il) + dr(il) * y
+             save      = bsp(il+1)
+             bsp(il+1) = dl(ik+1-il) * y
+          end do
+       end do
+
+       do ik = 1, kx
+          work(ik) = bcoef(leftx+ik-kx)
+          dr(ik)   = xknot(leftx+ik) - x
+          dl(ik)   = x - xknot(leftx+ik-kx)
+       end do
+
+       do ik = 1, iderx
+          dik   = dble(kx - ik)
+          save2 = work(ik)
+          do il = ik+1, kx
+             save1    = work(il)
+             work(il) = dik * (work(il) - save2) /(dl(il) + dr(il-ik))
+             save2    = save1
+          end do
+       end do
+
+       sum = 0.0_dbl
+
+       do ix = 1, kx-iderx
+          sum = sum + bsp(ix) * work(iderx+ix)
+       end do
+
+       dbsder = sum
+
+    else
+       dbsder = 0.0_dbl
+    endif
+
+  end function dbsder
+
 
 
 

@@ -52,6 +52,8 @@ module infpowspline
   public free_power_scal_spline, free_power_tens_spline
   public set_power_scal_spline, set_power_tens_spline
   public splineval_power_scal, splineval_power_tens
+  public splineval_ns_scal, splineval_nt_tens
+  public splineval_alphas_scal, splineval_betas_scal
 
 contains
   
@@ -325,6 +327,103 @@ contains
     
   end function splineval_power_tens
 
+!the derivative of the spline at kmpc (+1)
+  function splineval_ns_scal(kmpc)
+    use bspline, only : dbsder
+    implicit none
+    real(kp), intent(in) :: kmpc
+    real(kp), dimension(scalModeNum,scalModeNum) :: splineval_ns_scal    
+    real(kp) :: lnkmpc
+    integer :: i,j
+
+!first derivative: spectral index    
+    integer, parameter :: ider = 1
+    
+    lnkmpc = log(kmpc)  
+
+
+    do j=1,scalModeNum
+       do i=1,scalModeNum
+          splineval_ns_scal(i,j) = dbsder(ider,lnkmpc,scalOrder,scalLnkmpcKnot &
+               ,scalBcoefNum,scalPowerBcoef(:,i,j))
+       enddo
+    enddo
+
+!we have computed d ln(Ps)/d ln(k) which is ns-1    
+    splineval_ns_scal = splineval_ns_scal + 1._kp
+
+  end function splineval_ns_scal
+
+
+  function splineval_nt_tens(kmpc)
+    use bspline, only : dbsder
+    implicit none
+    real(kp), intent(in) :: kmpc
+    real(kp) :: splineval_nt_tens   
+    real(kp) :: lnkmpc
+
+!first derivative: spectral index    
+    integer, parameter :: ider = 1
+    
+    lnkmpc = log(kmpc)
+
+!d ln(Ph) / d ln(k) which is nt    
+    splineval_nt_tens = dbsder(ider,lnkmpc,tensOrder,tensLnkmpcKnot &
+         ,tensBcoefNum,tensPowerBcoef)
+
+  end function splineval_nt_tens
+
+
+
+  function splineval_alphas_scal(kmpc)
+    use bspline, only : dbsder
+    implicit none
+    real(kp), intent(in) :: kmpc
+    real(kp), dimension(scalModeNum,scalModeNum) :: splineval_alphas_scal    
+    real(kp) :: lnkmpc
+    integer :: i,j
+
+!second derivative: running
+    integer, parameter :: ider = 2
+    
+    lnkmpc = log(kmpc)  
+
+
+    do j=1,scalModeNum
+       do i=1,scalModeNum
+          splineval_alphas_scal(i,j) = dbsder(ider,lnkmpc,scalOrder,scalLnkmpcKnot &
+               ,scalBcoefNum,scalPowerBcoef(:,i,j))
+       enddo
+    enddo
+
+
+  end function splineval_alphas_scal
+
+
+  function splineval_betas_scal(kmpc)
+    use bspline, only : dbsder
+    implicit none
+    real(kp), intent(in) :: kmpc
+    real(kp), dimension(scalModeNum,scalModeNum) :: splineval_betas_scal    
+    real(kp) :: lnkmpc
+    integer :: i,j
+
+!third derivative: running of running
+    integer, parameter :: ider = 3
+    
+    lnkmpc = log(kmpc)  
+
+
+    do j=1,scalModeNum
+       do i=1,scalModeNum
+          splineval_betas_scal(i,j) = dbsder(ider,lnkmpc,scalOrder,scalLnkmpcKnot &
+               ,scalBcoefNum,scalPowerBcoef(:,i,j))
+       enddo
+    enddo
+
+    
+  end function splineval_betas_scal
+  
 
 
 end module infpowspline

@@ -1,24 +1,3 @@
-!   This file is part of FieldInf
-!
-!   Copyright (C) 2005-2021 C. Ringeval
-!   
-!   FieldInf is free software: you can redistribute it and/or modify
-!   it under the terms of the GNU General Public License as published by
-!   the Free Software Foundation, either version 3 of the License, or
-!   (at your option) any later version.
-!
-!   FieldInf is distributed in the hope that it will be useful,
-!   but WITHOUT ANY WARRANTY; without even the implied warranty of
-!   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!   GNU General Public License for more details.
-!
-!   You should have received a copy of the GNU General Public License
-!   along with FieldInf.  If not, see <https://www.gnu.org/licenses/>.
-
-
-
-
-
 !This module provides the initial power spectra for CAMB, computed
 !from the inflationary module
 
@@ -98,10 +77,31 @@ module InitialPower
      procedure :: FreeInfBgData => TInitialFieldInf_FreeInfBgData
      procedure :: SetInfScalPow => TInitialFieldInf_SetInfScalPow
      procedure :: FreePowers => TInitialFieldInf_FreePowers
-
+     procedure :: Effective_ns => TInitalPowerLaw_Effective_ns
+     procedure :: Effective_as => TInitalPowerLaw_Effective_as
+     procedure :: Effective_bs => TInitalPowerLaw_Effective_bs
   end Type TInitialFieldInf
 
 
+  Type, extends(TInitialPower) :: TSplinedInitialPower
+     real(dl) :: effective_ns_for_nonlinear = -1._dl !used for halofit
+     real(dl) :: kmin_scalar, kmax_scalar
+     real(dl) :: kmin_tensor, kmax_tensor
+     class(TSpline1D), allocatable :: Pscalar, Ptensor
+   contains
+     procedure :: SetScalarTable => TSplinedInitialPower_SetScalarTable
+     procedure :: SetTensorTable => TSplinedInitialPower_SetTensorTable
+     procedure :: SetScalarLogRegular => TSplinedInitialPower_SetScalarLogRegular
+     procedure :: SetTensorLogRegular => TSplinedInitialPower_SetTensorLogRegular
+     procedure :: ScalarPower => TSplinedInitialPower_ScalarPower
+     procedure :: TensorPower => TSplinedInitialPower_TensorPower
+     procedure :: HasTensors => TSplinedInitialPower_HasTensors
+     procedure :: Effective_ns => TSplinedInitialPower_Effective_ns
+     procedure, nopass :: PythonClass => TSplinedInitialPower_PythonClass
+     procedure, nopass :: SelfPointer => TSplinedInitialPower_SelfPointer
+  end Type TSplinedInitialPower
+
+  
 !a local static allocated ressource
   type(InitialPowerData), save :: powerD
 
@@ -131,10 +131,10 @@ contains
     character(LEN=:), allocatable :: TInitialFieldInf_PythonClass
 
     TInitialFieldInf_PythonClass = 'InitialPower'
-    
+
   end function TInitialFieldInf_PythonClass
 
-  
+
   subroutine TInitialFieldInf_SelfPointer(cptr,P)
     use iso_c_binding
     Type(c_ptr) :: cptr
@@ -148,7 +148,7 @@ contains
 
 
 
-   function inipowerparams_equal(PinA, PinB)
+  function inipowerparams_equal(PinA, PinB)
     use infbgmodel, only : operator(==) 
     implicit none
     type(initialpowerparams), intent(in) :: PinA, PinB
@@ -1044,4 +1044,195 @@ contains
   end subroutine TInitialFieldInf_ReadParams
 
 
+
+  function TInitalFieldInf_Effective_ns(this)
+    use infpowspline, only : splineval_ns_scal
+    class(TInitialFieldInf) :: this
+    real(dl) :: TInitalPowerLaw_Effective_ns
+
+!only possible if spline is on (safest way to compute numerical derivatives)    
+    if (.not.(this%ipp%useSpline)) then
+       write(*,*)'useSpline= ',this%ipp%useSpline
+       call Mpistop( 'TInitalFieldInf_Effective_ns: enable spline to compute ns!' )
+    end if
+       
+    TInitialFieldInf_Effective_ns = splineval_ns_scal(real(this%ipp%kstar,kp))   
+
+  end function TInitalPowerLaw_Effective_ns
+
+!same as before for the running and running of the running
+  function TInitalFieldInf_Effective_as(this)
+    use infpowspline, only : splineval_alphas_scal
+    class(TInitialFieldInf) :: this
+    real(dl) :: TInitalPowerLaw_Effective_as
+
+    if (.not.(this%ipp%useSpline)) then
+       write(*,*)'useSpline= ',this%ipp%useSpline
+       call Mpistop( 'TInitalFieldInf_Effective_ns: enable spline to compute as!' )
+    end if
+       
+    TInitialFieldInf_Effective_as = splineval_alphas_scal(real(this%ipp%kstar,kp))   
+
+  end function TInitalFieldInf_Effective_as
+
+  function TInitalFieldInf_Effective_bs(this)
+    use infpowspline, only : splineval_betas_scal
+    class(TInitialFieldInf) :: this
+    real(dl) :: TInitalPowerLaw_Effective_bs
+
+    if (.not.(this%ipp%useSpline)) then
+       write(*,*)'useSpline= ',this%ipp%useSpline
+       call Mpistop( 'TInitalFieldInf_Effective_as: enable spline to compute bs!' )
+    end if
+       
+    TInitialFieldInf_Effective_bs = splineval_betas_scal(real(this%ipp%kstar,kp))   
+
+  end function TInitalFieldInf_Effective_bs
+  
+
+  
+  subroutine TSplinedInitialPower_SelfPointer(cptr, P)
+    use iso_c_binding
+    Type(c_ptr) :: cptr
+    Type (TSplinedInitialPower), pointer :: PType
+    class (TPythonInterfacedClass), pointer :: P
+
+    call c_f_pointer(cptr, PType)
+    P => PType
+
+  end subroutine TSplinedInitialPower_SelfPointer
+
+  logical function TSplinedInitialPower_HasTensors(this)
+    class(TSplinedInitialPower) :: this
+
+    TSplinedInitialPower_HasTensors = allocated(this%Ptensor)
+
+  end function TSplinedInitialPower_HasTensors
+
+  function TSplinedInitialPower_ScalarPower(this, k)
+    class(TSplinedInitialPower) :: this
+    real(dl), intent(in) ::k
+    real(dl) TSplinedInitialPower_ScalarPower
+
+    if (k <= this%kmin_scalar) then
+       TSplinedInitialPower_ScalarPower = this%Pscalar%F(1)
+    elseif (k >= this%kmax_scalar) then
+       TSplinedInitialPower_ScalarPower = this%Pscalar%F(this%Pscalar%n)
+    else
+       TSplinedInitialPower_ScalarPower = this%Pscalar%Value(k)
+    end if
+
+  end function TSplinedInitialPower_ScalarPower
+
+  function TSplinedInitialPower_TensorPower(this, k)
+    class(TSplinedInitialPower) :: this
+    real(dl), intent(in) ::k
+    real(dl) TSplinedInitialPower_TensorPower
+
+    if (k <= this%kmin_tensor) then
+       TSplinedInitialPower_TensorPower = this%Ptensor%F(1)
+    elseif (k >= this%kmax_tensor) then
+       TSplinedInitialPower_TensorPower = this%Ptensor%F(this%Ptensor%n)
+    else
+       TSplinedInitialPower_TensorPower = this%Ptensor%Value(k)
+    end if
+
+  end function TSplinedInitialPower_TensorPower
+
+  function TSplinedInitialPower_PythonClass()
+    character(LEN=:), allocatable :: TSplinedInitialPower_PythonClass
+
+    TSplinedInitialPower_PythonClass = 'SplinedInitialPower'
+
+  end function TSplinedInitialPower_PythonClass
+
+  subroutine TSplinedInitialPower_SetScalarTable(this, n, k, PK)
+    class(TSplinedInitialPower) :: this
+    integer, intent(in) :: n
+    real(dl), intent(in) :: k(n), PK(n)
+
+    if (allocated(this%Pscalar)) deallocate(this%Pscalar)
+    if (n>0) then
+       allocate(TCubicSpline::this%Pscalar)
+       select type (Sp => this%Pscalar)
+       class is (TCubicSpline)
+          call Sp%Init(k,PK)
+       end select
+       this%kmin_scalar = k(1)
+       this%kmax_scalar = k(n)
+    end if
+
+  end subroutine TSplinedInitialPower_SetScalarTable
+
+
+  subroutine TSplinedInitialPower_SetTensorTable(this, n, k, PK)
+    class(TSplinedInitialPower) :: this
+    integer, intent(in) :: n
+    real(dl), intent(in) :: k(n), PK(n)
+
+    if (allocated(this%PTensor)) deallocate(this%PTensor)
+    if (n>0) then
+       allocate(TCubicSpline::this%PTensor)
+       select type (Sp => this%PTensor)
+       class is (TCubicSpline)
+          call Sp%Init(k,PK)
+       end select
+       this%kmin_tensor = k(1)
+       this%kmax_tensor = k(n)
+    end if
+
+  end subroutine TSplinedInitialPower_SetTensorTable
+
+  subroutine TSplinedInitialPower_SetScalarLogRegular(this, kmin, kmax, n, PK)
+    class(TSplinedInitialPower) :: this
+    integer, intent(in) :: n
+    real(dl), intent(in) ::kmin, kmax, PK(n)
+
+    if (allocated(this%Pscalar)) deallocate(this%Pscalar)
+    if (n>0) then
+       allocate(TLogRegularCubicSpline::this%Pscalar)
+       select type (Sp => this%Pscalar)
+       class is (TLogRegularCubicSpline)
+          call Sp%Init(kmin, kmax, n, PK)
+       end select
+       this%kmin_scalar = kmin
+       this%kmax_scalar = kmax
+    end if
+
+  end subroutine TSplinedInitialPower_SetScalarLogRegular
+
+
+  subroutine TSplinedInitialPower_SetTensorLogRegular(this, kmin, kmax, n, PK)
+    class(TSplinedInitialPower) :: this
+    integer, intent(in) :: n
+    real(dl), intent(in) ::kmin, kmax, PK(n)
+
+    if (allocated(this%Ptensor)) deallocate(this%Ptensor)
+    if (n>0) then
+       allocate(TLogRegularCubicSpline::this%Ptensor)
+       select type (Sp => this%Ptensor)
+       class is (TLogRegularCubicSpline)
+          call Sp%Init(kmin, kmax, n, PK)
+       end select
+       this%kmin_tensor = kmin
+       this%kmax_tensor = kmax
+    end if
+
+  end subroutine TSplinedInitialPower_SetTensorLogRegular
+
+  function TSplinedInitialPower_Effective_ns(this)
+    use config
+    class(TSplinedInitialPower) :: this
+    real(dl) :: TSplinedInitialPower_Effective_ns
+
+    if (this%effective_ns_for_nonlinear==-1._dl) then
+       call GlobalError('TSplinedInitialPower: effective_ns_for_nonlinear not set',error_inital_power)
+    else
+       TSplinedInitialPower_Effective_ns = this%effective_ns_for_nonlinear
+    end if
+  end function TSplinedInitialPower_Effective_ns
+
+
+
+    
 end module InitialPower
