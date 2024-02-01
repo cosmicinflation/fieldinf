@@ -198,7 +198,7 @@ contains
     if (useVelocity) then
        fieldDot = derivField/sqrt(hubbleSquare)
        velocityDot = velocity_derivative(field,derivField)
-       fieldDotDot = (velocityDot - derivField*epsilon1)/sqrt(hubblesquare)
+       fieldDotDot = (velocityDot + derivField*epsilon1)/sqrt(hubblesquare)
     else
        fieldDot = derivField
        fieldDotDot = field_second_derivative(field,fieldDot)       
