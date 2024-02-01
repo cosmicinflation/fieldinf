@@ -1,4 +1,4 @@
-AC_INIT([fieldinf],[1.2.2],[chris@curl.group],[],[https://github.com/eatdust/fieldinf])
+AC_INIT([fieldinf],[1.3.0],[chris@curl.group],[],[https://github.com/eatdust/fieldinf])
 
 AM_INIT_AUTOMAKE
 
