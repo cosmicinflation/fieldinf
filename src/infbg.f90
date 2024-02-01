@@ -23,8 +23,10 @@
 module infbg
   use fieldprec, only : kp, tolkp
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
+  use infbgfunc, only : field_second_derivative, velocity_derivative
   use infbgfunc, only : hubble_parameter_square, slowroll_first_parameter_JF
   use infbgfunc, only : slowroll_first_parameter, slowroll_second_parameter
+  use infbgfunc, only : slowroll_third_parameter
 
 !background evolution in the Einstein FLRW Frame for multifields:
 !scalar gravity + matter fields.
@@ -75,7 +77,9 @@ module infbg
 !to store snapshot (ini or end, or more)
   type infbgphys    
      sequence
-     real(kp) :: efold, hubble, epsilon1, epsilon1JF, epsilon2
+     real(kp) :: efold, hubble
+     real(kp) :: epsilon1, epsilon1JF
+     real(kp) :: epsilon2, epsilon3
      real(kp), dimension(fieldNum) :: field
      real(kp), dimension(fieldNum) :: fieldDot
   end type infbgphys
@@ -132,6 +136,7 @@ contains
          .and. (infbgphysA%epsilon1 == infbgphysB%epsilon1) &
          .and. (infbgphysA%epsilon1JF == infbgphysB%epsilon1JF) &
          .and. (infbgphysA%epsilon2 == infbgphysB%epsilon2) &
+!         .and. (infbgphysA%epsilon3 == infbgphysB%epsilon3) &
          .and. all(infbgphysA%field == infbgphysB%field) &
          .and. all(infbgphysA%fieldDot == infbgphysB%fieldDot))
 
@@ -149,6 +154,7 @@ contains
          .or. (infbgphysA%epsilon1 /= infbgphysB%epsilon1) &
          .or. (infbgphysA%epsilon1JF /= infbgphysB%epsilon1JF) &
          .or. (infbgphysA%epsilon2 /= infbgphysB%epsilon2) &
+!         .or. (infbgphysA%epsilon3 /= infbgphysB%epsilon3) &
          .or. any(infbgphysA%field /= infbgphysB%field) &
          .or. any(infbgphysA%fieldDot /= infbgphysB%fieldDot))
 
@@ -188,13 +194,14 @@ contains
     if (present(inname)) then
        write(*,*)'infbgphys type: ',inname
     endif
-    write(*,*)'efold=        ',infvar%efold
-    write(*,*)'hubble=       ',infvar%hubble
-    write(*,*)'epsilon1=     ',infvar%epsilon1
-    write(*,*)'epsilon1(JF)= ',infvar%epsilon1JF
-    write(*,*)'epsilon2=     ',infvar%epsilon2
-    write(*,*)'field value=  ',infvar%field
-    write(*,*)'Dfield/Defold=',infvar%fieldDot
+    write(*,*)'efold=          ',infvar%efold
+    write(*,*)'hubble=         ',infvar%hubble
+    write(*,*)'epsilon1=       ',infvar%epsilon1
+    write(*,*)'epsilon1(JF)=   ',infvar%epsilon1JF
+    write(*,*)'epsilon2=       ',infvar%epsilon2
+    write(*,*)'epsilon3=       ',infvar%epsilon3
+    write(*,*)'field value=    ',infvar%field
+    write(*,*)'Dfield/Defold=  ',infvar%fieldDot
 
 
   end subroutine print_infbgphys
@@ -255,6 +262,7 @@ contains
 
     infIni%epsilon1 = slowroll_first_parameter(infIni%field,infIni%fieldDot, .false.)
     infIni%epsilon2 = slowroll_second_parameter(infIni%field,infIni%fieldDot, .false.)
+    infIni%epsilon3 = slowroll_third_parameter(infIni%field,infIni%fieldDot, .false.)
     infIni%epsilon1JF = slowroll_first_parameter_JF(infIni%field, infIni%fieldDot,.false.)
     infIni%efold = 0._kp
 
@@ -374,6 +382,8 @@ contains
           ptr_alternate_stop_parameter => slowroll_first_parameter_JF
        case('epsilon2')
           ptr_alternate_stop_parameter => slowroll_second_parameter
+       case('epsilon3')
+          ptr_alternate_stop_parameter => slowroll_third_parameter
        case default
           stop 'set_bgfieldevol_useotherepsilon: name not found!'
 
@@ -456,7 +466,7 @@ contains
     
     
     real(kp) :: epsilon1, epsilon1JF
-    real(kp) :: epsilon2
+    real(kp) :: epsilon2, epsilon3
 
 !if ptrBgdata input without data number, this is the default storage step
     real(kp), parameter :: efoldStepDefault = 1._kp
@@ -779,6 +789,8 @@ contains
          , useVelocity)
     bg_field_evol%epsilon2 = slowroll_second_parameter(fieldEndInf, derivFieldEndInf &
          , useVelocity)
+    bg_field_evol%epsilon3 = slowroll_third_parameter(fieldEndInf, derivFieldEndInf &
+         , useVelocity)
     bg_field_evol%epsilon1JF = slowroll_first_parameter_JF(fieldEndInf, derivFieldEndInf &
          , useVelocity)
 
@@ -808,6 +820,7 @@ contains
           call delete_file('geom.dat')
           call delete_file('epsilon1.dat')
           call delete_file('epsilon2.dat')
+          call delete_file('epsilon3.dat')
           call delete_file('hubble.dat')
           call delete_file('potential.dat')
           call delete_file('confsquare.dat')
@@ -852,6 +865,7 @@ contains
           hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
           epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
           epsilon2 =  slowroll_second_parameter(field,derivField,useVelocity)
+          epsilon3 =  slowroll_third_parameter(field,derivField,useVelocity)
           epsilon1JF = slowroll_first_parameter_JF(field,derivField,useVelocity)
 
           if (hubbleSquare.ge.0._kp) then
@@ -874,6 +888,7 @@ contains
           ptrCurrent%bg%epsilon1 = epsilon1
           ptrCurrent%bg%epsilon1JF = epsilon1JF
           ptrCurrent%bg%epsilon2 = epsilon2
+          ptrCurrent%bg%epsilon3 = epsilon3
           ptrCurrent%bg%field = field
 !          i=i+1
 !             print *,'stored efold',ptrCurrent%bg%efold,i
@@ -891,6 +906,7 @@ contains
              call livewrite('hubble.dat',efold,hubble)
              call livewrite('epsilon1.dat',efold,epsilon1,epsilon1JF)
              call livewrite('epsilon2.dat',efold,epsilon2)
+             call livewrite('epsilon3.dat',efold,epsilon3)
              call livewrite('potential.dat',efold,potential(bgVar(1:fieldNum)))
              call livewrite('confsquare.dat',efold &
                   ,conformal_factor_square(bgVar(matterNum+1:fieldNum)))
@@ -1128,16 +1144,13 @@ contains
 
 
 
-  subroutine bg_field_dot_decoupled(neqs,efold,bgVar,bgVarDot,stopData)                     
+  subroutine bg_field_dot_decoupled(neqs,efold,bgVar,bgVarDot,stopData)
 !for derivField=Dfield/Defold the field equations decouple from the
 !Hubble flow. However, this decomposition becomes singular when the
 !potential vanishes and the integration fails a that point. Harmless
 !for the inflationary era.
 
     use fieldprec, only : transfert
-    use infsigma, only : metric, metric_inverse   
-    use infsigma, only : connection_affine
-    use infpotential, only : deriv_ln_potential
     implicit none
         
     integer :: neqs    
@@ -1148,20 +1161,18 @@ contains
    
     integer :: i
     real(kp), dimension(fieldNum) :: dlnPotVec
-    real(kp), dimension(fieldNum) :: field, christVec
-    real(kp), dimension(fieldNum) :: fieldDot, fieldDotDot 
-    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
-    real(kp) :: fieldDotSquare, epsilon, hubbleSquare
-  
+    real(kp), dimension(fieldNum) :: field
+    real(kp), dimension(fieldNum) :: fieldDot, fieldDotDot
+    real(kp) :: epsilon, hubbleSquare
+      
     logical :: stopNow
 
     stopNow = .false.
 
     field = bgVar(1:fieldNum)
     fieldDot = bgVar(fieldNum+1:2*fieldNum)
-    christoffel = connection_affine(field)
 
-    fieldDotSquare = dot_product(fieldDot,matmul(metric(field),fieldDot))
+!    fieldDotSquare = dot_product(fieldDot,matmul(metric(field),fieldDot))
 
     if (present(stopData)) then
 !use other method or not to stop inflation
@@ -1170,7 +1181,8 @@ contains
           if (stopData%yesno1) then
              epsilon = ptr_alternate_stop_parameter(field,fieldDot,.false.)
           else
-             epsilon = fieldDotSquare/2._kp
+             !epsilon = fieldDotSquare/2._kp
+             epsilon = slowroll_first_parameter(field,fieldDot,.false.)
           endif
 
           if (stopData%mat) then
@@ -1209,19 +1221,20 @@ contains
        endif
     endif
     
-    do i=1,fieldNum
-       christVec(i) = dot_product(fieldDot,matmul(christoffel(i,:,:),fieldDot))
-    enddo
- 
-!    dlnPotVec = deriv_ln_potential_vec(field)
-    
-    dlnPotVec = matmul(metric_inverse(field),deriv_ln_potential(field))
+!    do i=1,fieldNum
+!       christVec(i) = dot_product(fieldDot,matmul(christoffel(i,:,:),fieldDot))
+!    enddo
+     
+!    dlnPotVec = matmul(metric_inverse(field),deriv_ln_potential(field))
           
-    fieldDotDot = -christVec - (3._kp - fieldDotSquare/2._kp)*(fieldDot + dlnPotVec)
+!    fieldDotDot = -christVec - (3._kp - fieldDotSquare/2._kp)*(fieldDot + dlnPotVec)
+
+!    bgVarDot(1:fieldNum) = fieldDot
+!    bgVarDot(fieldNum+1:2*fieldNum) = fieldDotDot
 
     bgVarDot(1:fieldNum) = fieldDot
-    bgVarDot(fieldNum+1:2*fieldNum) = fieldDotDot
-       
+    bgVarDot(fieldNum+1:2*fieldNum) = field_second_derivative(field,fieldDot)
+    
   end subroutine bg_field_dot_decoupled
 
 
@@ -1235,8 +1248,7 @@ contains
 !at the end of inflation.
 
     use fieldprec, only : transfert
-    use infsigma, only : metric, metric_inverse, connection_affine
-    use infpotential, only : deriv_potential
+
     implicit none
         
     integer :: neqs    
@@ -1248,9 +1260,8 @@ contains
     integer :: i
     real(kp), dimension(fieldNum) :: dPotVec
     real(kp), dimension(fieldNum) :: field, velocity
-    real(kp), dimension(fieldNum) :: fieldDot, velocityDot, christVec
-    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
-    real(kp) :: velocitySquare, epsilon, hubbleSquare, hubble
+    real(kp), dimension(fieldNum) :: fieldDot
+    real(kp) :: epsilon, hubbleSquare, hubble
     
     logical :: stopNow
 
@@ -1258,16 +1269,14 @@ contains
 
     field = bgVar(1:fieldNum)
     velocity = bgVar(fieldNum+1:2*fieldNum)
-    christoffel = connection_affine(field)
-   
-    velocitySquare = dot_product(velocity,matmul(metric(field),velocity))    
 
-    do i=1,fieldNum
-       christVec(i) = dot_product(velocity(:),matmul(christoffel(i,:,:),velocity(:)))
-    enddo
+!    christoffel = connection_affine(field)
+!    velocitySquare = dot_product(velocity,matmul(metric(field),velocity))    
+!    do i=1,fieldNum
+!       christVec(i) = dot_product(velocity(:),matmul(christoffel(i,:,:),velocity(:)))
+!    enddo
    
-!    dPotVec = deriv_potential_vec(field)
-    dPotVec = matmul(metric_inverse(field),deriv_potential(field))
+!    dPotVec = matmul(metric_inverse(field),deriv_potential(field))
    
     hubbleSquare = hubble_parameter_square(field,velocity,.true.)
     if (hubbleSquare.ge.0.) then
@@ -1285,7 +1294,8 @@ contains
           if (stopData%yesno1) then
              epsilon = ptr_alternate_stop_parameter(field,velocity,.true.)
           else
-             epsilon = velocitySquare/2._kp/hubbleSquare
+             !             epsilon = velocitySquare/2._kp/hubbleSquare
+             epsilon = slowroll_first_parameter(field,velocity,.true.)
           endif          
 
           if (stopData%mat) then
@@ -1328,11 +1338,14 @@ contains
     endif
    
     fieldDot = velocity/hubble
-    velocityDot =  -3._kp*velocity - (christVec + dPotVec)/hubble
+!    velocityDot =  -3._kp*velocity - (christVec + dPotVec)/hubble
        
+!    bgVarDot(1:fieldNum) = fieldDot
+!    bgVarDot(fieldNum+1:2*fieldNum) = velocityDot
+
     bgVarDot(1:fieldNum) = fieldDot
-    bgVarDot(fieldNum+1:2*fieldNum) = velocityDot
-            
+    bgVarDot(fieldNum+1:2*fieldNum) = velocity_derivative(field,velocity)
+    
   end subroutine bg_field_dot_coupled
 
 

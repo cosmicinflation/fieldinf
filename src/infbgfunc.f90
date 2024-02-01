@@ -24,7 +24,8 @@ module infbgfunc
   use infbgmodel, only : matterNum, dilatonNum, fieldNum
   use fieldprec, only : kp
   use infpotential, only : potential, deriv_potential
-  use infsigma, only : metric, metric_inverse
+  use infpotential, only : deriv_second_potential, deriv_ln_potential
+  use infsigma, only : metric, metric_inverse,  connection_affine
 
   implicit none
 
@@ -32,14 +33,70 @@ module infbgfunc
 
 ! Hubble flow and energy density functions (exact)
 
+  public field_second_derivative, velocity_derivative
+  
   public hubble_parameter_square
-  public slowroll_first_parameter, slowroll_second_parameter
+  public slowroll_first_parameter, slowroll_second_parameter, slowroll_third_parameter
   public slowroll_first_parameter_JF
 
   public matter_energy_density, matter_energy_density_JF
 
 contains
 
+!d^2 Field / d efold^2
+  function field_second_derivative(field,fieldDot) result(fieldDotDot)
+    implicit none
+    real(kp), dimension(fieldNum) :: fieldDotDot    
+    real(kp), dimension(fieldNum), intent(in) :: field, fieldDot
+    
+    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
+    real(kp), dimension(fieldNum) :: christVec, dlnPotVec
+
+    real(kp) :: fieldDotSquare
+    
+    integer :: i
+    
+    christoffel = connection_affine(field)
+    
+    do i=1,fieldNum
+       christVec(i) = dot_product(fieldDot,matmul(christoffel(i,:,:),fieldDot))
+    enddo
+     
+    dlnPotVec = matmul(metric_inverse(field),deriv_ln_potential(field))
+          
+    fieldDotDot = -christVec - (3._kp - fieldDotSquare/2._kp)*(fieldDot + dlnPotVec)
+    
+  end function field_second_derivative
+
+  
+!d (dphi/dt) /d efold
+  function velocity_derivative(field,velocity) result(velocityDot)
+    implicit none
+    real(kp), dimension(fieldNum) :: velocityDot    
+    real(kp), dimension(fieldNum), intent(in) :: field, velocity
+    
+    real(kp), dimension(fieldNum,fieldNum,fieldNum) :: christoffel 
+    real(kp), dimension(fieldNum) :: christVec, dPotVec
+
+    real(kp) :: velocitySquare, hubble
+
+    integer :: i
+
+    christoffel = connection_affine(field)
+    hubble = sqrt(hubble_parameter_square(field,velocity,.true.))
+    
+    velocitySquare = dot_product(velocity,matmul(metric(field),velocity))    
+    do i=1,fieldNum
+       christVec(i) = dot_product(velocity(:),matmul(christoffel(i,:,:),velocity(:)))
+    enddo
+   
+    dPotVec = matmul(metric_inverse(field),deriv_potential(field))
+
+    velocityDot =  -3._kp*velocity - (christVec + dPotVec)/hubble
+    
+  end function velocity_derivative
+  
+  
 
   function hubble_parameter_square(field,derivField,useVelocity)
 !in unit of kappa^2
@@ -76,9 +133,9 @@ contains
     
     if (useVelocity) then       
        hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
-       slowroll_first_parameter = derivFieldSquare/2d0/hubbleSquare
+       slowroll_first_parameter = derivFieldSquare/2._kp/hubbleSquare
     else
-       slowroll_first_parameter = derivFieldSquare/2d0
+       slowroll_first_parameter = derivFieldSquare/2._kp
     endif
     
 
@@ -108,17 +165,62 @@ contains
 
     epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
     
-    if (epsilon1.ne.0.) then
+    if (epsilon1.ne.0._kp) then
        derivPotFieldDot = dot_product(deriv_potential(field),fieldDot)
 
-       slowroll_second_parameter = -6d0 + 2d0*epsilon1 &
+       slowroll_second_parameter = -6._kp + 2._kp*epsilon1 &
             - derivPotFieldDot/(epsilon1*hubbleSquare)
     else
-       slowroll_second_parameter = 0.
+       slowroll_second_parameter = 0._kp
     endif
 
   end function slowroll_second_parameter
 
+
+
+  function slowroll_third_parameter(field,derivField,useVelocity)
+!epsilon3 = d ln(|epsilon2|) / dN
+    implicit none
+    real(kp) :: slowroll_third_parameter
+    real(kp), dimension(fieldNum), intent(in) :: field, derivField
+    logical, intent(in) :: useVelocity
+
+    real(kp), dimension(fieldNum) :: fieldDot, fieldDotDot
+    real(kp), dimension(fieldNum) :: velocityDot
+    
+    real(kp) :: epsilon1, epsilon2
+    real(kp) :: hubbleSquare, derivPot, derivSecondPot
+
+    hubbleSquare = hubble_parameter_square(field,derivField,useVelocity)
+    epsilon1 = slowroll_first_parameter(field,derivField,useVelocity)
+    epsilon2 = slowroll_second_parameter(field,derivField,useVelocity)
+    
+    if (useVelocity) then
+       fieldDot = derivField/sqrt(hubbleSquare)
+       velocityDot = velocity_derivative(field,derivField)
+       fieldDotDot = velocityDot/sqrt(hubblesquare) - derivField*epsilon1       
+    else
+       fieldDot = derivField
+       fieldDotDot = field_second_derivative(field,fieldDot)       
+    endif
+
+    
+    if ((epsilon1.ne.0._kp).and.(epsilon2.ne.0._kp)) then
+       derivPot = dot_product(deriv_potential(field),fieldDot)
+       derivSecondPot = dot_product(matmul(deriv_second_potential(field),fieldDot),fieldDot) &
+            + dot_product(deriv_potential(field),fieldDotDot)
+       
+       slowroll_third_parameter = 2._kp*epsilon1 &
+            + ( derivPot*(epsilon2 - 2._kp*epsilon1) - derivSecondPot ) &
+            / (hubbleSquare*epsilon1*epsilon2)
+       
+    else
+
+       slowroll_third_parameter = 0._kp
+
+    endif
+
+  end function slowroll_third_parameter
 
 
 
@@ -202,7 +304,7 @@ contains
     confSquare = conformal_factor_square(dilaton)
 
     matter_energy_density &
-         = 0.5d0*confSquare * dot_product(matterVel,matterVel) &
+         = 0.5_kp*confSquare * dot_product(matterVel,matterVel) &
          + matter_potential(matter) * confSquare**2
 
   end function matter_energy_density

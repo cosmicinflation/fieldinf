@@ -332,7 +332,7 @@ contains
     bgVar(1:2*fieldNum) = allVar(5:4+2*fieldNum)
 
     efold = bfold + efoldEnd
-    call bg_field_dot_coupled(2*fieldNum,efold,bgVar,bgVarDot)  
+    call bg_field_dot_coupled(2*fieldNum,efold,bgVar,bgVarDot)
 
 !need the background for the equations of the perturbations
     field = bgVar(1:fieldNum)
