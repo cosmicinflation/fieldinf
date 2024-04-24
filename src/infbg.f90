@@ -66,6 +66,10 @@ module infbg
   real(kp), save :: BgEvolEpsilonStopValue = 1._kp
   procedure(sr_param), pointer :: ptr_alternate_stop_parameter => slowroll_second_parameter
 
+!observable modes were generated after that (for all possible
+!reheating history): we don't care about what happens before
+  real(kp), save :: BgEvolEfoldBeforeEndObs = 120._kp
+  
 !default maximum number of efolds  
   real(kp), save :: BgEvolEfoldMaxiStop = 1000._kp
 
@@ -115,6 +119,7 @@ module infbg
   public set_bgfieldevol_matterstop, set_bgfieldevol_efoldexploreosc
   public set_bgfieldevol_hubblestop, set_bgfieldevol_epsilonstop
   public set_bgfieldevol_useotherepsilon, set_bgfieldevol_efoldmaxistop
+  public set_bgfieldevol_efoldbeforeendobs
   
 
 contains
@@ -429,6 +434,18 @@ contains
     write(*,*)'infbg: setting EfoldExploreOsc= ',efold
 
   end subroutine set_bgfieldevol_efoldexploreosc
+
+
+  subroutine set_bgfieldevol_efoldbeforeendobs(efold)
+    implicit none
+    real(kp), intent(in) :: efold
+
+    BgEvolEfoldBeforeEndObs = efold
+
+    write(*,*)'infbg: setting EfoldBeforeEndObs= ',efold
+
+  end subroutine set_bgfieldevol_efoldbeforeendobs
+  
   
   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -479,7 +496,7 @@ contains
     real(kp) :: efoldExploreOsc
     
 !observable perturbations were produced after that
-    real(kp), parameter :: efoldBeforeEndObs = 120._kp
+    real(kp) :: efoldBeforeEndObs
     real(kp) :: efoldObs
 
     real(kp) :: hubbleSquare, hubble, hubbleEndInf
@@ -550,12 +567,14 @@ contains
     efoldHuge = 1._kp/epsilon(1._kp)
     neqs = 2*fieldNum
 
+    efoldBeforeEndObs = BgEvolEfoldBeforeEndObs
+    
     if (present(infObs)) then
        infObs = infIni
     endif
 
     efoldExploreOsc = BgEvolEfoldExploreOsc
-
+    
 !initialization of inflation ending check and conditional stops
     epsilonStop = BgEvolEpsilonStopValue
     useOtherEpsilon = BgEvolUseOtherEpsilon
@@ -759,7 +778,7 @@ contains
           efoldEndInf = zbrent(find_endinf_matter,efoldBeforeEndInf &
                ,efoldAfterEndInf,tolEfoldEnd,findData)
        else
-          
+
           efoldEndInf = zbrent(find_endinf_epsilon,efoldBeforeEndInf &
                ,efoldAfterEndInf,tolEfoldEnd,findData)
 
@@ -1021,13 +1040,13 @@ contains
         
     if (useOtherEpsilon) then
        find_endinf_epsilon &
-            = ptr_alternate_stop_parameter(field,derivField,findData%yesno1) - 1._kp
+            = ptr_alternate_stop_parameter(field,derivField,findData%yesno1) - BgEvolEpsilonStopValue
     else
        find_endinf_epsilon &
-            = slowroll_first_parameter(field,derivField,findData%yesno1) - 1._kp
+            = slowroll_first_parameter(field,derivField,findData%yesno1) - BgEvolEpsilonStopValue
     endif
 
-    findData%real3 = find_endinf_epsilon + 1._kp
+    findData%real3 = find_endinf_epsilon + BgEvolEpsilonStopValue
        
 
   end function find_endinf_epsilon
