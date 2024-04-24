@@ -925,6 +925,7 @@ contains
                    infObs%fieldDot = ptrCurrent%bg%fieldDot
                    infObs%epsilon1 = epsilon1
                    infObs%epsilon2 = epsilon2
+                   infObs%epsilon3 = epsilon3
                    infObs%epsilon1JF = epsilon1JF
 !                   print *,'infObs set',infObs
                 endif
