@@ -143,9 +143,10 @@ contains
           p = potParam(2)
           potName = 'largef'
 
-       case ('rcquad')
+       case ('rcquad','rcqi')
           M4 = potParam(1)
           alpha = -potParam(4)/potParam(1)
+          potName = 'rcquad'
 
        case ('smallf','sfi')
           M4 = potParam(3)
@@ -153,24 +154,28 @@ contains
           mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
           potName = 'smallf'
 
-       case ('branei')
+       case ('branei','bi')
           M4 = potParam(3)
           p = -potParam(2)
           mu = (-potParam(3)/potParam(1))**(1._kp/potParam(2))
-
-       case ('kklmmt')
+          potName = 'branei'
+          
+       case ('kklmmt','kklti')
           M4 = 1._kp/potParam(3)
           p = -potParam(2)
           mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
-
-       case ('gswli')
+          potName = 'kklmmt'
+          
+       case ('gswli','li')
           M4 = potParam(3)
           alpha = potParam(4)/potParam(3)
-
-       case ('colwei')
+          potName = 'gswli'
+          
+       case ('colwei','cwi')
           M4 = potParam(3)
           alpha = potParam(4)/potParam(3)*exp(-potParam(2)*potParam(1)/potParam(4))
           mu = exp(-potParam(1)/potParam(4))
+          potName = 'colwei'
 
        case ('tdwell','dwi')
           M4 = potParam(3)**2
@@ -183,41 +188,47 @@ contains
           mu = (-potParam(3)/potParam(1))**(1._kp/(potParam(2)))
           potName = 'gdwell'
           
-       case ('betexp')
+       case ('betexp','bei')
           M4 = potParam(3)**potParam(5)
           beta = 1._kp/potParam(5)
           lambda = -potParam(1)*potParam(5)/potParam(3)
-
-       case ('radiag')
+          potName = 'betexp'
+          
+       case ('radiag','rgi')
           M4 = 1._kp/potParam(3)
           alpha = potParam(1)/potParam(3)
+          potName = 'radiag'
           
-       case ('hybrid')
+       case ('hybrid','vhi')
           M4 = potParam(3)
           p = potParam(2)
           mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
+          potName = 'hybrid'
 
-       case ('dysusy')
+       case ('dysusy','dsi')
           M4 = potParam(3)
           p = -potParam(2)
           mu = (potParam(3)/potParam(1))**(1._kp/potParam(2))
-
-       case ('nszero')
+          potName = 'dysusy'
+          
+       case ('nszero','csi')
           M4= 1._kp/potParam(3)**2
           alpha = - potParam(1)/potParam(3)
+          potName = 'nszero'
           
-       case ('sugrab')
+       case ('sugrab','sbi')
           M4 = potParam(3)
           alpha = -potParam(1)/potParam(3)
           beta = potParam(4)/potParam(3)
+          potName = 'sugrab'
 
-       case ('runmas','runma1','runma2','runma3','runma4')
+       case ('runmas','runma1','runma2','runma3','runma4','rmi')
           M4 = potParam(3)          
           nu = -potParam(4)/potParam(3)
           mu = exp(-potParam(1)/potParam(4) - 1._kp/2._kp)
           potName = 'runmas'
 
-       case ('logpot','logpo1','logpo2','logpo3','witorh')
+       case ('logpot','logpo1','logpo2','logpo3','witorh','lpi')
           q = potParam(5)
           p = potParam(2)*potParam(5)
           mu = exp(-potParam(1)/potParam(4))
@@ -228,80 +239,91 @@ contains
              potName = 'logpot'
           endif
 
-       case ('ostach')
+       case ('ostach','osti')
           p = potParam(2)
           mu = exp(potParam(1)/potParam(4))
           M4 = -potParam(4) * exp(potParam(1)/potParam(4)*potParam(2))
           potName = 'ostach'
 
-       case ('invmon')
+       case ('invmon','imi')
           M4 = potParam(1)
           p = -potParam(2)
-
+          potName = 'invmon'
 
 #ifndef PP5
-       case ('gmixlf')
+       case ('gmixlf','gmlfi')
           M4 = potParam(1)
           p = potParam(2)
           q = potParam(12) - potParam(2)
           alpha = potParam(6)/potParam(1)
-
-       case ('rcmass')
+          potName = 'gmixlf'
+          
+       case ('rcmass','rcmi')
           M4 = potParam(6)
           alpha = -0.5_kp*potParam(4)/potParam(6)
-       
-       case ('natinf')
+          potName = 'rcmass'
+          
+       case ('natinf','ni')
           M4 = potParam(6)
           mu = 1._kp/potParam(10)
+          potName = 'natinf'
 
-       case ('hybnat')
+       case ('hybnat','hni')
           M4 = potParam(6)
           mu = 1._kp/potParam(10)
           alpha = potParam(9)/potParam(6)
-
+          potName = 'hybnat'
+          
        case ('exsusy','esi')
           M4 = potParam(6)
           q = -potParam(8)
           potName = 'exsusy'
           
-       case ('powlaw')
+       case ('powlaw','pli')
           M4 = potParam(7)
           alpha = -potParam(8)
+          potName = 'powlaw'
 
-       case ('hfline')
+       case ('hfline','hf1i')
           M4 = potParam(3)**2
           alpha = potParam(1)/potParam(3)
+          potName = 'hfline'
 
-       case ('interm')
+       case ('interm','ii')
           M4 = potParam(1)
           beta = - potParam(2)
-
-       case ('twisti')
+          potName = 'interm'
+          
+       case ('twisti','twi')
           M4 = potParam(3)
           mu = -1._kp/potParam(8)
-
-       case ('nckahi')
+          potName = 'twisti'
+          
+       case ('nckahi','ncki')
           M4= potParam(3)
           alpha = potParam(4)/potParam(3)
           beta = potParam(6)/potParam(3)
+          potName = 'nckahi'
 
-       case ('oifold')
+       case ('oifold','oi')
           mu = exp(-potParam(1)/potParam(4))
           M4 = potParam(4)**2 * exp(-4*potParam(1)/potParam(4))
           alpha = -potParam(6)/potParam(4)**2
+          potName = 'oifold'
 
-       case ('ssbinf','spsyb1','spsyb2','spsyb3','spsyb4','spsyb5','spsyb6')
+       case ('ssbinf','spsyb1','spsyb2','spsyb3','spsyb4','spsyb5','spsyb6','ssbi')
           M4 = potParam(3)
           alpha = potParam(1)/potParam(3)
           beta = potParam(6)/potParam(3)
           potName='ssbinf'
 
-       case ('nrcoli')
+       case ('nrcoli''ncli')
           M4 = potParam(1)
           p = 0.5_kp*potParam(12)-2._kp
           alpha = potParam(4)/potParam(1)
           mu = (potParam(1)/potParam(6))**(1._kp/potParam(12))
-
+          potName = 'nrcoli'
+          
        case ('radlfi','rclfi1','rclfi2','rclfi3','rclfi4')
           p = potParam(12)
           mu = exp(-potParam(1)/potParam(4))
@@ -311,7 +333,7 @@ contains
           
 
 #ifndef PP12
-       case ('kahmod')
+       case ('kahmod','kmii','kmiii')
           M4 = potParam(13)
           alpha = -potParam(15)/potParam(13)
           beta = -potParam(17)
@@ -341,9 +363,10 @@ contains
           alpha = - potParam(6)*potParam(11)**(potParam(12)-2._kp)/potParam(1)
           beta = potParam(13)*potParam(11)**(potParam(5)-2._kp)/potParam(1)
           
-       case ('bsusyb')
+       case ('bsusyb','bsusybi')
           M4 = potParam(7)
           gam = potParam(17)/sqrt(6._kp)
+          potName = 'bsusyb'
 
        case ('nformi','nfi1','nfi2','nfi3','nfi4')
           M4 = potParam(15)
@@ -370,72 +393,99 @@ contains
           xi = 0.5_kp/sqrt(potParam(1))
           potName = 'higgsi'
           
-       case ('mhitop')
+       case ('mhitop','mhi')
           M4 = potParam(1)
           mu = potParam(2)
-
-       case ('ricci','ricci2')
+          potName = 'mhitop'
+          
+       case ('ricci','rpi1')
           M4 = potParam(1)
           p = potParam(2)
           q = sqrt(3._kp/2._kp)
+          potName = 'ricci'
 
+       case ('ricci2','rpi2')
+          M4 = potParam(1)
+          p = potParam(2)
+          q = sqrt(3._kp/2._kp)          
+          potName = 'ricci2'
+          
        case ('ccorsi','corsi1','corsi2','corsi3','ccsi','ccsi1','ccsi2','ccsi3')
           M4 = potParam(1)
           alpha = potParam(2)
           q = sqrt(3._kp/2._kp)
           potName='ccorsi'
 
-       case ('tipinf')
+       case ('tipinf','ti')
           M4 = potParam(1)
           alpha = potParam(2)
           mu = potParam(3)**0.25_kp
-
+          potName = 'tipinf'
+          
        case ('psenat','psni')
           M4 = potParam(1)
           alpha = potParam(2)
           mu = potParam(3)**0.25_kp
           potName = 'psenat'
           
-       case ('arctan')
+       case ('arctan','ai')
           M4 = potParam(1)
           mu = potParam(2)
-
-       case ('fixnsa','fixnsb','fixnsc')
+          potName = 'arctan'
+          
+       case ('fixnsa','cnai')
           M4 = potParam(1)
           alpha = potParam(2)
+          potName = 'fixnsa'
+          
+       case ('fixnsb','cnbi')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          potName = 'fixnsb'
 
-       case ('fixnsd')
+       case ('fixnsc','cnci')
+          M4 = potParam(1)
+          alpha = potParam(2)
+          potName = 'fixnsc'
+          
+       case ('fixnsd','cndi')
           M4 = potParam(1)
           alpha = potParam(2)
           beta = potParam(3)**0.25_kp
-
-       case ('dualsb')
+          potName = 'fixnsd'
+          
+       case ('dualsb','di')
           f = potParam(1)**0.25_kp
           lambda = potParam(2)
           M4 = potParam(1)*potParam(2)**2/pi**2
-
-       case ('mukhai')
+          potName = 'dualsb'
+          
+       case ('mukhai','vfmi')
           M4 = potParam(1)
           alpha = potParam(2)
           beta = potParam(3)**0.25_kp
-
+          potName = 'mukhai'
+          
        case ('axhtop','ahi')
           M4 = potParam(1)
           mu = potParam(2)
           potName = 'axhtop'
           
-       case ('sbkahi')
+       case ('sbkahi','sbki')
           M4 = potParam(1)
           alpha = potParam(2)
-
-       case ('fibrei')
+          potName = 'sbkahi'
+          
+       case ('fibrei','fi')
           M4 = potParam(1)
           alpha = potParam(2)
           p = potParam(3)**0.25_kp - 1._kp
-
-       case ('sduali')
+          potName = 'fibrei'
+          
+       case ('sduali','sdi')
           M4 = potParam(1)
           mu = potParam(2)
+          potName = 'sduali'
 
        case ('scaati','sati')
           M4 = potParam(1)
