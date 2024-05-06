@@ -1,6 +1,6 @@
 !   This file is part of FieldInf
 !
-!   Copyright (C) 2005-2021 C. Ringeval
+!   Copyright (C) 2005-2024 C. Ringeval
 !   
 !   FieldInf is free software: you can redistribute it and/or modify
 !   it under the terms of the GNU General Public License as published by
@@ -912,7 +912,7 @@ contains
 !          i=i+1
 !             print *,'stored efold',ptrCurrent%bg%efold,i
           if (useVelocity) then
-             ptrCurrent%bg%fieldDot = derivField/hubble             
+             ptrCurrent%bg%fieldDot = derivField/hubble
           else
              ptrCurrent%bg%fieldDot = derivField
           endif
@@ -941,7 +941,11 @@ contains
                    infObs%efold = efold
                    infObs%field = field
                    infObs%hubble = hubble
-                   infObs%fieldDot = ptrCurrent%bg%fieldDot
+                   if (useVelocity) then
+                      infObs%fieldDot = derivField/hubble
+                   else
+                      infObs%fieldDot = derivField
+                   endif
                    infObs%epsilon1 = epsilon1
                    infObs%epsilon2 = epsilon2
                    infObs%epsilon3 = epsilon3
