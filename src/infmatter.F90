@@ -390,11 +390,12 @@ contains
           alpha = potParam(2)
           mu = potParam(3)**0.25_kp
 
-       case ('psenat')
+       case ('psenat','psni')
           M4 = potParam(1)
           alpha = potParam(2)
           mu = potParam(3)**0.25_kp
-
+          potName = 'psenat'
+          
        case ('arctan')
           M4 = potParam(1)
           mu = potParam(2)
