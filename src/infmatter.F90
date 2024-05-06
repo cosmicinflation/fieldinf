@@ -259,10 +259,11 @@ contains
           mu = 1._kp/potParam(10)
           alpha = potParam(9)/potParam(6)
 
-       case ('exsusy')
+       case ('exsusy','esi')
           M4 = potParam(6)
           q = -potParam(8)
-
+          potName = 'exsusy'
+          
        case ('powlaw')
           M4 = potParam(7)
           alpha = -potParam(8)
