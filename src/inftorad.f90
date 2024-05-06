@@ -113,7 +113,8 @@ contains
   end subroutine print_infhubblexit
 
 
-
+!todo code reheating functions input lnRrad and w,rhoreh.
+!  
   function set_inftorad_cosmo(bgParam,bgIni,bgEnd,lnReheat,inferror)
     use infbgmodel, only : infbgparam
     use infbg, only : infbgdata, infbgphys

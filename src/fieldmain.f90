@@ -142,7 +142,7 @@ program fieldmain
 !radiation from the reheating parameter
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!R, the reheating parameter (zero means radiation-like reheating)
+!R, the rescaled reheating parameter lnRreh = lnRrad + 1/4 ln(rhoend)
   lnReheat = 0._kp
 
   infCosmo = set_inftorad_cosmo(infParam,bgIni,bgEnd,lnReheat)
