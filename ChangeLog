@@ -1,3 +1,135 @@
+commit f02c5eb3565c88bdffad6124c6b99f5d19a893c3
+Author: chris <chris@ringeval.com>
+Date:   Mon May 6 15:13:39 2024 +0200
+
+    Fix comment
+
+ src/fieldmain.f90 | 2 +-
+ src/inftorad.f90  | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit 497adbd6a4e038c3989aa52b3e79becbb91aff70
+Author: chris <chris@ringeval.com>
+Date:   Mon May 6 14:58:49 2024 +0200
+
+    Do not rely on ptrbgdata for infobs output
+
+ src/infbg.f90 | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+commit 89496c261083df30fe84e71d732c700f7e9685cf
+Author: chris <chris@ringeval.com>
+Date:   Mon May 6 14:49:55 2024 +0200
+
+    Support aspic naming for all models
+
+ src/infmatter.F90 | 170 +++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 110 insertions(+), 60 deletions(-)
+
+commit c262c2575d1c91fdffbdc1417c96e887759e8563
+Author: chris <chris@ringeval.com>
+Date:   Mon May 6 14:32:22 2024 +0200
+
+    Support aspic naming for pseudo-natural inflation
+
+ src/infmatter.F90 | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 6baa092b05ad0d094a0092b364a9583baf233277
+Author: chris <chris@ringeval.com>
+Date:   Mon May 6 10:49:53 2024 +0200
+
+    Allow aspic naming for esi
+
+ src/infmatter.F90 | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 563c1fb79719d3eac77f36fae98ab815bb07ba12
+Author: chris <chris@ringeval.com>
+Date:   Wed Apr 24 18:15:39 2024 +0200
+
+    Add options to change efoldobs and stop inflation at eps1<1
+
+ src/infbg.f90 | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+commit ab35fcb42aa7135510ae83f50fe4dead3b760421
+Author: chris <chris@ringeval.com>
+Date:   Wed Apr 24 16:45:10 2024 +0200
+
+    Add eps3 to infobs output
+
+ src/infbg.f90 | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 710cc341898d0faec217989c9e92c984199e7eea
+Author: chris <chris@ringeval.com>
+Date:   Thu Feb 1 16:09:58 2024 +0100
+
+    Fix sign error in fieldDotDot
+
+ src/infbgfunc.f90 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 054500d3fb667a2550fcfec144e60f60bb7e8919
+Author: chris <chris@ringeval.com>
+Date:   Thu Feb 1 16:01:31 2024 +0100
+
+    Fix calculation of fieldDotDot
+
+ configure.ac      | 2 +-
+ src/infbgfunc.f90 | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit e8076bab2c3ff15b4ec72320285f9d6a8ca9278c
+Author: chris <chris@ringeval.com>
+Date:   Thu Feb 1 15:34:33 2024 +0100
+
+    Put bg eom in infbgfunc and add exact computation of eps3
+
+ src/infbg.f90     | 109 +++++++++++++++++++++++++++----------------------
+ src/infbgfunc.f90 | 118 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ src/infpert.f90   |   2 +-
+ 3 files changed, 172 insertions(+), 57 deletions(-)
+
+commit 50cb26d1cacd0cb9f2a37754c0698b7d8a7c12ba
+Author: chris <chris@ringeval.com>
+Date:   Wed May 17 14:58:51 2023 +0200
+
+    Debug initial power spectrum module
+
+ src/InitialFieldInf.f90 | 51 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 33 insertions(+), 18 deletions(-)
+
+commit cf12feb39999c1903e7b6d9a7433c164942b473b
+Author: chris <chris@ringeval.com>
+Date:   Wed May 17 14:19:12 2023 +0200
+
+    Restore licensing info
+
+ src/InitialFieldInf.f90 | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+commit 9152dd42fcca2b1bf8d2250f16eabb7104454bd6
+Author: chris <chris@ringeval.com>
+Date:   Wed May 17 14:18:05 2023 +0200
+
+    Add computation of spectral indices and scalar runnings
+
+ src/InitialFieldInf.f90 | 241 +++++++++++++++++++++++++++++++++++++++++++-----
+ src/binfspline.f90      | 132 ++++++++++++++++++++++++++
+ src/infpowspline.f90    |  99 ++++++++++++++++++++
+ 3 files changed, 447 insertions(+), 25 deletions(-)
+
+commit 7fc4f9805584cdb3413cc9b33b095d86e7847806
+Author: chris <chris@ringeval.com>
+Date:   Tue Apr 18 14:40:12 2023 +0200
+
+    update log
+
+ ChangeLog | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
 commit bd0df46e9f2735b6d9e86b94ef347ee00b604261 (HEAD -> fieldinf)
 Author: chris <chris@ringeval.com>
 Date:   Tue Apr 18 14:39:30 2023 +0200
